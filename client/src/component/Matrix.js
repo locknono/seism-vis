@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import Button from "react-bootstrap/lib/Button";
-import MatrixInfo from "./MatrixInfo";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import PlaneChooseButton from "./PlaneChooseButton";
+import MatrixFigure from "./MatrixFigure";
+import MatrixInfo from "./MatrixInfo";
+
 class Matrix extends Component {
   constructor(props) {
     super(props);
@@ -54,11 +56,15 @@ class Matrix extends Component {
   render() {
     const { plane, depth, maxDepth } = this.state;
     const PlaneChooseButtonS = ["xy", "xz", "yz"].map(plane => (
-      <PlaneChooseButton plane={plane} onChangePlane={this.onChangePlane} />
+      <PlaneChooseButton
+        key={plane}
+        plane={plane}
+        onChangePlane={this.onChangePlane}
+      />
     ));
     return (
       <div>
-        <img src={`./imgs/${plane}/${depth}.png`} alt="Matrix" />
+        <MatrixFigure plane={plane} depth={depth} />
         <Slider onChange={this.onSlide} min={0} max={maxDepth} value={depth} />
         <Button bsStyle="primary" onClick={this.onAutoShow}>
           自动展示
