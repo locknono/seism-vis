@@ -53,6 +53,9 @@ class Matrix extends Component {
   }
   render() {
     const { plane, depth, maxDepth } = this.state;
+    const PlaneChooseButtonS = ["xy", "xz", "yz"].map(plane => (
+      <PlaneChooseButton plane={plane} onChangePlane={this.onChangePlane} />
+    ));
     return (
       <div>
         <img src={`./imgs/${plane}/${depth}.png`} alt="Matrix" />
@@ -63,9 +66,7 @@ class Matrix extends Component {
         <Button bsStyle="primary" onClick={this.stopAutoShow}>
           停止自动展示
         </Button>
-        <PlaneChooseButton plane="xy" onChangePlane={this.onChangePlane} />
-        <PlaneChooseButton plane="xz" onChangePlane={this.onChangePlane} />
-        <PlaneChooseButton plane="yz" onChangePlane={this.onChangePlane} />
+        {PlaneChooseButtonS}
         <MatrixInfo plane={plane} depth={depth} />
       </div>
     );
