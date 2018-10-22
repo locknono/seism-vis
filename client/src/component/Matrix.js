@@ -52,11 +52,11 @@ class Matrix extends Component {
     this.stopAutoShow();
   }
   render() {
-    const { plane, depth } = this.state;
+    const { plane, depth, maxDepth } = this.state;
     return (
       <div>
         <img src={`./imgs/${plane}/${depth}.png`} alt="Matrix" />
-        <Slider onChange={this.onSlide} min={0} max={2902} value={depth} />
+        <Slider onChange={this.onSlide} min={0} max={maxDepth} value={depth} />
         <Button bsStyle="primary" onClick={this.onAutoShow}>
           自动展示
         </Button>
