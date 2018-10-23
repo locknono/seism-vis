@@ -23,6 +23,7 @@ class MatrixFigure extends Component {
   }
   onClick(e) {
     //x for 886,y for 716
+    if (this.props.plane !== "xy") return;
     const { offsetX, offsetY } = e.nativeEvent;
     const { width, height } = this.state;
     const x = Math.floor((offsetX / width) * 886);
