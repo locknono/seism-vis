@@ -35,7 +35,7 @@ def sendPolyLineData(coors):
     zData = db.queryByOneCoord(x, y)
 
     res = Response(json.dumps(zData), mimetype='application/json')
-    
+
     return res
 
 

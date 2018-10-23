@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-
+import PolylineSvg from "./PolylineSvg";
 class MatrixFigure extends Component {
   constructor(props) {
     super(props);
+    this.state = { zData: [] };
     this.figureRef = React.createRef();
     this.onClick = this.onClick.bind(this);
   }
@@ -28,11 +29,14 @@ class MatrixFigure extends Component {
     const y = Math.floor((offsetY / height) * 716);
     fetch(`http://localhost:5000/xy/${x}-${y}`)
       .then(response => response.json())
-      .then(zData => {});
+      .then(zData => {
+        this.setState({ zData });
+      });
   }
 
   render() {
     const { plane, depth } = this.props;
+    const { zData } = this.state;
     return (
       <React.Fragment>
         <img
@@ -41,6 +45,7 @@ class MatrixFigure extends Component {
           ref={this.figureRef}
           onClick={this.onClick}
         />
+        <PolylineSvg zData={zData} width={1000} height={200} />
       </React.Fragment>
     );
   }
