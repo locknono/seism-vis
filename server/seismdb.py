@@ -4,7 +4,7 @@ import time
 import threading
 import multiprocessing as mp
 from multiprocessing import Pool
-
+import numpy as np
 
 class SeismDb:
     def __init__(self):
@@ -38,7 +38,8 @@ class SeismDb:
             if depth < 0 or depth > zDepth:
                 raise ValueError('depth for x should less than {0} and larger than 0'.format(zDepth))
             matrix = self.zCollection.find_one({"level": depth})['zArray']
-        return matrix
+
+        return np.transpose(matrix)
 
     def iterCursor(self, cursor, matrix):
         for doc in cursor:

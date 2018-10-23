@@ -7,7 +7,7 @@ import os
 from seismdb import SeismDb
 import matplotlib
 import logging
-
+from tomorrow import threads
 
 class Drawer():
     def __init__(self):
@@ -16,7 +16,7 @@ class Drawer():
     def drawTightMatrix(self, plane_name, depth, saveDir=''):
         vmin, vmax = -15533.79296875, 16425.25390625
         matrix = self.db.queryMatrix(plane_name, depth)
-        fig = plt.imshow(matrix, vmin=vmin, vmax=vmax)
+        fig = plt.imshow(matrix, vmin=vmin, vmax=vmax,cmap=plt.get_cmap("Greys"))
         fig.axes.get_xaxis().set_visible(False)
         fig.axes.get_yaxis().set_visible(False)
         if saveDir == '':
@@ -59,38 +59,40 @@ class Drawer():
                     os.mkdir(saveDir)
                     plt.savefig(path)
                     plt.close(fig)
-    def drawCoors(self,x,y):
+
+    def drawCoors(self, x, y):
         vmin, vmax = -15533.79296875, 16425.25390625
-        matrix = [self.db.queryByOneCoord(x,y)]
+        matrix = [self.db.queryByOneCoord(x, y)]
         fig = plt.imshow(matrix, vmin=vmin, vmax=vmax, aspect='auto')
         fig.axes.get_xaxis().set_visible(False)
         fig.axes.get_yaxis().set_visible(False)
         return fig
-    def drawBound(self,ox,oy,tx,ty):
+
+    def drawBound(self, ox, oy, tx, ty):
         vmin, vmax = -15533.79296875, 16425.25390625
-        matrix=self.db.queryBound(ox,oy,tx,ty)
+        matrix = self.db.queryBound(ox, oy, tx, ty)
         fig = plt.imshow(matrix, vmin=vmin, vmax=vmax, aspect='auto')
         fig.axes.get_xaxis().set_visible(False)
         fig.axes.get_yaxis().set_visible(False)
         return fig
+
+
 if __name__ == '__main__':
-    """
+
     logging.basicConfig(level=logging.INFO)
     matplotlib.use('Agg')
     plt.ioff()
     plt.axis('off')
-    """
+
     drawer = Drawer()
-    drawer.drawCoors(200,500)
-    """
-    for i in range(656, 716):
+    for i in range(700, 2902):
+        drawer.drawTightMatrix("xy", i, './imgs/xy/')
+
+    for i in range(0, 716):
         drawer.drawMatrix('xz', i, './imgs/{0}/'.format('xz'))
-    """
-    """
-    for i in range(276, 886):
-        drawer.drawMatrix('yz', i)
-        break
-    """
+
+    for i in range(0, 886):
+        drawer.drawMatrix('yz', i, './imgs/{0}/'.format('yz'))
 
     """
     for i in range(2160, 2902):
@@ -98,6 +100,3 @@ if __name__ == '__main__':
         drawer.drawTightMatrix('xy', i,'./imgs/xy/')
         print(time.time()-cur)
     """
-
-
-

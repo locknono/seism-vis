@@ -87,7 +87,6 @@ class MatrixFigure extends Component {
     const { zData, width, height, x1, x2, y1, y2 } = this.state;
     const className = "figurePosition";
     const lineCoors = [[x1, y1], [x2, y2]];
-    console.log(plane === "xy");
     return (
       <React.Fragment>
         <div>
@@ -100,6 +99,7 @@ class MatrixFigure extends Component {
             onMouseDown={this.onMouseDown}
             onMouseMove={this.onMouseMove}
             onMouseUp={this.onMouseUp}
+            
           />
           {plane === "xy" && (
             <FigureSvgLayer
