@@ -42,12 +42,14 @@ class MatrixFigure extends Component {
 
   onMouseDown(e) {
     e.preventDefault();
+    if (this.props.plane !== "xy") return;
     this.mousedownFlag = true;
     const { x, y } = this.getXY(e);
     this.x1 = e.nativeEvent.offsetX;
     this.y1 = e.nativeEvent.offsetY;
   }
   onMouseMove(e) {
+    if (this.props.plane !== "xy") return;
     if (this.mousedownFlag) {
       this.x2 = e.nativeEvent.offsetX;
       this.y2 = e.nativeEvent.offsetY;
@@ -60,6 +62,7 @@ class MatrixFigure extends Component {
     }
   }
   onMouseUp(e) {
+    if (this.props.plane !== "xy") return;
     this.mousedownFlag = false;
     const { x, y } = this.getXY(e);
     this.x2 = e.nativeEvent.offsetX;
@@ -84,6 +87,7 @@ class MatrixFigure extends Component {
     const { zData, width, height, x1, x2, y1, y2 } = this.state;
     const className = "figurePosition";
     const lineCoors = [[x1, y1], [x2, y2]];
+    console.log(plane === "xy");
     return (
       <React.Fragment>
         <div>
@@ -97,12 +101,14 @@ class MatrixFigure extends Component {
             onMouseMove={this.onMouseMove}
             onMouseUp={this.onMouseUp}
           />
-          <FigureSvgLayer
-            className={className}
-            width={width}
-            height={height}
-            lineCoors={lineCoors}
-          />
+          {plane === "xy" && (
+            <FigureSvgLayer
+              className={className}
+              width={width}
+              height={height}
+              lineCoors={lineCoors}
+            />
+          )}
         </div>
         <PolylineSvg zData={zData} width={1000} height={200} />
       </React.Fragment>
