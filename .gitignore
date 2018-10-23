@@ -23,3 +23,6 @@ yarn-error.log*
 #data
 data
 imgs
+
+#python server
+.idea
