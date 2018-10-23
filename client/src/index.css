@@ -12,3 +12,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.figurePosition {
+  position: absolute;
+  top: 25rem;
+  left: 10rem;
+}
