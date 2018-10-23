@@ -14,8 +14,10 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import io
 import base64
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 db = SeismDb()
 
@@ -30,22 +32,10 @@ def hello():
 def sendPolyLineData(coors):
     x = int(coors.split('-')[0])
     y = int(coors.split('-')[1])
-    drawer = Drawer()
-    drawer.drawCoors(x, y)
-    sio = io.BytesIO()
-    plt.savefig(sio, format='png')
-    sio.seek(0)
+    zData = db.queryByOneCoord(x, y)
 
-    data = base64.encodebytes(sio.getvalue()).decode()
-
-    html = '''
-          <img src="data:image/png;base64,{}" />    
-        '''
-
-    res = Response(html.format(data), mimetype='text/xml')
-    res.headers['Access-Control-Allow-Origin'] = '*'
-    sio.close()
-    plt.close()
+    res = Response(json.dumps(zData), mimetype='application/json')
+    
     return res
 
 

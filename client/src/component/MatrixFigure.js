@@ -21,7 +21,14 @@ class MatrixFigure extends Component {
     );
   }
   onClick(e) {
+    //x for 886,y for 716
     const { offsetX, offsetY } = e.nativeEvent;
+    const { width, height } = this.state;
+    const x = Math.floor((offsetX / width) * 886);
+    const y = Math.floor((offsetY / height) * 716);
+    fetch(`http://localhost:5000/xy/${x}-${y}`)
+      .then(response => response.json())
+      .then(zData => {});
   }
 
   render() {
