@@ -39,10 +39,12 @@ def sendPolyLineData(coors):
     return res
 
 
-@app.route('/showXY/', methods=['GET', 'POST'])
+@app.route('/drawLine/', methods=['GET', 'POST'])
 def show_user_profiile2():
     xyArray = request.values
     ods = request.data.decode("utf-8")
+    print(ods)
+    print(type(json.loads(ods)))
     ox = int(ods.split(',')[0])
     oy = int(ods.split(',')[1])
     tx = int(ods.split(',')[2])
@@ -69,4 +71,4 @@ def show_user_profiile2():
 
 
 if __name__ == '__main__':
-    app.run(threaded=False)
+    app.run()

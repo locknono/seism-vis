@@ -75,7 +75,7 @@ class MatrixFigure extends Component {
     const { matrixCoors, pointsOnLine } = this.getCoorsAndPointsOnLine(
       lineCoors
     );
-    fetch("http://localhost:5000", {
+    fetch("http://localhost:5000/drawLine/", {
       body: JSON.stringify(pointsOnLine), // must match 'Content-Type' header
       credentials: "same-origin", // include, same-origin, *omit
       headers: {
