@@ -72,11 +72,44 @@ class MatrixFigure extends Component {
       [this.offsetX1, this.offsetY1],
       [this.offsetX2, this.offsetY2]
     ];
-    this.setState({
+    const { matrixCoors, pointsOnLine } = this.getCoorsAndPointsOnLine(
       lineCoors
+    );
+    fetch("http://localhost:5000", {
+      body: JSON.stringify(pointsOnLine), // must match 'Content-Type' header
+      credentials: "same-origin", // include, same-origin, *omit
+      headers: {
+        "content-type": "application/json"
+      },
+      method: "POST", // *GET, POST, PUT, DELETE, etc.
+      mode: "cors" // no-cors, cors, *same-origin
+    });
+    this.setState({
+      lineCoors,
+      matrixCoors,
+      pointsOnLine
     });
   }
-
+  getCoorsAndPointsOnLine(lineCoors) {
+    const matrixCoors = lineCoors.map(v => {
+      return v.map(m => {
+        return Math.floor(m / this.state.padLength);
+      });
+    });
+    const k =
+      (matrixCoors[0][1] - matrixCoors[1][1]) /
+      (matrixCoors[0][0] - matrixCoors[1][0]);
+    const b = matrixCoors[0][1] - matrixCoors[0][0] * k;
+    let smallerX = matrixCoors[0][0] < matrixCoors[1][0] ? 0 : 1;
+    let biggerX = matrixCoors[0][0] < matrixCoors[1][0] ? 1 : 0;
+    let pointsOnLine = [];
+    for (let x = matrixCoors[smallerX][0]; x < matrixCoors[biggerX][0]; x++) {
+      let y = k * x + b;
+      pointsOnLine.push([x, y]);
+    }
+    console.log("pointsOnLine: ", pointsOnLine);
+    return { matrixCoors, pointsOnLine };
+  }
   getXY(e) {
     const { offsetX, offsetY } = e.nativeEvent;
     const { width, height } = this.state;
@@ -86,7 +119,14 @@ class MatrixFigure extends Component {
   }
   render() {
     const { plane, depth } = this.props;
-    const { zData, width, height, lineCoors } = this.state;
+    const {
+      zData,
+      width,
+      height,
+      lineCoors,
+      matrixCoors,
+      pointsOnLine
+    } = this.state;
     const className = "figurePosition";
     return (
       <React.Fragment>
