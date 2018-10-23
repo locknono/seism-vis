@@ -21,6 +21,7 @@ class MatrixFigure extends Component {
       function() {
         const figuerNode = this.figureRef.current;
         const { width, height } = figuerNode;
+        const padLength = width / 886;
         this.setState({ width, height });
       }.bind(this),
       0
@@ -45,19 +46,19 @@ class MatrixFigure extends Component {
     if (this.props.plane !== "xy") return;
     this.mousedownFlag = true;
     const { x, y } = this.getXY(e);
-    this.pixel_x1 = e.nativeEvent.offsetX;
-    this.pixel_y1 = e.nativeEvent.offsetY;
+    this.offsetX1 = e.nativeEvent.offsetX;
+    this.offsetY1 = e.nativeEvent.offsetY;
   }
   onMouseMove(e) {
     if (this.props.plane !== "xy") return;
     if (this.mousedownFlag) {
-      this.pixel_x2 = e.nativeEvent.offsetX;
-      this.pixel_y2 = e.nativeEvent.offsetY;
+      this.offsetX2 = e.nativeEvent.offsetX;
+      this.offsetY2 = e.nativeEvent.offsetY;
       this.setState({
-        pixel_x1: this.pixel_x1,
-        pixel_x2: this.pixel_x2,
-        pixel_y1: this.pixel_y1,
-        pixel_y2: this.pixel_y2
+        offsetX1: this.offsetX1,
+        offsetX2: this.offsetX2,
+        offsetY1: this.offsetY1,
+        offsetY2: this.offsetY2
       });
     }
   }
@@ -65,15 +66,14 @@ class MatrixFigure extends Component {
     if (this.props.plane !== "xy") return;
     this.mousedownFlag = false;
     const { x, y } = this.getXY(e);
-    this.pixel_x2 = e.nativeEvent.offsetX;
-    this.pixel_y2 = e.nativeEvent.offsetY;
+    this.offsetX2 = e.nativeEvent.offsetX;
+    this.offsetY2 = e.nativeEvent.offsetY;
     this.setState({
-      pixel_x1: this.pixel_x1,
-      pixel_x2: this.pixel_x2,
-      pixel_y1: this.pixel_y1,
-      pixel_y2: this.pixel_y2
+      offsetX1: this.offsetX1,
+      offsetX2: this.offsetX2,
+      offsetY1: this.offsetY1,
+      offsetY2: this.offsetY2
     });
-    
   }
 
   getXY(e) {
@@ -85,9 +85,17 @@ class MatrixFigure extends Component {
   }
   render() {
     const { plane, depth } = this.props;
-    const { zData, width, height, pixel_x1, pixel_x2, pixel_y1, pixel_y2 } = this.state;
+    const {
+      zData,
+      width,
+      height,
+      offsetX1,
+      offsetX2,
+      offsetY1,
+      offsetY2
+    } = this.state;
     const className = "figurePosition";
-    const lineCoors = [[pixel_x1, pixel_y1], [pixel_x2, pixel_y2]];
+    const lineCoors = [[offsetX1, offsetY1], [offsetX2, offsetY2]];
     return (
       <React.Fragment>
         <div>
