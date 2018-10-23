@@ -23,6 +23,9 @@ class MatrixFigure extends Component {
   }
   onClick(e) {
     //x for 886,y for 716
+    
+    //TO-DO:store Global variables such as 
+    //row number ,vmin into `context` 
     if (this.props.plane !== "xy") return;
     const { offsetX, offsetY } = e.nativeEvent;
     const { width, height } = this.state;
