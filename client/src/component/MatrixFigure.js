@@ -22,7 +22,7 @@ class MatrixFigure extends Component {
         const figuerNode = this.figureRef.current;
         const { width, height } = figuerNode;
         const padLength = width / 886;
-        this.setState({ width, height });
+        this.setState({ width, height, padLength });
       }.bind(this),
       0
     );
@@ -45,7 +45,6 @@ class MatrixFigure extends Component {
     e.preventDefault();
     if (this.props.plane !== "xy") return;
     this.mousedownFlag = true;
-    const { x, y } = this.getXY(e);
     this.offsetX1 = e.nativeEvent.offsetX;
     this.offsetY1 = e.nativeEvent.offsetY;
   }
@@ -54,11 +53,12 @@ class MatrixFigure extends Component {
     if (this.mousedownFlag) {
       this.offsetX2 = e.nativeEvent.offsetX;
       this.offsetY2 = e.nativeEvent.offsetY;
+      const lineCoors = [
+        [this.offsetX1, this.offsetY1],
+        [this.offsetX2, this.offsetY2]
+      ];
       this.setState({
-        offsetX1: this.offsetX1,
-        offsetX2: this.offsetX2,
-        offsetY1: this.offsetY1,
-        offsetY2: this.offsetY2
+        lineCoors
       });
     }
   }
@@ -68,11 +68,12 @@ class MatrixFigure extends Component {
     const { x, y } = this.getXY(e);
     this.offsetX2 = e.nativeEvent.offsetX;
     this.offsetY2 = e.nativeEvent.offsetY;
+    const lineCoors = [
+      [this.offsetX1, this.offsetY1],
+      [this.offsetX2, this.offsetY2]
+    ];
     this.setState({
-      offsetX1: this.offsetX1,
-      offsetX2: this.offsetX2,
-      offsetY1: this.offsetY1,
-      offsetY2: this.offsetY2
+      lineCoors
     });
   }
 
@@ -85,17 +86,8 @@ class MatrixFigure extends Component {
   }
   render() {
     const { plane, depth } = this.props;
-    const {
-      zData,
-      width,
-      height,
-      offsetX1,
-      offsetX2,
-      offsetY1,
-      offsetY2
-    } = this.state;
+    const { zData, width, height, lineCoors } = this.state;
     const className = "figurePosition";
-    const lineCoors = [[offsetX1, offsetY1], [offsetX2, offsetY2]];
     return (
       <React.Fragment>
         <div>
@@ -109,14 +101,15 @@ class MatrixFigure extends Component {
             onMouseMove={this.onMouseMove}
             onMouseUp={this.onMouseUp}
           />
-          {plane === "xy" && (
-            <FigureSvgLayer
-              className={className}
-              width={width}
-              height={height}
-              lineCoors={lineCoors}
-            />
-          )}
+          {plane === "xy" &&
+            lineCoors && (
+              <FigureSvgLayer
+                className={className}
+                width={width}
+                height={height}
+                lineCoors={lineCoors}
+              />
+            )}
         </div>
         <PolylineSvg zData={zData} width={1000} height={200} />
       </React.Fragment>
