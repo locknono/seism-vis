@@ -45,19 +45,19 @@ class MatrixFigure extends Component {
     if (this.props.plane !== "xy") return;
     this.mousedownFlag = true;
     const { x, y } = this.getXY(e);
-    this.x1 = e.nativeEvent.offsetX;
-    this.y1 = e.nativeEvent.offsetY;
+    this.pixel_x1 = e.nativeEvent.offsetX;
+    this.pixel_y1 = e.nativeEvent.offsetY;
   }
   onMouseMove(e) {
     if (this.props.plane !== "xy") return;
     if (this.mousedownFlag) {
-      this.x2 = e.nativeEvent.offsetX;
-      this.y2 = e.nativeEvent.offsetY;
+      this.pixel_x2 = e.nativeEvent.offsetX;
+      this.pixel_y2 = e.nativeEvent.offsetY;
       this.setState({
-        x1: this.x1,
-        x2: this.x2,
-        y1: this.y1,
-        y2: this.y2
+        pixel_x1: this.pixel_x1,
+        pixel_x2: this.pixel_x2,
+        pixel_y1: this.pixel_y1,
+        pixel_y2: this.pixel_y2
       });
     }
   }
@@ -65,14 +65,15 @@ class MatrixFigure extends Component {
     if (this.props.plane !== "xy") return;
     this.mousedownFlag = false;
     const { x, y } = this.getXY(e);
-    this.x2 = e.nativeEvent.offsetX;
-    this.y2 = e.nativeEvent.offsetY;
+    this.pixel_x2 = e.nativeEvent.offsetX;
+    this.pixel_y2 = e.nativeEvent.offsetY;
     this.setState({
-      x1: this.x1,
-      x2: this.x2,
-      y1: this.y1,
-      y2: this.y2
+      pixel_x1: this.pixel_x1,
+      pixel_x2: this.pixel_x2,
+      pixel_y1: this.pixel_y1,
+      pixel_y2: this.pixel_y2
     });
+    
   }
 
   getXY(e) {
@@ -84,9 +85,9 @@ class MatrixFigure extends Component {
   }
   render() {
     const { plane, depth } = this.props;
-    const { zData, width, height, x1, x2, y1, y2 } = this.state;
+    const { zData, width, height, pixel_x1, pixel_x2, pixel_y1, pixel_y2 } = this.state;
     const className = "figurePosition";
-    const lineCoors = [[x1, y1], [x2, y2]];
+    const lineCoors = [[pixel_x1, pixel_y1], [pixel_x2, pixel_y2]];
     return (
       <React.Fragment>
         <div>
@@ -99,7 +100,6 @@ class MatrixFigure extends Component {
             onMouseDown={this.onMouseDown}
             onMouseMove={this.onMouseMove}
             onMouseUp={this.onMouseUp}
-            
           />
           {plane === "xy" && (
             <FigureSvgLayer

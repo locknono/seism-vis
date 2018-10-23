@@ -9,6 +9,7 @@ import matplotlib
 import logging
 from tomorrow import threads
 
+
 class Drawer():
     def __init__(self):
         self.db = SeismDb()
@@ -16,7 +17,7 @@ class Drawer():
     def drawTightMatrix(self, plane_name, depth, saveDir=''):
         vmin, vmax = -15533.79296875, 16425.25390625
         matrix = self.db.queryMatrix(plane_name, depth)
-        fig = plt.imshow(matrix, vmin=vmin, vmax=vmax,cmap=plt.get_cmap("Greys"))
+        fig = plt.imshow(matrix, vmin=vmin, vmax=vmax, cmap=plt.get_cmap("Greys"))
         fig.axes.get_xaxis().set_visible(False)
         fig.axes.get_yaxis().set_visible(False)
         if saveDir == '':
@@ -33,6 +34,8 @@ class Drawer():
                 except FileNotFoundError:
                     os.mkdir(saveDir)
                     plt.savefig(path, bbox_inches='tight', pad_inches=0)
+        plt.ioff()
+        plt.axis('off')
 
     def drawMatrix(self, plane_name, depth, saveDir=''):
         vmin, vmax = -15533.79296875, 16425.25390625
@@ -77,26 +80,24 @@ class Drawer():
         return fig
 
 
-if __name__ == '__main__':
-
+def drawAll():
     logging.basicConfig(level=logging.INFO)
     matplotlib.use('Agg')
     plt.ioff()
     plt.axis('off')
 
     drawer = Drawer()
-    for i in range(700, 2902):
+
+    for i in range(0, 2902):
         drawer.drawTightMatrix("xy", i, './imgs/xy/')
 
     for i in range(0, 716):
-        drawer.drawMatrix('xz', i, './imgs/{0}/'.format('xz'))
+        drawer.drawTightMatrix('xz', i, './imgs/{0}/'.format('xz'))
 
     for i in range(0, 886):
-        drawer.drawMatrix('yz', i, './imgs/{0}/'.format('yz'))
+        drawer.drawTightMatrix('yz', i, './imgs/{0}/'.format('yz'))
 
-    """
-    for i in range(2160, 2902):
-        cur=time.time()
-        drawer.drawTightMatrix('xy', i,'./imgs/xy/')
-        print(time.time()-cur)
-    """
+
+if __name__ == '__main__':
+    drawer = Drawer()
+    drawAll()
