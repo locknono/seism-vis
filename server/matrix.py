@@ -1,13 +1,9 @@
-import threading
-import time
-from queue import Queue
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import os
 from seismdb import SeismDb
 import matplotlib
 import logging
-from tomorrow import threads
 
 
 class Drawer():

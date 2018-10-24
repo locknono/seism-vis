@@ -75,6 +75,11 @@ class MatrixFigure extends Component {
     const { matrixCoors, pointsOnLine } = this.getCoorsAndPointsOnLine(
       lineCoors
     );
+    this.setState({
+      lineCoors,
+      matrixCoors,
+      pointsOnLine
+    });
     fetch("http://localhost:5000/drawLine/", {
       body: JSON.stringify(pointsOnLine), // must match 'Content-Type' header
       credentials: "same-origin", // include, same-origin, *omit
@@ -83,12 +88,11 @@ class MatrixFigure extends Component {
       },
       method: "POST", // *GET, POST, PUT, DELETE, etc.
       mode: "cors" // no-cors, cors, *same-origin
-    });
-    this.setState({
-      lineCoors,
-      matrixCoors,
-      pointsOnLine
-    });
+    })
+      .then(res => res.text())
+      .then(imgURI => {
+        this.setState({ imgURI });
+      });
   }
   getCoorsAndPointsOnLine(lineCoors) {
     const matrixCoors = lineCoors.map(v => {
@@ -125,7 +129,8 @@ class MatrixFigure extends Component {
       height,
       lineCoors,
       matrixCoors,
-      pointsOnLine
+      pointsOnLine,
+      imgURI
     } = this.state;
     const className = "figurePosition";
     return (
@@ -152,6 +157,9 @@ class MatrixFigure extends Component {
             )}
         </div>
         <PolylineSvg zData={zData} width={1000} height={200} />
+        {imgURI && (
+          <img alt="Selected Line" src={`data:image/png;base64,${imgURI}`} />
+        )}
       </React.Fragment>
     );
   }

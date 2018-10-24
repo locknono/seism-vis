@@ -3,6 +3,8 @@ from seismdb import SeismDb
 import json
 from matrix import Drawer
 import matplotlib.pyplot as plt
+import matplotlib
+import numpy as np
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
 import random
@@ -20,6 +22,14 @@ app = Flask(__name__)
 CORS(app)
 
 db = SeismDb()
+xDepth, yDepth, zDepth = 886, 716, 2902
+xStart, yStart = 638000, 4173000
+xySection = 25
+xEnd, yEnd = 660125, 4190875
+vmin, vmax = -15533.79296875, 16425.25390625
+
+plt.ioff()
+matplotlib.use('Agg')
 
 
 @app.route('/')
@@ -40,34 +50,37 @@ def sendPolyLineData(coors):
 
 
 @app.route('/drawLine/', methods=['GET', 'POST'])
-def show_user_profiile2():
-    xyArray = request.values
-    ods = request.data.decode("utf-8")
-    print(ods)
-    print(type(json.loads(ods)))
-    ox = int(ods.split(',')[0])
-    oy = int(ods.split(',')[1])
-    tx = int(ods.split(',')[2])
-    ty = int(ods.split(',')[3])
+def drawLine():
+    ods = json.loads(request.data.decode("utf-8"))
+    matrix = []
+    for p in ods:
+        zArray = db.trace.find_one({"x": xStart + p[0] * xySection, "y": yStart + int(p[1]) * xySection})['z']
+        matrix.append(zArray)
 
-    drawer = Drawer()
-    fig = drawer.drawBound(ox, oy, tx, ty)
+    fig = plt.imshow((matrix), vmin=vmin, vmax=vmax, cmap=plt.get_cmap("Greys"))
+    fig.axes.get_xaxis().set_visible(False)
+    fig.axes.get_yaxis().set_visible(False)
     sio = io.BytesIO()
-    plt.savefig(sio, format='png')
+    plt.savefig(sio, format='png', bbox_inches='tight', pad_inches=0)
     sio.seek(0)
 
     data = base64.encodebytes(sio.getvalue()).decode()
 
+    """
     html = '''
               <img src="data:image/png;base64,{}" />    
             '''
     res = Response(html.format(data), mimetype='text/xml')
-
     res.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
     res.headers['Access-Control-Allow-Methods'] = 'POST'
+    """
+    resURL = Response(data, mimetype='text/xml')
+    resURL.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+    resURL.headers['Access-Control-Allow-Methods'] = 'POST'
+
     sio.close()
-    plt.close()
-    return res
+
+    return resURL
 
 
 if __name__ == '__main__':
