@@ -1,19 +1,19 @@
 import React, { Component } from "react";
-import Button from "react-bootstrap/lib/Button";
-import Slider from "rc-slider";
-import "rc-slider/assets/index.css";
 import PlaneChooseButton from "./PlaneChooseButton";
 import MatrixFigure from "./MatrixFigure";
-import MatrixInfo from "./MatrixInfo";
-
+import MatrixControlPanel from "./MatrixControlPanel";
+import PolylineSvg from "./PolylineSvg";
+import MatrixSelectedLine from "./MatrixSelectedLine";
 class Matrix extends Component {
   constructor(props) {
     super(props);
-    this.state = { plane: "xy", depth: 0, maxDepth: 2902 };
+    this.state = { plane: "xy", depth: 0, maxDepth: 2902, zData: [] };
     this.onSlide = this.onSlide.bind(this);
     this.onAutoShow = this.onAutoShow.bind(this);
     this.stopAutoShow = this.stopAutoShow.bind(this);
     this.onChangePlane = this.onChangePlane.bind(this);
+    this.onClickChangeZData = this.onClickChangeZData.bind(this);
+    this.onChangeImgURI = this.onChangeImgURI.bind(this);
   }
   onSlide(value) {
     let plane = this.state.plane;
@@ -53,8 +53,14 @@ class Matrix extends Component {
     this.setState({ plane: plane, depth: 0, maxDepth: maxDepth });
     this.stopAutoShow();
   }
+  onClickChangeZData(zData) {
+    this.setState({ zData });
+  }
+  onChangeImgURI(imgURI) {
+    this.setState({ imgURI });
+  }
   render() {
-    const { plane, depth, maxDepth } = this.state;
+    const { plane, depth, maxDepth, zData, imgURI } = this.state;
     const PlaneChooseButtonS = ["xy", "xz", "yz"].map(plane => (
       <PlaneChooseButton
         key={plane}
@@ -64,26 +70,23 @@ class Matrix extends Component {
     ));
     return (
       <div className="matrix panel panel-default">
-        <MatrixFigure plane={plane} depth={depth} />
-        <div
-          className="matrix-control-panel panel panel-default"
-          style={{ position: "absolute", top: 18, left: 500 }}
-        >
-          <Slider
-            onChange={this.onSlide}
-            min={0}
-            max={maxDepth}
-            value={depth}
-          />
-          <Button bsStyle="primary" onClick={this.onAutoShow}>
-            自动展示
-          </Button>
-          <Button bsStyle="primary" onClick={this.stopAutoShow}>
-            停止自动展示
-          </Button>
-          {PlaneChooseButtonS}
-          <MatrixInfo plane={plane} depth={depth} />
-        </div>
+        <MatrixFigure
+          plane={plane}
+          depth={depth}
+          onClickChangeZData={this.onClickChangeZData}
+          onChangeImgURI={this.onChangeImgURI}
+        />
+        <MatrixControlPanel
+          onSlide={this.onSlide}
+          onAutoShow={this.onAutoShow}
+          stopAutoShow={this.stopAutoShow}
+          plane={plane}
+          depth={depth}
+          maxDepth={maxDepth}
+          PlaneChooseButtonS={PlaneChooseButtonS}
+        />
+        <PolylineSvg zData={zData} width={1000} height={200} />
+        <MatrixSelectedLine imgURI={imgURI} />
       </div>
     );
   }

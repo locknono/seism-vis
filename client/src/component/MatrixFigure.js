@@ -1,10 +1,9 @@
 import React, { Component } from "react";
-import PolylineSvg from "./PolylineSvg";
 import FigureSvgLayer from "./FigureSvgLayer";
 class MatrixFigure extends Component {
   constructor(props) {
     super(props);
-    this.state = { zData: [] };
+    this.state = {};
     this.figureRef = React.createRef();
     this.onClick = this.onClick.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
@@ -40,7 +39,7 @@ class MatrixFigure extends Component {
     fetch(`http://localhost:5000/xy/${x}-${y}`)
       .then(response => response.json())
       .then(zData => {
-        this.setState({ zData });
+        this.props.onClickChangeZData(zData);
       });
   }
 
@@ -94,7 +93,7 @@ class MatrixFigure extends Component {
     })
       .then(res => res.text())
       .then(imgURI => {
-        this.setState({ imgURI });
+        this.props.onChangeImgURI(imgURI);
       });
   }
   getCoorsAndPointsOnLine(lineCoors) {
@@ -127,15 +126,13 @@ class MatrixFigure extends Component {
   render() {
     const { plane, depth } = this.props;
     const {
-      zData,
       top,
       left,
       width,
       height,
       lineCoors,
       matrixCoors,
-      pointsOnLine,
-      imgURI
+      pointsOnLine
     } = this.state;
     const className = "figurePosition";
     return (
@@ -171,12 +168,6 @@ class MatrixFigure extends Component {
         </div>
         <div
           className="panel panel-default"
-          style={{ width: 1000, height: 200 }}
-        >
-          <PolylineSvg zData={zData} width={1000} height={200} />
-        </div>
-        <div
-          className="panel panel-default"
           style={{
             width: 520,
             height: 158,
@@ -185,11 +176,7 @@ class MatrixFigure extends Component {
             left: 500,
             padding: 5
           }}
-        >
-          {imgURI && (
-            <img alt="Selected Line" src={`data:image/png;base64,${imgURI}`} />
-          )}
-        </div>
+        />
       </div>
     );
   }
