@@ -24,11 +24,9 @@ class PolylineSvg extends Component {
     const { width, height, zData } = this.props;
     const d = this.getPolyPath(zData);
     return (
-      <div>
-        <svg width={width} height={height}>
-          <path d={d} stroke="black" strokeWidth="1px" fill="none" />
-        </svg>
-      </div>
+      <svg width={width} height={height}>
+        <path d={d} stroke="black" strokeWidth="1px" fill="none" />
+      </svg>
     );
   }
 }

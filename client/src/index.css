@@ -14,7 +14,25 @@ code {
 }
 
 .figurePosition {
-  position: absolute;
-  top: 25rem;
-  left: 10rem;
+  position: relative;
+  top: 0px;
+  left: 0px;
+}
+
+.matrix {
+  margin:5px;
+}
+
+.matrix-view {
+  padding: 10px;
+}
+
+.matrix-figure {
+  width: 31.25rem;
+  height: 31.25rem;
+}
+
+.matrix-control-panel {
+  padding: 0px 50px;
+  width: 30%;
 }

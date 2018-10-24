@@ -4,9 +4,9 @@ import Matrix from "./Matrix";
 class Seism extends Component {
   render() {
     return (
-      <div>
+      <React.Fragment>
         <Matrix />
-      </div>
+      </React.Fragment>
     );
   }
 }

@@ -63,17 +63,24 @@ class Matrix extends Component {
       />
     ));
     return (
-      <div>
+      <div className="matrix panel panel-default">
         <MatrixFigure plane={plane} depth={depth} />
-        <Slider onChange={this.onSlide} min={0} max={maxDepth} value={depth} />
-        <Button bsStyle="primary" onClick={this.onAutoShow}>
-          自动展示
-        </Button>
-        <Button bsStyle="primary" onClick={this.stopAutoShow}>
-          停止自动展示
-        </Button>
-        {PlaneChooseButtonS}
-        <MatrixInfo plane={plane} depth={depth} />
+        <div className="matrix-control-panel panel panel-default">
+          <Slider
+            onChange={this.onSlide}
+            min={0}
+            max={maxDepth}
+            value={depth}
+          />
+          <Button bsStyle="primary" onClick={this.onAutoShow}>
+            自动展示
+          </Button>
+          <Button bsStyle="primary" onClick={this.stopAutoShow}>
+            停止自动展示
+          </Button>
+          {PlaneChooseButtonS}
+          <MatrixInfo plane={plane} depth={depth} />
+        </div>
       </div>
     );
   }

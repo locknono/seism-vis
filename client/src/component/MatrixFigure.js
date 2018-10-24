@@ -21,8 +21,9 @@ class MatrixFigure extends Component {
       function() {
         const figuerNode = this.figureRef.current;
         const { width, height } = figuerNode;
+        const { top, left } = figuerNode.getBoundingClientRect();
         const padLength = width / 886;
-        this.setState({ width, height, padLength });
+        this.setState({ width, height, padLength, top, left });
       }.bind(this),
       0
     );
@@ -125,6 +126,8 @@ class MatrixFigure extends Component {
     const { plane, depth } = this.props;
     const {
       zData,
+      top,
+      left,
       width,
       height,
       lineCoors,
@@ -134,8 +137,11 @@ class MatrixFigure extends Component {
     } = this.state;
     const className = "figurePosition";
     return (
-      <React.Fragment>
-        <div>
+      <div className="matrix-view panel panel-default">
+        <div
+          className="matrix-figure panel panel-default"
+          style={{ width: width, height: height }}
+        >
           <img
             src={`./imgs/${plane}/${depth}.png`}
             alt="Matrix"
@@ -150,17 +156,26 @@ class MatrixFigure extends Component {
             lineCoors && (
               <FigureSvgLayer
                 className={className}
+                left={left}
+                top={top}
                 width={width}
                 height={height}
                 lineCoors={lineCoors}
               />
             )}
         </div>
-        <PolylineSvg zData={zData} width={1000} height={200} />
-        {imgURI && (
-          <img alt="Selected Line" src={`data:image/png;base64,${imgURI}`} />
-        )}
-      </React.Fragment>
+        <div
+          className="panel panel-default"
+          style={{ width: 1000, height: 200 }}
+        >
+          <PolylineSvg zData={zData} width={1000} height={200} />
+        </div>
+        <div className="panel panel-default">
+          {imgURI && (
+            <img alt="Selected Line" src={`data:image/png;base64,${imgURI}`} />
+          )}
+        </div>
+      </div>
     );
   }
 }
