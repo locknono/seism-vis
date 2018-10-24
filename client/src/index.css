@@ -23,16 +23,29 @@ code {
   margin: 5px;
 }
 
-.matrix-view {
-  padding: 10px;
+.matrix-sub-view-for-spliting-layout {
+  height: 500px;
 }
 
 .matrix-figure {
-  width: 31.25rem;
-  height: 31.25rem;
+  float: left;
+  display: inline-block;
 }
 
 .matrix-control-panel {
-  padding: 10px 50px;
-  width: 30%;
+  padding: 1% 1%;
+  margin: 0;
+  float: left;
+  width: 35%;
+  display: inline-block;
+}
+
+.matrix-selected-line {
+  padding: 1% 0;
+  float: left;
+  width: 35%;
+  display: inline-block;
+}
+
+.matrix-polyline {
 }

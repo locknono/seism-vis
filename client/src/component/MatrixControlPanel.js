@@ -13,10 +13,12 @@ class MatrixControlPanel extends Component {
       plane,
       depth,
       maxDepth,
-      PlaneChooseButtonS
+      PlaneChooseButtonS,
+      height
     } = this.props;
+    const style = { height };
     return (
-      <div className="matrix-control-panel panel panel-default">
+      <div className="matrix-control-panel panel panel-default" style={style}>
         <Slider onChange={onSlide} min={0} max={maxDepth} value={depth} />
         <Button bsStyle="primary" onClick={onAutoShow}>
           自动展示

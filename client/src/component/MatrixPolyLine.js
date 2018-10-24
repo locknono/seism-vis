@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
-class PolylineSvg extends Component {
+class MatrixPolyLine extends Component {
   constructor(props) {
     super(props);
     const { width, height } = this.props;
@@ -24,11 +24,13 @@ class PolylineSvg extends Component {
     const { width, height, zData } = this.props;
     const d = this.getPolyPath(zData);
     return (
-      <svg width={width} height={height}>
-        <path d={d} stroke="black" strokeWidth="1px" fill="none" />
-      </svg>
+      <div className="matrix-polyline panel panel-default">
+        <svg width={width} height={height}>
+          <path d={d} stroke="black" strokeWidth="1px" fill="none" />
+        </svg>
+      </div>
     );
   }
 }
 
-export default PolylineSvg;
+export default MatrixPolyLine;

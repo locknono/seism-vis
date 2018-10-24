@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PlaneChooseButton from "./PlaneChooseButton";
 import MatrixFigure from "./MatrixFigure";
 import MatrixControlPanel from "./MatrixControlPanel";
-import PolylineSvg from "./PolylineSvg";
+import MatrixPolyLine from "./MatrixPolyLine";
 import MatrixSelectedLine from "./MatrixSelectedLine";
 class Matrix extends Component {
   constructor(props) {
@@ -14,6 +14,7 @@ class Matrix extends Component {
     this.onChangePlane = this.onChangePlane.bind(this);
     this.onClickChangeZData = this.onClickChangeZData.bind(this);
     this.onChangeImgURI = this.onChangeImgURI.bind(this);
+    this.onGetFigureHeight = this.onGetFigureHeight.bind(this);
   }
   onSlide(value) {
     let plane = this.state.plane;
@@ -53,6 +54,9 @@ class Matrix extends Component {
     this.setState({ plane: plane, depth: 0, maxDepth: maxDepth });
     this.stopAutoShow();
   }
+  onGetFigureHeight(height) {
+    this.setState({ figureHeight: height });
+  }
   onClickChangeZData(zData) {
     this.setState({ zData });
   }
@@ -60,7 +64,7 @@ class Matrix extends Component {
     this.setState({ imgURI });
   }
   render() {
-    const { plane, depth, maxDepth, zData, imgURI } = this.state;
+    const { plane, depth, maxDepth, zData, imgURI, figureHeight } = this.state;
     const PlaneChooseButtonS = ["xy", "xz", "yz"].map(plane => (
       <PlaneChooseButton
         key={plane}
@@ -68,25 +72,33 @@ class Matrix extends Component {
         onChangePlane={this.onChangePlane}
       />
     ));
+    const controlPanelHeightPortion = 3 / 5;
     return (
       <div className="matrix panel panel-default">
-        <MatrixFigure
-          plane={plane}
-          depth={depth}
-          onClickChangeZData={this.onClickChangeZData}
-          onChangeImgURI={this.onChangeImgURI}
-        />
-        <MatrixControlPanel
-          onSlide={this.onSlide}
-          onAutoShow={this.onAutoShow}
-          stopAutoShow={this.stopAutoShow}
-          plane={plane}
-          depth={depth}
-          maxDepth={maxDepth}
-          PlaneChooseButtonS={PlaneChooseButtonS}
-        />
-        <PolylineSvg zData={zData} width={1000} height={200} />
-        <MatrixSelectedLine imgURI={imgURI} />
+        <div className="matrix-sub-view-for-spliting-layout">
+          <MatrixFigure
+            plane={plane}
+            depth={depth}
+            onClickChangeZData={this.onClickChangeZData}
+            onChangeImgURI={this.onChangeImgURI}
+            onGetFigureHeight={this.onGetFigureHeight}
+          />
+          <MatrixControlPanel
+            onSlide={this.onSlide}
+            onAutoShow={this.onAutoShow}
+            stopAutoShow={this.stopAutoShow}
+            plane={plane}
+            depth={depth}
+            maxDepth={maxDepth}
+            PlaneChooseButtonS={PlaneChooseButtonS}
+            height={figureHeight * controlPanelHeightPortion}
+          />
+          <MatrixSelectedLine
+            imgURI={imgURI}
+            height={figureHeight * (1 - controlPanelHeightPortion)}
+          />
+        </div>
+        <MatrixPolyLine zData={zData} width={1000} height={200} />
       </div>
     );
   }

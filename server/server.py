@@ -29,6 +29,7 @@ xEnd, yEnd = 660125, 4190875
 vmin, vmax = -15533.79296875, 16425.25390625
 
 plt.ioff()
+plt.axis('off')
 matplotlib.use('Agg')
 
 

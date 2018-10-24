@@ -21,9 +21,8 @@ class MatrixFigure extends Component {
         const figuerNode = this.figureRef.current;
         const { width, height } = figuerNode;
         const { top, left } = figuerNode.getBoundingClientRect();
-        console.log("left: ", left);
-        console.log("top: ", top);
         const padLength = width / 886;
+        this.props.onGetFigureHeight(height);
         this.setState({ width, height, padLength, top, left });
       }.bind(this),
       0
@@ -136,47 +135,28 @@ class MatrixFigure extends Component {
     } = this.state;
     const className = "figurePosition";
     return (
-      <div className="matrix-view panel panel-default">
-        <div
-          className="matrix-figure panel panel-default"
-          style={{
-            width: width,
-            height: height
-          }}
-        >
-          <img
-            src={`./imgs/${plane}/${depth}.png`}
-            alt="Matrix"
-            className={className}
-            ref={this.figureRef}
-            onClick={this.onClick}
-            onMouseDown={this.onMouseDown}
-            onMouseMove={this.onMouseMove}
-            onMouseUp={this.onMouseUp}
-          />
-          {plane === "xy" &&
-            lineCoors && (
-              <FigureSvgLayer
-                className={className}
-                left={left}
-                top={top}
-                width={width}
-                height={height}
-                lineCoors={lineCoors}
-              />
-            )}
-        </div>
-        <div
-          className="panel panel-default"
-          style={{
-            width: 520,
-            height: 158,
-            position: "absolute",
-            top: 230,
-            left: 500,
-            padding: 5
-          }}
+      <div className="matrix-figure panel panel-default">
+        <img
+          src={`./imgs/${plane}/${depth}.png`}
+          alt="Matrix"
+          className={className}
+          ref={this.figureRef}
+          onClick={this.onClick}
+          onMouseDown={this.onMouseDown}
+          onMouseMove={this.onMouseMove}
+          onMouseUp={this.onMouseUp}
         />
+        {plane === "xy" &&
+          lineCoors && (
+            <FigureSvgLayer
+              className={className}
+              left={left}
+              top={top}
+              width={width}
+              height={height}
+              lineCoors={lineCoors}
+            />
+          )}
       </div>
     );
   }
