@@ -22,6 +22,8 @@ class MatrixFigure extends Component {
         const figuerNode = this.figureRef.current;
         const { width, height } = figuerNode;
         const { top, left } = figuerNode.getBoundingClientRect();
+        console.log("left: ", left);
+        console.log("top: ", top);
         const padLength = width / 886;
         this.setState({ width, height, padLength, top, left });
       }.bind(this),
@@ -112,7 +114,7 @@ class MatrixFigure extends Component {
       let y = k * x + b;
       pointsOnLine.push([x, y]);
     }
-    console.log("pointsOnLine: ", pointsOnLine);
+
     return { matrixCoors, pointsOnLine };
   }
   getXY(e) {
@@ -140,7 +142,10 @@ class MatrixFigure extends Component {
       <div className="matrix-view panel panel-default">
         <div
           className="matrix-figure panel panel-default"
-          style={{ width: width, height: height }}
+          style={{
+            width: width,
+            height: height
+          }}
         >
           <img
             src={`./imgs/${plane}/${depth}.png`}
@@ -170,7 +175,17 @@ class MatrixFigure extends Component {
         >
           <PolylineSvg zData={zData} width={1000} height={200} />
         </div>
-        <div className="panel panel-default">
+        <div
+          className="panel panel-default"
+          style={{
+            width: 520,
+            height: 158,
+            position: "absolute",
+            top: 230,
+            left: 500,
+            padding: 5
+          }}
+        >
           {imgURI && (
             <img alt="Selected Line" src={`data:image/png;base64,${imgURI}`} />
           )}

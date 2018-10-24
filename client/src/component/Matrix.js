@@ -65,7 +65,10 @@ class Matrix extends Component {
     return (
       <div className="matrix panel panel-default">
         <MatrixFigure plane={plane} depth={depth} />
-        <div className="matrix-control-panel panel panel-default">
+        <div
+          className="matrix-control-panel panel panel-default"
+          style={{ position: "absolute", top: 18, left: 500 }}
+        >
           <Slider
             onChange={this.onSlide}
             min={0}
