@@ -10,11 +10,7 @@ class PlaneChooseButton extends Component {
     this.props.onChangePlane(this.props.plane);
   }
   render() {
-    return (
-      <div>
-        <Button onClick={this.onClick}>{this.props.plane}</Button>
-      </div>
-    );
+    return <Button onClick={this.onClick}>{this.props.plane}</Button>;
   }
 }
 

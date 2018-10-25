@@ -83,14 +83,15 @@ def drawAll():
     plt.axis('off')
 
     drawer = Drawer()
-
+    """
     for i in range(0, 2902):
         drawer.drawTightMatrix("xy", i, './imgs/xy/')
-
+"""
+    """
     for i in range(0, 716):
         drawer.drawTightMatrix('xz', i, './imgs/{0}/'.format('xz'))
-
-    for i in range(0, 886):
+"""
+    for i in range(3, 886):
         drawer.drawTightMatrix('yz', i, './imgs/{0}/'.format('yz'))
 
 

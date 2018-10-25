@@ -25,7 +25,7 @@ class MatrixPolyLine extends Component {
     const d = this.getPolyPath(zData);
     return (
       <div className="matrix-polyline panel panel-default">
-        <svg width={width} height={height}>
+        <svg width={width} height={height} className="polyline-svg">
           <path d={d} stroke="black" strokeWidth="1px" fill="none" />
         </svg>
       </div>

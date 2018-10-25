@@ -3,7 +3,7 @@ import Button from "react-bootstrap/lib/Button";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import MatrixInfo from "./MatrixInfo";
-
+import { Container, Row, Col, ButtonGroup } from "react-bootstrap";
 class MatrixControlPanel extends Component {
   render() {
     const {
@@ -16,17 +16,22 @@ class MatrixControlPanel extends Component {
       PlaneChooseButtonS,
       height
     } = this.props;
+    console.log(PlaneChooseButtonS);
     const style = { height };
     return (
       <div className="matrix-control-panel panel panel-default" style={style}>
         <Slider onChange={onSlide} min={0} max={maxDepth} value={depth} />
-        <Button bsStyle="primary" onClick={onAutoShow}>
-          自动展示
-        </Button>
-        <Button bsStyle="primary" onClick={stopAutoShow}>
-          停止自动展示
-        </Button>
-        {PlaneChooseButtonS}
+        <Row>
+          <Col>
+            <Button bsStyle="primary" onClick={onAutoShow}>
+              自动展示
+            </Button>
+            <Button bsStyle="primary" onClick={stopAutoShow}>
+              停止自动展示
+            </Button>
+          </Col>
+        </Row>
+        <ButtonGroup>{PlaneChooseButtonS}</ButtonGroup>
         <MatrixInfo plane={plane} depth={depth} />
       </div>
     );

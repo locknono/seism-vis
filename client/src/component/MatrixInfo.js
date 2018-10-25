@@ -2,9 +2,9 @@ import React from "react";
 const MatrixInfo = ({ plane, depth }) => {
   return (
     <div>
-      <span>{`平面:${plane}`}</span>
+      <span>{`当前平面:  ${plane}`}</span>
       <br />
-      <span>{`深度:${depth}`}</span>
+      <span>{`当前深度:  ${depth}`}</span>
     </div>
   );
 };

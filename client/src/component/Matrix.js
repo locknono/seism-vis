@@ -4,6 +4,8 @@ import MatrixFigure from "./MatrixFigure";
 import MatrixControlPanel from "./MatrixControlPanel";
 import MatrixPolyLine from "./MatrixPolyLine";
 import MatrixSelectedLine from "./MatrixSelectedLine";
+import { ButtonToolbar, Row, Col } from "react-bootstrap";
+import Map from "./Map";
 class Matrix extends Component {
   constructor(props) {
     super(props);
@@ -97,6 +99,7 @@ class Matrix extends Component {
             imgURI={imgURI}
             height={figureHeight * (1 - controlPanelHeightPortion)}
           />
+          <Map />
         </div>
         <MatrixPolyLine zData={zData} width={1000} height={200} />
       </div>
