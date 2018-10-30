@@ -6,6 +6,16 @@ import MatrixPolyLine from "./MatrixPolyLine";
 import MatrixSelectedLine from "./MatrixSelectedLine";
 import { ButtonToolbar, Row, Col } from "react-bootstrap";
 import Map from "./Map";
+import { values } from "d3-collection";
+
+const matrixContextDefaultValue = {
+  u1: 652500,
+  u2: 4190300,
+  u3: 660525,
+  u4: 4198025
+};
+const matrixContext = React.createContext(matrixContextDefaultValue);
+
 class Matrix extends Component {
   constructor(props) {
     super(props);
@@ -76,33 +86,38 @@ class Matrix extends Component {
     ));
     const controlPanelHeightPortion = 3 / 5;
     return (
-      <div className="matrix panel panel-default">
-        <div className="matrix-sub-view-for-spliting-layout">
-          <MatrixFigure
-            plane={plane}
-            depth={depth}
-            onClickChangeZData={this.onClickChangeZData}
-            onChangeImgURI={this.onChangeImgURI}
-            onGetFigureHeight={this.onGetFigureHeight}
-          />
-          <MatrixControlPanel
-            onSlide={this.onSlide}
-            onAutoShow={this.onAutoShow}
-            stopAutoShow={this.stopAutoShow}
-            plane={plane}
-            depth={depth}
-            maxDepth={maxDepth}
-            PlaneChooseButtonS={PlaneChooseButtonS}
-            height={figureHeight * controlPanelHeightPortion}
-          />
-          <MatrixSelectedLine
-            imgURI={imgURI}
-            height={figureHeight * (1 - controlPanelHeightPortion)}
-          />
-          <Map />
+      <matrixContext.Provider value={matrixContextDefaultValue}>
+        <div className="matrix panel panel-default">
+          <div className="matrix-sub-view-for-spliting-layout">
+            <MatrixFigure
+              plane={plane}
+              depth={depth}
+              onClickChangeZData={this.onClickChangeZData}
+              onChangeImgURI={this.onChangeImgURI}
+              onGetFigureHeight={this.onGetFigureHeight}
+            />
+            <MatrixControlPanel
+              onSlide={this.onSlide}
+              onAutoShow={this.onAutoShow}
+              stopAutoShow={this.stopAutoShow}
+              plane={plane}
+              depth={depth}
+              maxDepth={maxDepth}
+              PlaneChooseButtonS={PlaneChooseButtonS}
+              height={figureHeight * controlPanelHeightPortion}
+            />
+            <MatrixSelectedLine
+              imgURI={imgURI}
+              height={figureHeight * (1 - controlPanelHeightPortion)}
+            />
+
+            <matrixContext.Consumer>
+              {value => <Map uCoors={value} />}
+            </matrixContext.Consumer>
+          </div>
+          <MatrixPolyLine zData={zData} width={1000} height={200} />
         </div>
-        <MatrixPolyLine zData={zData} width={1000} height={200} />
-      </div>
+      </matrixContext.Provider>
     );
   }
 }
