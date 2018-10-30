@@ -42,9 +42,11 @@ code {
   margin: 0;
   padding: 1% 0;
   flex-grow: 1.1;
+  display: flex;
 }
 
 .matrix-selected-line-img {
+  margin:auto;
 }
 
 .matrix-polyline {
@@ -54,6 +56,7 @@ code {
 }
 
 .polyline-svg {
+  
 }
 
 .leaflet-map {
@@ -68,4 +71,8 @@ code {
   display: flex;
   flex-direction: column;
   align-items:stretch;
+}
+
+.matrix-figure img{
+  cursor: crosshair;
 }
