@@ -10,7 +10,7 @@ class MatrixSelectedLine extends Component {
           <img
             alt="Selected Line"
             src={`data:image/png;base64,${imgURI}`}
-            className="selected-line-img"
+            className="matrix-selected-line-img"
           />
         )}
       </div>

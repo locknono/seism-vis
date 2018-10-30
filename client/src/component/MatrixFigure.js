@@ -28,6 +28,18 @@ class MatrixFigure extends Component {
       0
     );
   }
+  getSnapshotBeforeUpdate(prevProps, prevState) {
+    return null;
+  }
+  componentDidUpdate(prevProps, prevState) {
+    const figuerNode = this.figureRef.current;
+    const { height } = figuerNode;
+    if (height !== prevState.height) {
+      this.setState({ height });
+      this.props.onGetFigureHeight(height);
+    }
+  }
+
   onClick(e) {
     //x for colCount,y for rowCount
 

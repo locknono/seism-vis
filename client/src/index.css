@@ -48,6 +48,10 @@ code {
   display: flex;
 }
 
+.matrix-selected-line-img {
+  margin: auto;
+}
+
 .matrix-polyline {
   padding: 0;
   height: 300px;
@@ -61,8 +65,4 @@ code {
 .leaflet-map {
   width: 400px;
   height: 370px;
-}
-
-.selected-line-img {
-  margin: auto;
 }
