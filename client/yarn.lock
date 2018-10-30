@@ -9722,6 +9722,11 @@ utils-merge@1.0.1:
   resolved "http://registry.npm.taobao.org/utils-merge/download/utils-merge-1.0.1.tgz#9f95710f50a267947b2ccc124741c1028427e713"
   integrity sha1-n5VxD1CiZ5R7LMwSR0HBAoQn5xM=
 
+utm@^1.1.1:
+  version "1.1.1"
+  resolved "http://registry.npm.taobao.org/utm/download/utm-1.1.1.tgz#c6ec8789a59aae21ffad160e7b51bd4bdebec18f"
+  integrity sha1-xuyHiaWariH/rRYOe1G9S96+wY8=
+
 uuid@^3.0.1, uuid@^3.3.2:
   version "3.3.2"
   resolved "http://registry.npm.taobao.org/uuid/download/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
