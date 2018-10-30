@@ -107,11 +107,9 @@ class Matrix extends Component {
                 depth={depth}
                 maxDepth={maxDepth}
                 PlaneChooseButtonS={PlaneChooseButtonS}
-                height={figureHeight * controlPanelHeightPortion}
               />
               <MatrixSelectedLine
                 imgURI={imgURI}
-                height={figureHeight * (1 - controlPanelHeightPortion)}
               />
             </div>
             <matrixContext.Consumer>
