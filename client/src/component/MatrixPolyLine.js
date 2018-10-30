@@ -11,7 +11,7 @@ class MatrixPolyLine extends Component {
     this.lineGen = d3
       .line()
       .x((d, i) => {
-        return (width / 2902) * i;
+        return (width / this.props.zDepth) * i;
       })
       .y(d => yScale(d));
   }

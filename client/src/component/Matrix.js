@@ -7,14 +7,10 @@ import MatrixSelectedLine from "./MatrixSelectedLine";
 import { ButtonToolbar, Row, Col } from "react-bootstrap";
 import Map from "./Map";
 import { values } from "d3-collection";
-
-const matrixContextDefaultValue = {
-  u1: 652500,
-  u2: 4190300,
-  u3: 660525,
-  u4: 4198025
-};
-const matrixContext = React.createContext(matrixContextDefaultValue);
+import {
+  matrixContext,
+  matrixContextDefaultValue
+} from "../context/matrixContext";
 
 class Matrix extends Component {
   constructor(props) {
@@ -89,13 +85,19 @@ class Matrix extends Component {
       <matrixContext.Provider value={matrixContextDefaultValue}>
         <div className="matrix panel panel-default">
           <div className="matrix-sub-view-for-spliting-layout">
-            <MatrixFigure
-              plane={plane}
-              depth={depth}
-              onClickChangeZData={this.onClickChangeZData}
-              onChangeImgURI={this.onChangeImgURI}
-              onGetFigureHeight={this.onGetFigureHeight}
-            />
+            <matrixContext.Consumer>
+              {value => (
+                <MatrixFigure
+                  plane={plane}
+                  depth={depth}
+                  onClickChangeZData={this.onClickChangeZData}
+                  onChangeImgURI={this.onChangeImgURI}
+                  onGetFigureHeight={this.onGetFigureHeight}
+                  rowCount={value.rowCount}
+                  colCount={value.colCount}
+                />
+              )}
+            </matrixContext.Consumer>
             <MatrixControlPanel
               onSlide={this.onSlide}
               onAutoShow={this.onAutoShow}
@@ -110,12 +112,16 @@ class Matrix extends Component {
               imgURI={imgURI}
               height={figureHeight * (1 - controlPanelHeightPortion)}
             />
-
             <matrixContext.Consumer>
               {value => <Map uCoors={value} />}
             </matrixContext.Consumer>
           </div>
-          <MatrixPolyLine zData={zData} width={1000} height={200} />
+          <MatrixPolyLine
+            zData={zData}
+            width={1000}
+            height={200}
+            zDepth={matrixContextDefaultValue.zDepth}
+          />
         </div>
       </matrixContext.Provider>
     );

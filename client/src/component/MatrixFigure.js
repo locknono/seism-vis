@@ -21,7 +21,7 @@ class MatrixFigure extends Component {
         const figuerNode = this.figureRef.current;
         const { width, height } = figuerNode;
         const { top, left } = figuerNode.getBoundingClientRect();
-        const padLength = width / 886;
+        const padLength = width / this.props.colCount;
         this.props.onGetFigureHeight(height);
         this.setState({ width, height, padLength, top, left });
       }.bind(this),
@@ -29,7 +29,7 @@ class MatrixFigure extends Component {
     );
   }
   onClick(e) {
-    //x for 886,y for 716
+    //x for colCount,y for rowCount
 
     //TO-DO:store Global variables such as
     //row number ,vmin into `context`
@@ -118,8 +118,8 @@ class MatrixFigure extends Component {
   getXY(e) {
     const { offsetX, offsetY } = e.nativeEvent;
     const { width, height } = this.state;
-    const x = Math.floor((offsetX / width) * 886);
-    const y = Math.floor((offsetY / height) * 716);
+    const x = Math.floor((offsetX / width) * this.props.colCount);
+    const y = Math.floor((offsetY / height) * this.props.rowCount);
     return { x, y };
   }
   render() {
