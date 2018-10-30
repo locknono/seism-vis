@@ -26,30 +26,24 @@ code {
 .matrix-sub-view-for-spliting-layout {
   height: 371px;
   padding: 0;
-}
-
-.matrix-figure {
-  float: left;
-  display: inline-block;
-}
-
-.matrix-control-panel {
-  padding: 1% 1%;
-  margin: 0;
-  float: left;
-  width: 36%;
-  display: inline-block;
-}
-
-.matrix-selected-line-div {
-  padding: 1% 0;
-  float: left;
-  width: 36%;
   display: flex;
 }
 
+.matrix-figure {
+}
+
+.matrix-control-panel {
+  padding: 30px;
+  margin: 0;
+  text-align:center;
+}
+
+.matrix-selected-line-div {
+  margin: 0;
+  padding: 1% 0;
+}
+
 .matrix-selected-line-img {
-  margin: auto;
 }
 
 .matrix-polyline {
@@ -59,10 +53,17 @@ code {
 }
 
 .polyline-svg {
-  float: left;
 }
 
 .leaflet-map {
   width: 400px;
   height: 370px;
+}
+
+#map {
+}
+
+.col-group{
+  flex-direction: column;
+  align-items:stretch;
 }

@@ -98,20 +98,22 @@ class Matrix extends Component {
                 />
               )}
             </matrixContext.Consumer>
-            <MatrixControlPanel
-              onSlide={this.onSlide}
-              onAutoShow={this.onAutoShow}
-              stopAutoShow={this.stopAutoShow}
-              plane={plane}
-              depth={depth}
-              maxDepth={maxDepth}
-              PlaneChooseButtonS={PlaneChooseButtonS}
-              height={figureHeight * controlPanelHeightPortion}
-            />
-            <MatrixSelectedLine
-              imgURI={imgURI}
-              height={figureHeight * (1 - controlPanelHeightPortion)}
-            />
+            <div className="col-group">
+              <MatrixControlPanel
+                onSlide={this.onSlide}
+                onAutoShow={this.onAutoShow}
+                stopAutoShow={this.stopAutoShow}
+                plane={plane}
+                depth={depth}
+                maxDepth={maxDepth}
+                PlaneChooseButtonS={PlaneChooseButtonS}
+                height={figureHeight * controlPanelHeightPortion}
+              />
+              <MatrixSelectedLine
+                imgURI={imgURI}
+                height={figureHeight * (1 - controlPanelHeightPortion)}
+              />
+            </div>
             <matrixContext.Consumer>
               {value => <Map uCoors={value} />}
             </matrixContext.Consumer>

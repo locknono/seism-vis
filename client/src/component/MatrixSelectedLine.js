@@ -5,7 +5,10 @@ class MatrixSelectedLine extends Component {
     const imgURI = this.props.imgURI;
     const style = { height: this.props.height };
     return (
-      <div className="matrix-selected-line-div panel panel-default" style={style}>
+      <div
+        className="matrix-selected-line-div panel panel-default"
+        style={style}
+      >
         {imgURI && (
           <img
             alt="Selected Line"
