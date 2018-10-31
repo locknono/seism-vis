@@ -63,8 +63,8 @@ class SeismDb:
     def drawMatrix(self, matrix):
         pass
 
-    def queryByOneCoord(self, x, y):
-        zArray = self.trace.find_one({"x": xStart + x * xySection, "y": yStart + y * xySection})['z']
+    def queryByOneCoord(self, colNumber, rowNumber):
+        zArray = self.trace.find_one({"x": xStart + colNumber * xySection, "y": yStart + rowNumber * xySection})['z']
         return zArray
 
     def queryBound(self, ox, oy, tx, ty):

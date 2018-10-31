@@ -47,16 +47,16 @@ class Matrix extends Component {
     let maxDepth = null;
     switch (plane) {
       case "xy":
-        maxDepth = 2902;
+        maxDepth = 3000;
         break;
       case "xz":
-        maxDepth = 716;
+        maxDepth = 309;
         break;
       case "yz":
-        maxDepth = 886;
+        maxDepth = 321;
         break;
       default:
-        maxDepth = 2902;
+        maxDepth = 3000;
         break;
     }
     this.setState({ plane: plane, depth: 0, maxDepth: maxDepth });

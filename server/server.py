@@ -35,9 +35,9 @@ def hello():
 # coors should be in "x-y" form
 @app.route('/xy/<coors>')
 def sendPolyLineData(coors):
-    x = int(coors.split('-')[0])
-    y = int(coors.split('-')[1])
-    zData = db.queryByOneCoord(x, y)
+    colNumber = int(coors.split('-')[0])
+    rowNumber = int(coors.split('-')[1])
+    zData = db.queryByOneCoord(colNumber, rowNumber)
 
     res = Response(json.dumps(zData), mimetype='application/json')
 
