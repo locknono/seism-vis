@@ -15,7 +15,13 @@ import {
 class Matrix extends Component {
   constructor(props) {
     super(props);
-    this.state = { plane: "xy", depth: 0, maxDepth: 2902, zData: [] };
+    this.state = {
+      plane: "xy",
+      depth: 0,
+      maxDepth: 2902,
+      zData: [],
+      allWellRowColNumber: [[]]
+    };
     this.onSlide = this.onSlide.bind(this);
     this.onAutoShow = this.onAutoShow.bind(this);
     this.stopAutoShow = this.stopAutoShow.bind(this);
@@ -23,6 +29,10 @@ class Matrix extends Component {
     this.onClickChangeZData = this.onClickChangeZData.bind(this);
     this.onChangeImgURI = this.onChangeImgURI.bind(this);
     this.onGetFigureHeight = this.onGetFigureHeight.bind(this);
+    this.onGetSelectedWellRowColNumber = this.onGetSelectedWellRowColNumber.bind(
+      this
+    );
+    this.onGetAllWellRowColNumber = this.onGetAllWellRowColNumber.bind(this);
   }
   onSlide(value) {
     let plane = this.state.plane;
@@ -71,8 +81,28 @@ class Matrix extends Component {
   onChangeImgURI(imgURI) {
     this.setState({ imgURI });
   }
+  onGetSelectedWellRowColNumber(rowNumber, colNumber) {
+    this.setState({
+      selectedWellRowNumber: rowNumber,
+      selectedWellColNumber: colNumber
+    });
+  }
+  onGetAllWellRowColNumber(allWellRowColNumber) {
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    this.setState({ allWellRowColNumber: allWellRowColNumber });
+  }
   render() {
-    const { plane, depth, maxDepth, zData, imgURI, figureHeight } = this.state;
+    const {
+      plane,
+      depth,
+      maxDepth,
+      zData,
+      imgURI,
+      figureHeight,
+      selectedWellRowNumber,
+      selectedWellColNumber,
+      allWellRowColNumber
+    } = this.state;
     const PlaneChooseButtonS = ["xy", "xz", "yz"].map(plane => (
       <PlaneChooseButton
         key={plane}
@@ -80,7 +110,7 @@ class Matrix extends Component {
         onChangePlane={this.onChangePlane}
       />
     ));
-    const controlPanelHeightPortion = 3 / 5;
+    console.log("allWellRowColNumber: ", allWellRowColNumber);
     return (
       <matrixContext.Provider value={matrixContextDefaultValue}>
         <div className="matrix panel panel-default">
@@ -95,6 +125,9 @@ class Matrix extends Component {
                   onGetFigureHeight={this.onGetFigureHeight}
                   rowCount={value.rowCount}
                   colCount={value.colCount}
+                  selectedWellRowNumber={selectedWellRowNumber}
+                  selectedWellColNumber={selectedWellColNumber}
+                  allWellRowColNumber={allWellRowColNumber}
                 />
               )}
             </matrixContext.Consumer>
@@ -108,12 +141,18 @@ class Matrix extends Component {
                 maxDepth={maxDepth}
                 PlaneChooseButtonS={PlaneChooseButtonS}
               />
-              <MatrixSelectedLine
-                imgURI={imgURI}
-              />
+              <MatrixSelectedLine imgURI={imgURI} />
             </div>
             <matrixContext.Consumer>
-              {value => <Map uCoors={value} />}
+              {value => (
+                <Map
+                  uCoors={value}
+                  onGetSelectedWellRowColNumber={
+                    this.onGetSelectedWellRowColNumber
+                  }
+                  onGetAllWellRowColNumber={this.onGetAllWellRowColNumber}
+                />
+              )}
             </matrixContext.Consumer>
           </div>
           <MatrixPolyLine

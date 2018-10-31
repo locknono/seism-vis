@@ -6,34 +6,55 @@ class Map extends Component {
   constructor(props) {
     super(props);
     this.mapRef = React.createRef();
+    this.inBound = this.inBound.bind(this);
   }
   componentDidMount() {
-    const { u1, u2, u3, u4 } = this.props.uCoors;
+    const { xStart, yStart, xEnd, yEnd, xySection } = this.props.uCoors;
     this.deployMap();
+    const self = this;
     fetch("./data/well_logging.json")
       .then(res => res.json())
       .then(loggingData => {
+        let allWellRowColNumber = [];
         loggingData.map(logging => {
           L.circle(logging.latlng, { radius: 10 }).addTo(this.map);
-          const { easting, northing } = fromLatLon(
-            logging.latlng[0],
-            logging.latlng[1]
-          );
-          if (easting > u1 && easting < u3 && northing > u2 && northing < u4) {
-            L.circle(logging.latlng, { radius: 10, color: "red" }).addTo(
-              this.map
-            );
+          const { easting, northing } = fromLatLon(...logging.latlng);
+          if (this.inBound(easting, northing)) {
+            L.circle(logging.latlng, { radius: 10, color: "red" })
+              .on("mouseover", function(e) {
+                let { lat, lng } = e.latlng;
+                let { easting, northing } = fromLatLon(lat, lng);
+                let colNumber = parseInt((easting - xStart) / xySection);
+                let rowNumber = parseInt((northing - yStart) / xySection);
+                self.props.onGetSelectedWellRowColNumber(rowNumber, colNumber);
+              })
+              .addTo(this.map);
+            let colNumber = parseInt((easting - xStart) / xySection);
+            let rowNumber = parseInt((northing - yStart) / xySection);
+            allWellRowColNumber.push([rowNumber, colNumber]);
           }
         });
+        self.props.onGetAllWellRowColNumber(allWellRowColNumber);
       });
-    let p1 = this.getLatLngArray(toLatLon(u1, u2, 50, "N"));
-    let p2 = this.getLatLngArray(toLatLon(u1, u4, 50, "N"));
-    let p3 = this.getLatLngArray(toLatLon(u3, u2, 50, "N"));
-    let p4 = this.getLatLngArray(toLatLon(u3, u4, 50, "N"));
-    let latlngs = [p3, p1, p2, p4];
+    let p1 = this.getLatLngArray(toLatLon(xStart, yStart, 50, "N"));
+    let p2 = this.getLatLngArray(toLatLon(xStart, yEnd, 50, "N"));
+    let p3 = this.getLatLngArray(toLatLon(xEnd, yStart, 50, "N"));
+    let p4 = this.getLatLngArray(toLatLon(xEnd, yEnd, 50, "N"));
+    let latlngs = [p1, p2, p4, p3];
+
+    L.circle(p1, { radius: 300, color: "white" }).addTo(this.map);
+    L.circle(p2, { radius: 300, color: "red" }).addTo(this.map);
+    L.circle(p3, { radius: 300, color: "purple" }).addTo(this.map);
+    L.circle(p4, { radius: 300, color: "black" }).addTo(this.map);
+
     let polygon = L.polygon(latlngs, { color: "red" }).addTo(this.map);
   }
-
+  inBound(easting, northing) {
+    const { xStart, yStart, xEnd, yEnd } = this.props.uCoors;
+    return (
+      easting > xStart && easting < xEnd && northing > yStart && northing < yEnd
+    );
+  }
   getLatLngArray(toLatLonResult) {
     return [toLatLonResult.latitude, toLatLonResult.longitude];
   }

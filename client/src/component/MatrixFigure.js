@@ -3,7 +3,7 @@ import FigureSvgLayer from "./FigureSvgLayer";
 class MatrixFigure extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { lineCoors: [[], []] };
     this.figureRef = React.createRef();
     this.onClick = this.onClick.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
@@ -135,7 +135,15 @@ class MatrixFigure extends Component {
     return { x, y };
   }
   render() {
-    const { plane, depth } = this.props;
+    const {
+      plane,
+      depth,
+      selectedWellRowNumber,
+      selectedWellColNumber,
+      rowCount,
+      colCount,
+      allWellRowColNumber
+    } = this.props;
     const {
       top,
       left,
@@ -145,6 +153,11 @@ class MatrixFigure extends Component {
       matrixCoors,
       pointsOnLine
     } = this.state;
+    const selectedWellXOnSvg = (selectedWellColNumber / colCount) * colCount;
+    const selectedWellYOnSvg = (selectedWellRowNumber / rowCount) * height;
+    const allWellXY = allWellRowColNumber.map(v => {
+      return [(v[0] / rowCount) * height, (v[1] / colCount) * colCount];
+    });
     const className = "figurePosition";
     return (
       <div className="matrix-figure panel panel-default">
@@ -167,6 +180,9 @@ class MatrixFigure extends Component {
               width={width}
               height={height}
               lineCoors={lineCoors}
+              selectedWellXOnSvg={selectedWellXOnSvg}
+              selectedWellYOnSvg={selectedWellYOnSvg}
+              allWellXY={allWellXY}
             />
           )}
       </div>
