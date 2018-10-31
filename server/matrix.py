@@ -6,12 +6,14 @@ import matplotlib
 import logging
 from global_variable import *
 
+
 class Drawer():
     def __init__(self):
         self.db = SeismDb()
 
     def drawTightMatrix(self, plane_name, depth, saveDir=''):
         matrix = self.db.queryMatrix(plane_name, depth)
+        print(matrix)
         fig = plt.imshow(matrix, vmin=vmin, vmax=vmax, cmap=plt.get_cmap("Greys"))
         fig.axes.get_xaxis().set_visible(False)
         fig.axes.get_yaxis().set_visible(False)
@@ -79,15 +81,16 @@ def drawAll():
     plt.axis('off')
 
     drawer = Drawer()
-
-    for i in range(1659, zDepth):
+    """
+    for i in range(0, zDepth):
         drawer.drawTightMatrix("xy", i, './imgs/xy/')
-
-    for i in range(1,yDepth):
+    
+    for i in range(0,rowCount):
         drawer.drawTightMatrix('xz', i, './imgs/{0}/'.format('xz'))
 
-    for i in range(1, xDepth):
+    for i in range(0, colCount):
         drawer.drawTightMatrix('yz', i, './imgs/{0}/'.format('yz'))
+    """
 
 
 if __name__ == '__main__':

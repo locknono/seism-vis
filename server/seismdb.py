@@ -9,7 +9,7 @@ from global_variable import *
 class SeismDb:
     def __init__(self):
         self.client = MongoClient('localhost', 27017)
-        self.db = self.client.seism
+        self.db = self.client.zh_seism
 
         self.trace = self.db.trace
         self.zCollection = self.db.z
@@ -17,7 +17,7 @@ class SeismDb:
     def queryMatrix(self, plane_name, depth):
         matrix = []
         if plane_name == 'xz' or plane_name == 'zx':
-            if depth < 0 or depth > yDepth:
+            if depth < 0 or depth > rowCount:
                 raise ValueError('depth for y should less than {0} and larger than 0'.format(yDepth))
             cursor = self.trace.find({"x": {"$gte": xStart, "$lte": xEnd}, "y": yStart + depth * xySection})
             self.iterCursor(cursor, matrix)
@@ -26,14 +26,14 @@ class SeismDb:
             self.multiProcessingIterCursor(cursor, matrix, 5)
             """
         elif plane_name == 'yz' or plane_name == 'zy':
-            if depth < 0 or depth > xDepth:
-                raise ValueError('depth for x should less than {0} and larger than 0'.format(xDepth))
+            if depth < 0 or depth > colCount:
+                raise ValueError('depth for x should less than {0} and larger than 0'.format(colCount))
             cursor = self.trace.find({"x": xStart + depth * xySection, "y": {"$gte": yStart, "$lte": yEnd}})
             self.iterCursor(cursor, matrix)
         elif plane_name == 'xy' or plane_name == 'yx':
             if depth < 0 or depth > zDepth:
                 raise ValueError('depth for x should less than {0} and larger than 0'.format(zDepth))
-            matrix = self.zCollection.find_one({"level": depth})['zArray']
+            matrix = self.zCollection.find_one({"level": depth})['z']
 
         return np.transpose(matrix)
 
