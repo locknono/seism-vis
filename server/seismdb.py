@@ -5,7 +5,7 @@ import threading
 import multiprocessing as mp
 from multiprocessing import Pool
 import numpy as np
-
+from global_variable import *
 class SeismDb:
     def __init__(self):
         self.client = MongoClient('localhost', 27017)
@@ -15,10 +15,6 @@ class SeismDb:
         self.zCollection = self.db.z
 
     def queryMatrix(self, plane_name, depth):
-        xDepth, yDepth, zDepth = 886, 716, 2902
-        xStart, yStart = 638000, 4173000
-        xySection = 25
-        xEnd, yEnd = 660125, 4190875
         matrix = []
         if plane_name == 'xz' or plane_name == 'zx':
             if depth < 0 or depth > yDepth:
@@ -68,20 +64,11 @@ class SeismDb:
         pass
 
     def queryByOneCoord(self, x, y):
-        xDepth, yDepth, zDepth = 886, 716, 2902
-        xStart, yStart = 638000, 4173000
-        xySection = 25
-        xEnd, yEnd = 660125, 4190875
         zArray = self.trace.find_one({"x": xStart + x * xySection, "y": yStart + y * xySection})['z']
         return zArray
 
     def queryBound(self, ox, oy, tx, ty):
         matrix = []
-        xDepth, yDepth, zDepth = 886, 716, 2902
-        xStart, yStart = 638000, 4173000
-        xySection = 25
-        xEnd, yEnd = 660125, 4190875
-
         bigX = ox if ox > tx else tx
         bigY = oy if oy > ty else ty
         smallX = ox if ox < tx else tx

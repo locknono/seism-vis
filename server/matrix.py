@@ -4,14 +4,13 @@ import os
 from seismdb import SeismDb
 import matplotlib
 import logging
-
+from global_variable import *
 
 class Drawer():
     def __init__(self):
         self.db = SeismDb()
 
     def drawTightMatrix(self, plane_name, depth, saveDir=''):
-        vmin, vmax = -15533.79296875, 16425.25390625
         matrix = self.db.queryMatrix(plane_name, depth)
         fig = plt.imshow(matrix, vmin=vmin, vmax=vmax, cmap=plt.get_cmap("Greys"))
         fig.axes.get_xaxis().set_visible(False)
@@ -34,7 +33,6 @@ class Drawer():
         plt.axis('off')
 
     def drawMatrix(self, plane_name, depth, saveDir=''):
-        vmin, vmax = -15533.79296875, 16425.25390625
         matrix = self.db.queryMatrix(plane_name, depth)
         fig, ax = plt.subplots()
         im = ax.matshow(matrix, vmin=vmin, vmax=vmax)
@@ -60,7 +58,6 @@ class Drawer():
                     plt.close(fig)
 
     def drawCoors(self, x, y):
-        vmin, vmax = -15533.79296875, 16425.25390625
         matrix = [self.db.queryByOneCoord(x, y)]
         fig = plt.imshow(matrix, vmin=vmin, vmax=vmax, aspect='auto')
         fig.axes.get_xaxis().set_visible(False)
@@ -68,7 +65,6 @@ class Drawer():
         return fig
 
     def drawBound(self, ox, oy, tx, ty):
-        vmin, vmax = -15533.79296875, 16425.25390625
         matrix = self.db.queryBound(ox, oy, tx, ty)
         fig = plt.imshow(matrix, vmin=vmin, vmax=vmax, aspect='auto')
         fig.axes.get_xaxis().set_visible(False)
@@ -84,13 +80,13 @@ def drawAll():
 
     drawer = Drawer()
 
-    for i in range(1659, 2902):
+    for i in range(1659, zDepth):
         drawer.drawTightMatrix("xy", i, './imgs/xy/')
 
-    for i in range(1, 716):
+    for i in range(1,yDepth):
         drawer.drawTightMatrix('xz', i, './imgs/{0}/'.format('xz'))
 
-    for i in range(1, 886):
+    for i in range(1, xDepth):
         drawer.drawTightMatrix('yz', i, './imgs/{0}/'.format('yz'))
 
 

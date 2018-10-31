@@ -17,17 +17,11 @@ from matplotlib.figure import Figure
 import io
 import base64
 from flask_cors import CORS
-
+from global_variable import *
 app = Flask(__name__)
 CORS(app)
 
 db = SeismDb()
-xDepth, yDepth, zDepth = 886, 716, 2902
-xStart, yStart = 638000, 4173000
-xySection = 25
-xEnd, yEnd = 660125, 4190875
-vmin, vmax = -15533.79296875, 16425.25390625
-
 plt.ioff()
 plt.axis('off')
 matplotlib.use('Agg')
