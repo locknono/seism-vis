@@ -18,6 +18,7 @@ import io
 import base64
 from flask_cors import CORS
 from global_variable import *
+
 app = Flask(__name__)
 CORS(app)
 
@@ -76,6 +77,22 @@ def drawLine():
     sio.close()
 
     return resURL
+
+
+@app.route('/wellMatch/<twoID>')
+def sendWellData(twoID):
+    ID = twoID.split('_')[0]
+    ID2 = twoID.split('_')[1]
+    with open('./data/groupWellData.json', 'r') as f:
+        wellData = json.loads(f.read())
+        twoWellData = []
+        for d in wellData:
+            if d['id'] == ID or d['id'] == ID2:
+                twoWellData.append(d)
+            if len(twoWellData) == 2:
+                break
+        res = Response(json.dumps(twoWellData), mimetype='application/json')
+        return res
 
 
 if __name__ == '__main__':

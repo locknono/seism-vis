@@ -35,7 +35,7 @@ code {
 .matrix-control-panel {
   padding: 30px;
   margin: 0;
-  text-align:center;
+  text-align: center;
 }
 
 .matrix-selected-line-div {
@@ -46,7 +46,7 @@ code {
 }
 
 .matrix-selected-line-img {
-  margin:auto;
+  margin: auto;
 }
 
 .matrix-polyline {
@@ -56,7 +56,6 @@ code {
 }
 
 .polyline-svg {
-  
 }
 
 .leaflet-map {
@@ -67,12 +66,16 @@ code {
 #map {
 }
 
-.col-group{
+.col-group {
   display: flex;
   flex-direction: column;
-  align-items:stretch;
+  align-items: stretch;
 }
 
-.matrix-figure img{
+.matrix-figure img {
   cursor: crosshair;
+}
+
+.well-match-axis {
+  stroke: black;
 }
