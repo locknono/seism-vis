@@ -11,7 +11,8 @@ type State = {
   svgHeight: number,
   minDepth: number,
   maxDepth: number,
-  svgPadding: number
+  svgPadding: number,
+  colorScale: fn
 };
 
 class WellMatch extends Component<Props, State> {
@@ -23,7 +24,7 @@ class WellMatch extends Component<Props, State> {
       svgPadding: 0.1,
       minDepth: 1082,
       maxDepth: 1850,
-      points: [[0, 0], [0, 0]],
+      layerPath: [[0, 0], [0, 0]],
       colorScale: d3.scaleOrdinal(d3.schemeCategory10),
       pathGen: d3
         .line()
@@ -40,7 +41,6 @@ class WellMatch extends Component<Props, State> {
     fetch(`http://localhost:5000/wellMatch/${wellIDs[0]}_${wellIDs[1]}`)
       .then(res => res.json())
       .then(data => {
-        console.log("data: ", data);
         let {
           svgPadding,
           svgWidth,
@@ -52,22 +52,20 @@ class WellMatch extends Component<Props, State> {
           .scaleLinear()
           .domain([minDepth, maxDepth])
           .range([svgPadding * svgHeight, (1 - svgPadding) * svgHeight]);
-        let points = [];
+        let layerPath = [];
         let x1 = svgPadding * svgWidth;
         let x2 = svgWidth * (1 - svgPadding);
         for (let i = 0; i < data[0].value.length; i++) {
           if (data[0].value[i].topDepth && data[1].value[i].topDepth) {
             let y1 = scale(data[0].value[i].topDepth);
             let y2 = scale(data[1].value[i].topDepth);
-
             let y3 = scale(data[0].value[i].bottomDepth);
             let y4 = scale(data[1].value[i].bottomDepth);
-
             let path = [[x1, y1], [x2, y2], [x2, y4], [x1, y3]];
-            points.push(path);
+            layerPath.push(path);
           }
         }
-        this.setState({ points, scale });
+        this.setState({ layerPath, scale });
       });
   }
   componentDidUpdate(prevProps, prevState) {
@@ -77,38 +75,32 @@ class WellMatch extends Component<Props, State> {
       .then(res => res.json())
       .then(data => {
         let { svgPadding, svgWidth, scale } = this.state;
-        let points = [];
+        let layerPath = [];
         let x1 = svgPadding * svgWidth;
         let x2 = svgWidth * (1 - svgPadding);
         for (let i = 0; i < data[0].value.length; i++) {
           if (data[0].value[i].topDepth && data[1].value[i].topDepth) {
             let y1 = scale(data[0].value[i].topDepth);
-            let y2 = scale(data[1].value[i].bottomDepth);
-            points.push([[x1, y1], [x2, y2]]);
+            let y2 = scale(data[1].value[i].topDepth);
+            let y3 = scale(data[0].value[i].bottomDepth);
+            let y4 = scale(data[1].value[i].bottomDepth);
+            let path = [[x1, y1], [x2, y2], [x2, y4], [x1, y3]];
+            layerPath.push(path);
           }
         }
-        this.setState({ points, scale });
+        this.setState({ layerPath, scale });
       });
   }
   render() {
-    const {
-      svgWidth,
-      svgHeight,
-      svgPadding,
-      points,
-      minDepth,
-      maxDepth,
-      colorScale,
-      pathGen
-    } = this.state;
+    const { svgWidth, svgPadding, layerPath, colorScale, pathGen } = this.state;
     const p1 = [svgPadding * svgWidth, svgPadding * svgHeight];
     const p2 = [svgPadding * svgWidth, (1 - svgPadding) * svgHeight];
     const p3 = [(1 - svgPadding) * svgWidth, svgPadding * svgHeight];
     const p4 = [(1 - svgPadding) * svgWidth, (1 - svgPadding) * svgHeight];
-    const mapLines = points.map((e, i) => {
+    const mapLines = layerPath.map((e, i) => {
       let path = e;
       let pathD = pathGen(e);
-      let style = { fill: colorScale(i) };
+      let style = { fill: colorScale(i), stroke: "none" };
       return (
         <path key={i} d={pathD} style={style} className="well-match-axis" />
       );
