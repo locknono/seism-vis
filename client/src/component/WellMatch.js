@@ -23,7 +23,12 @@ class WellMatch extends Component<Props, State> {
       svgPadding: 0.1,
       minDepth: 1082,
       maxDepth: 1850,
-      points: [[0, 0], [0, 0]]
+      points: [[0, 0], [0, 0]],
+      colorScale: d3.scaleOrdinal(d3.schemeCategory10),
+      pathGen: d3
+        .line()
+        .x(d => d[0])
+        .y(d => d[1])
     };
   }
   componentDidMount() {
@@ -35,6 +40,7 @@ class WellMatch extends Component<Props, State> {
     fetch(`http://localhost:5000/wellMatch/${wellIDs[0]}_${wellIDs[1]}`)
       .then(res => res.json())
       .then(data => {
+        console.log("data: ", data);
         let {
           svgPadding,
           svgWidth,
@@ -52,8 +58,13 @@ class WellMatch extends Component<Props, State> {
         for (let i = 0; i < data[0].value.length; i++) {
           if (data[0].value[i].topDepth && data[1].value[i].topDepth) {
             let y1 = scale(data[0].value[i].topDepth);
-            let y2 = scale(data[1].value[i].bottomDepth);
-            points.push([[x1, y1], [x2, y2]]);
+            let y2 = scale(data[1].value[i].topDepth);
+
+            let y3 = scale(data[0].value[i].bottomDepth);
+            let y4 = scale(data[1].value[i].bottomDepth);
+
+            let path = [[x1, y1], [x2, y2], [x2, y4], [x1, y3]];
+            points.push(path);
           }
         }
         this.setState({ points, scale });
@@ -86,22 +97,20 @@ class WellMatch extends Component<Props, State> {
       svgPadding,
       points,
       minDepth,
-      maxDepth
+      maxDepth,
+      colorScale,
+      pathGen
     } = this.state;
     const p1 = [svgPadding * svgWidth, svgPadding * svgHeight];
     const p2 = [svgPadding * svgWidth, (1 - svgPadding) * svgHeight];
     const p3 = [(1 - svgPadding) * svgWidth, svgPadding * svgHeight];
     const p4 = [(1 - svgPadding) * svgWidth, (1 - svgPadding) * svgHeight];
     const mapLines = points.map((e, i) => {
+      let path = e;
+      let pathD = pathGen(e);
+      let style = { fill: colorScale(i) };
       return (
-        <line
-          key={i}
-          x1={e[0][0]}
-          y1={e[0][1]}
-          x2={e[1][0]}
-          y2={e[1][1]}
-          className="well-match-axis"
-        />
+        <path key={i} d={pathD} style={style} className="well-match-axis" />
       );
     });
     return (
