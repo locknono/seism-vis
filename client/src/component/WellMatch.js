@@ -31,7 +31,6 @@ class WellMatch extends Component<Props, State> {
     fetch(`http://localhost:5000/wellMatch/${wellIDs[0]}_${wellIDs[1]}`)
       .then(res => res.json())
       .then(data => {
-        console.log("data: ", data);
         let {
           svgPadding,
           svgWidth,
@@ -74,7 +73,6 @@ class WellMatch extends Component<Props, State> {
     const p2 = [svgPadding * svgWidth, (1 - svgPadding) * svgHeight];
     const p3 = [(1 - svgPadding) * svgWidth, svgPadding * svgHeight];
     const p4 = [(1 - svgPadding) * svgWidth, (1 - svgPadding) * svgHeight];
-    const axisHeight = svgHeight * (1 - 2 * svgPadding);
     const mapLines = points.map((e, i) => {
       return (
         <line

@@ -88,7 +88,6 @@ class Matrix extends Component {
     });
   }
   onGetAllWellRowColNumber(allWellRowColNumber) {
-    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
     this.setState({ allWellRowColNumber: allWellRowColNumber });
   }
   render() {
@@ -110,7 +109,6 @@ class Matrix extends Component {
         onChangePlane={this.onChangePlane}
       />
     ));
-    console.log("allWellRowColNumber: ", allWellRowColNumber);
     return (
       <matrixContext.Provider value={matrixContextDefaultValue}>
         <div className="matrix panel panel-default">

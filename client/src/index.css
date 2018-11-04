@@ -79,3 +79,26 @@ code {
 .well-match-axis {
   stroke: black;
 }
+
+.well-svg {
+  width: 700px;
+  height: 700px;
+}
+
+.well-svg-div {
+  width: min-content;
+  margin: auto;
+}
+
+.well-circle {
+  fill-opacity: 0.1;
+  stroke: black;
+}
+.well-circle:hover {
+  fill: yellow;
+  fill-opacity: 1;
+}
+.well-circle-selected {
+  fill-opacity: 1;
+  fill: yellow;
+}
