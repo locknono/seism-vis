@@ -28,6 +28,10 @@ class WellMatch extends Component<Props, State> {
   }
   componentDidMount() {
     const { wellIDs } = this.props;
+    let svg = d3.select(".well-match-svg");
+    let svgWidth = parseFloat(svg.style("width").split("px")[0]);
+    let svgHeight = parseFloat(svg.style("height").split("px")[0]);
+    this.setState({ svgWidth, svgHeight });
     fetch(`http://localhost:5000/wellMatch/${wellIDs[0]}_${wellIDs[1]}`)
       .then(res => res.json())
       .then(data => {
@@ -43,21 +47,37 @@ class WellMatch extends Component<Props, State> {
           .domain([minDepth, maxDepth])
           .range([svgPadding * svgHeight, (1 - svgPadding) * svgHeight]);
         let points = [];
+        let x1 = svgPadding * svgWidth;
+        let x2 = svgWidth * (1 - svgPadding);
         for (let i = 0; i < data[0].value.length; i++) {
           if (data[0].value[i].topDepth && data[1].value[i].topDepth) {
-            let x1 = svgPadding * svgWidth;
             let y1 = scale(data[0].value[i].topDepth);
-            let x2 = svgWidth * (1 - svgPadding);
             let y2 = scale(data[1].value[i].bottomDepth);
             points.push([[x1, y1], [x2, y2]]);
           }
         }
-        this.setState({ points });
+        this.setState({ points, scale });
       });
-    let svg = d3.select(".well-match-svg");
-    let svgWidth = parseFloat(svg.style("width").split("px")[0]);
-    let svgHeight = parseFloat(svg.style("height").split("px")[0]);
-    this.setState({ svgWidth, svgHeight });
+  }
+  componentDidUpdate(prevProps, prevState) {
+    const { wellIDs } = this.props;
+    if (wellIDs === prevProps.wellIDs) return;
+    fetch(`http://localhost:5000/wellMatch/${wellIDs[0]}_${wellIDs[1]}`)
+      .then(res => res.json())
+      .then(data => {
+        let { svgPadding, svgWidth, scale } = this.state;
+        let points = [];
+        let x1 = svgPadding * svgWidth;
+        let x2 = svgWidth * (1 - svgPadding);
+        for (let i = 0; i < data[0].value.length; i++) {
+          if (data[0].value[i].topDepth && data[1].value[i].topDepth) {
+            let y1 = scale(data[0].value[i].topDepth);
+            let y2 = scale(data[1].value[i].bottomDepth);
+            points.push([[x1, y1], [x2, y2]]);
+          }
+        }
+        this.setState({ points, scale });
+      });
   }
   render() {
     const {
@@ -68,7 +88,6 @@ class WellMatch extends Component<Props, State> {
       minDepth,
       maxDepth
     } = this.state;
-    console.log("points: ", points);
     const p1 = [svgPadding * svgWidth, svgPadding * svgHeight];
     const p2 = [svgPadding * svgWidth, (1 - svgPadding) * svgHeight];
     const p3 = [(1 - svgPadding) * svgWidth, svgPadding * svgHeight];
@@ -86,7 +105,7 @@ class WellMatch extends Component<Props, State> {
       );
     });
     return (
-      <div className="panel panel-default">
+      <div className="panel panel-default well-match-div">
         <svg className="well-match-svg">
           <line
             x1={p1[0]}

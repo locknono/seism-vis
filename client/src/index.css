@@ -102,3 +102,13 @@ code {
   fill-opacity: 1;
   fill: yellow;
 }
+
+.well-match-svg {
+  width: 300px;
+  height: 900px;
+}
+
+.well-match-div {
+  float:left;
+  width: min-content;
+}
