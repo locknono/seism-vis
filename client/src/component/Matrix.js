@@ -4,9 +4,7 @@ import MatrixFigure from "./MatrixFigure";
 import MatrixControlPanel from "./MatrixControlPanel";
 import MatrixPolyLine from "./MatrixPolyLine";
 import MatrixSelectedLine from "./MatrixSelectedLine";
-import { ButtonToolbar, Row, Col } from "react-bootstrap";
 import Map from "./Map";
-import { values } from "d3-collection";
 import {
   matrixContext,
   matrixContextDefaultValue
@@ -97,7 +95,6 @@ class Matrix extends Component {
       maxDepth,
       zData,
       imgURI,
-      figureHeight,
       selectedWellRowNumber,
       selectedWellColNumber,
       allWellRowColNumber

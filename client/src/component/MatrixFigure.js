@@ -150,8 +150,6 @@ class MatrixFigure extends Component {
       width,
       height,
       lineCoors,
-      matrixCoors,
-      pointsOnLine
     } = this.state;
     const selectedWellXOnSvg = (selectedWellColNumber / colCount) * colCount;
     const selectedWellYOnSvg = (selectedWellRowNumber / rowCount) * height;

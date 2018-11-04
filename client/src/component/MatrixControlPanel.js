@@ -3,7 +3,7 @@ import Button from "react-bootstrap/lib/Button";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import MatrixInfo from "./MatrixInfo";
-import { Container, Row, Col, ButtonGroup } from "react-bootstrap";
+import { Row, Col, ButtonGroup } from "react-bootstrap";
 class MatrixControlPanel extends Component {
   render() {
     const {

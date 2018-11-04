@@ -92,7 +92,14 @@ class WellMatch extends Component<Props, State> {
       });
   }
   render() {
-    const { svgWidth, svgPadding, layerPath, colorScale, pathGen } = this.state;
+    const {
+      svgWidth,
+      svgHeight,
+      svgPadding,
+      layerPath,
+      colorScale,
+      pathGen
+    } = this.state;
     const p1 = [svgPadding * svgWidth, svgPadding * svgHeight];
     const p2 = [svgPadding * svgWidth, (1 - svgPadding) * svgHeight];
     const p3 = [(1 - svgPadding) * svgWidth, svgPadding * svgHeight];

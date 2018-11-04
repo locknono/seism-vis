@@ -1,10 +1,6 @@
 import React, { Component } from "react";
 
 class FigureSvgLayer extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const {
       width,
@@ -19,9 +15,21 @@ class FigureSvgLayer extends Component {
     } = this.props;
     const [x1, y1] = lineCoors[0];
     const [x2, y2] = lineCoors[1];
-    const circles = allWellXY.map(e => (
-      <circle cx={e[1]} cy={e[0]} r={1} fill="black" />
-    ));
+    const circles = allWellXY.map((e, i) => {
+      if (Number.isNaN(e[0])) {
+        return null;
+      }
+      return <circle key={i} cx={e[1]} cy={e[0]} r={1} fill="black" />;
+    });
+
+    const circle = Number.isNaN(selectedWellXOnSvg) ? null : (
+      <circle
+        cx={selectedWellXOnSvg}
+        cy={selectedWellYOnSvg}
+        r={10}
+        fill="black"
+      />
+    );
     return (
       <svg
         className={className}
@@ -31,12 +39,7 @@ class FigureSvgLayer extends Component {
         pointerEvents="none"
       >
         <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="black" />
-        <circle
-          cx={selectedWellXOnSvg}
-          cy={selectedWellYOnSvg}
-          r={10}
-          fill="black"
-        />
+        {circle}
         {circles}
       </svg>
     );
