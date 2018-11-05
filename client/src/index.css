@@ -92,6 +92,7 @@ code {
 
 .well-circle {
   fill-opacity: 0.1;
+  stroke-opacity: 0.8;
   stroke: black;
 }
 .well-circle:hover {
@@ -99,8 +100,13 @@ code {
   fill-opacity: 1;
 }
 .well-circle-selected {
-  fill-opacity: 1;
   fill: yellow;
+  fill-opacity: 1;
+}
+
+.well-near {
+  fill: green;
+  fill-opacity: 0.5;
 }
 
 .well-match-svg {
@@ -109,6 +115,6 @@ code {
 }
 
 .well-match-div {
-  float:left;
+  float: left;
   width: min-content;
 }

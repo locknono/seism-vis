@@ -15,7 +15,7 @@ class Seism extends Component {
   render() {
     return (
       <React.Fragment>
-        <Matrix />
+      {/*   <Matrix /> */}
         <WellMatch wellIDs={this.state.wellIDs} />
         <Wells getWellIDs={this.getWellIDs} />
       </React.Fragment>

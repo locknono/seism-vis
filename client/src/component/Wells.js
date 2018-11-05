@@ -10,7 +10,8 @@ class Wells extends Component {
       minNorthing: 4190300.16,
       maxNorthing: 4198000.16,
       wells: [],
-      twoWellID: ["GD1-2X815", "GD1-6-611"]
+      twoWellID: ["GD1-2X815", "GD1-6-611"],
+      nearIDList: []
     };
     this.getTwoCoorsID = this.getTwoCoorsID.bind(this);
   }
@@ -41,21 +42,29 @@ class Wells extends Component {
     });
   }
   getTwoCoorsID(id) {
-    if (this.state.twoWellID.length === 0) {
+    if (this.state.twoWellID.length === 1) {
       this.setState((state, props) => {
-        return { twoWellID: [id] };
-      });
-    } else if (this.state.twoWellID.length === 1) {
-      this.setState((state, props) => {
-        this.props.getWellIDs([state.twoWellID[0], id]);
-        return { twoWellID: [state.twoWellID[0], id] };
+        const twoIDs = [state.twoWellID[0], id];
+        this.props.getWellIDs(twoIDs);
+        return { twoWellID: twoIDs, nearIDList: [] };
       });
     } else {
       this.setState({ twoWellID: [id] });
+      fetch("./data/nearList.json")
+        .then(r => r.json())
+        .then(d => {
+          for (let well of d) {
+            if (well["id"] === id) {
+              let nearList = well["nearList"];
+              this.setState({ nearIDList: nearList });
+              break;
+            }
+          }
+        });
     }
   }
   render() {
-    const { wells, twoWellID } = this.state;
+    const { wells, twoWellID, nearIDList } = this.state;
     const renderWells = wells.map(e => {
       return (
         <SingleWell
@@ -65,6 +74,7 @@ class Wells extends Component {
           id={e.id}
           r={5}
           selected={twoWellID.includes(e.id)}
+          ifNear={nearIDList.includes(e.id)}
           getTwoCoorsID={this.getTwoCoorsID}
         />
       );
