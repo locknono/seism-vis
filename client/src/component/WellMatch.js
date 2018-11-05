@@ -91,6 +91,10 @@ class WellMatch extends Component<Props, State> {
         this.setState({ layerPath, scale });
       });
   }
+  shouldComponentUpdate(nextProps, nextState) {
+    console.log(nextProps);
+  }
+
   render() {
     const {
       svgWidth,

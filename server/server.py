@@ -70,10 +70,12 @@ def drawLine():
     res.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
     res.headers['Access-Control-Allow-Methods'] = 'POST'
     """
-    resURL = Response(data, mimetype='text/xml')
-    resURL.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
-    resURL.headers['Access-Control-Allow-Methods'] = 'POST'
 
+
+    """
+    resURL = Response(data, mimetype='text/xml')
+    resURL.headers['Access-Control-Allow-Methods'] = 'POST'
+    """
     sio.close()
 
     return resURL

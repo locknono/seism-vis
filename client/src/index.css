@@ -107,6 +107,7 @@ code {
 .well-near {
   fill: green;
   fill-opacity: 0.5;
+  z-index:20;
 }
 
 .well-match-svg {

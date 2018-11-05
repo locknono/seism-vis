@@ -74,7 +74,7 @@ class Wells extends Component {
           id={e.id}
           r={5}
           selected={twoWellID.includes(e.id)}
-          ifNear={nearIDList.includes(e.id)}
+          isNear={nearIDList.includes(e.id)}
           getTwoCoorsID={this.getTwoCoorsID}
         />
       );

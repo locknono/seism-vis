@@ -4,10 +4,10 @@ const SingleWell = props => {
   function handleClick(e) {
     props.getTwoCoorsID(props.id);
   }
-  const { cx, cy, r, selected, ifNear } = props;
+  const { cx, cy, r, selected, isNear } = props;
   let className =
     selected === true ? "well-circle-selected well-circle" : "well-circle";
-  if (ifNear === true) {
+  if (isNear === true) {
     className += ` well-near`;
   }
   return (
