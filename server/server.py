@@ -71,8 +71,6 @@ def drawLine():
     res.headers['Access-Control-Allow-Methods'] = 'POST'
     """
 
-
-
     resURL = Response(data, mimetype='text/xml')
     resURL.headers['Access-Control-Allow-Methods'] = 'POST'
 

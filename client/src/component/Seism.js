@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Matrix from "./Matrix";
 import WellMatch from "./WellMatch";
 import Wells from "./Wells";
-
+import Map from "./Map";
 class Seism extends Component {
   constructor(props) {
     super(props);
@@ -15,9 +15,10 @@ class Seism extends Component {
   render() {
     return (
       <React.Fragment>
-        <Matrix />
-        <WellMatch wellIDs={this.state.wellIDs} />
-        <Wells getWellIDs={this.getWellIDs} />
+        <Map />
+        {/*   <Matrix /> */}
+        {/*   <WellMatch wellIDs={this.state.wellIDs} />
+        <Wells getWellIDs={this.getWellIDs} /> */}
       </React.Fragment>
     );
   }

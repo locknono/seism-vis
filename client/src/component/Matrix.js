@@ -138,7 +138,7 @@ class Matrix extends Component {
               />
               <MatrixSelectedLine imgURI={imgURI} />
             </div>
-            <matrixContext.Consumer>
+           {/*  <matrixContext.Consumer>
               {value => (
                 <Map
                   uCoors={value}
@@ -148,7 +148,7 @@ class Matrix extends Component {
                   onGetAllWellRowColNumber={this.onGetAllWellRowColNumber}
                 />
               )}
-            </matrixContext.Consumer>
+            </matrixContext.Consumer> */}
           </div>
           <MatrixPolyLine
             zData={zData}

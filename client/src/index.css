@@ -64,6 +64,8 @@ code {
 }
 
 #map {
+  width:700px;
+  height:700px;
 }
 
 .col-group {

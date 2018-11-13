@@ -9,7 +9,6 @@ class Map extends Component {
     this.mapRef = React.createRef();
   }
   componentDidMount() {
-    const { xStart, yStart, xEnd, yEnd, xySection } = this.props.uCoors;
     this.deployMap();
     this.generateBound();
 
