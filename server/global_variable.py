@@ -6,11 +6,11 @@ vmax = 15099.375
 colCount = 309
 rowCount = 321
 
-xStart = 652500
+xStart = 20652500
 yStart = 4190300.16
 xySection = 25
-xEnd = 660200
-yEnd = 4198300.16
+xEnd = 20660500
+yEnd = 4198000.16
 
 minEasting = 653320.3673148291
 maxEasting = 659447.2956462791

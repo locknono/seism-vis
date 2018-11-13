@@ -2,64 +2,31 @@ import React, { Component } from "react";
 import L from "leaflet";
 import { toLatLon, fromLatLon } from "utm";
 import proj4 from "proj4";
+
 class Map extends Component {
   constructor(props) {
     super(props);
     this.mapRef = React.createRef();
-    this.inBound = this.inBound.bind(this);
   }
   componentDidMount() {
     const { xStart, yStart, xEnd, yEnd, xySection } = this.props.uCoors;
     this.deployMap();
-    const self = this;
+    this.generateBound();
 
-    var utm = "+proj=utm +zone=50";
-    var wgs84 = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
+    const utm = "+proj=utm +zone=50";
+    const wgs84 = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
 
-    let w1 = proj4(utm, wgs84, [xStart, yStart]).reverse();
-    let w2 = proj4(utm, wgs84, [xStart, yEnd]).reverse();
-    let w3 = proj4(utm, wgs84, [xEnd, yStart]).reverse();
-    let w4 = proj4(utm, wgs84, [xEnd, yEnd]).reverse();
-
-    let ww = [w1, w2, w4, w3];
-    L.polygon(ww, { color: "blue" }).addTo(this.map);
-
-    fetch("./data/well_logging.json")
+    fetch("./data/wellFullLocation.json")
       .then(res => res.json())
-      .then(loggingData => {
-        let allWellRowColNumber = [];
-
-        loggingData.map(logging => {
-          L.circle(logging.latlng, { radius: 10 }).addTo(this.map);
-          const { easting, northing } = fromLatLon(...logging.latlng);
-          if (this.inBound(easting, northing)) {
-            L.circle(logging.latlng, { radius: 10, color: "red" })
-              .on("mouseover", function(e) {
-                let { lat, lng } = e.latlng;
-                let { easting, northing } = fromLatLon(lat, lng);
-                let colNumber = parseInt((easting - xStart) / xySection);
-                let rowNumber = parseInt((northing - yStart) / xySection);
-                self.props.onGetSelectedWellRowColNumber(rowNumber, colNumber);
-              })
-              .addTo(this.map);
-            let colNumber = parseInt((easting - xStart) / xySection);
-            let rowNumber = parseInt((northing - yStart) / xySection);
-            allWellRowColNumber.push([rowNumber, colNumber]);
-          }
+      .then(wellLocationData => {
+        wellLocationData.map(well => {
+          L.circle(well.latlng, { radius: 10, color: "red" }).addTo(this.map);
         });
-        self.props.onGetAllWellRowColNumber(allWellRowColNumber);
       });
   }
-  inBound(easting, northing) {
-    const { xStart, yStart, xEnd, yEnd } = this.props.uCoors;
-    return (
-      easting > xStart && easting < xEnd && northing > yStart && northing < yEnd
-    );
-  }
-  getLatLngArray(toLatLonResult) {
-    return [toLatLonResult.latitude, toLatLonResult.longitude];
-  }
+
   componentDidUpdate(prevProps, prevState, snapshot) {}
+
   deployMap() {
     const center = [37.867271959429445, 118.78092767561518];
     const zoom = 13;
@@ -77,6 +44,16 @@ class Map extends Component {
     L.tileLayer(`https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png`).addTo(
       this.map
     );
+  }
+
+  generateBound() {
+    //clockwise from left-bottom
+    let p1 = [37.83164815261103, 118.73221307817226];
+    let p2 = [37.90098826849878, 118.73383750454309];
+    let p3 = [37.899613830166174, 118.82475161382335];
+    let p4 = [37.83027712360192, 118.82304212267306];
+    let bound = [p1, p2, p3, p4];
+    L.polygon(bound, { color: "blue" }).addTo(this.map);
   }
 
   render() {
