@@ -16,13 +16,17 @@ class Map extends Component {
     const utm = "+proj=utm +zone=50";
     const wgs84 = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
 
+    const circlesLayer = L.layerGroup();
     fetch("./data/wellFullLocation.json")
       .then(res => res.json())
       .then(wellLocationData => {
         wellLocationData.map(well => {
-          L.circle(well.latlng, { radius: 10, color: "red" }).addTo(this.map);
+          circlesLayer.addLayer(
+            L.circle(well.latlng, { radius: 10, color: "red" })
+          );
         });
       });
+    circlesLayer.addTo(this.map);
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {}
@@ -54,6 +58,10 @@ class Map extends Component {
     let p4 = [37.83027712360192, 118.82304212267306];
     let bound = [p1, p2, p3, p4];
     L.polygon(bound, { color: "blue" }).addTo(this.map);
+  }
+
+  generateGrid() {
+    //TO-DO
   }
 
   render() {
