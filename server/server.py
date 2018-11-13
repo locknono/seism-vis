@@ -72,10 +72,10 @@ def drawLine():
     """
 
 
-    """
+
     resURL = Response(data, mimetype='text/xml')
     resURL.headers['Access-Control-Allow-Methods'] = 'POST'
-    """
+
     sio.close()
 
     return resURL
