@@ -30,6 +30,7 @@ code {
 }
 
 .matrix-figure {
+  width: min-content;
 }
 
 .matrix-control-panel {
@@ -64,8 +65,8 @@ code {
 }
 
 #map {
-  width:700px;
-  height:700px;
+  width: 700px;
+  height: 700px;
 }
 
 .col-group {
@@ -109,7 +110,7 @@ code {
 .well-near {
   fill: green;
   fill-opacity: 0.5;
-  z-index:20;
+  z-index: 20;
 }
 
 .well-match-svg {
