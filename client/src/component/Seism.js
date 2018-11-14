@@ -1,7 +1,4 @@
 import React, { Component } from "react";
-import Matrix from "./Matrix";
-import WellMatch from "./WellMatch";
-import Wells from "./Wells";
 import Map from "./Map";
 import MatrixFigureV2 from "./MatrixFigureV2";
 class Seism extends Component {

@@ -17,7 +17,11 @@ class Map extends Component {
 
     const circlesLayer = L.layerGroup();
     fetch("./data/wellFullLocation.json")
-      .then(res => res.json())
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        }
+      })
       .then(wellLocationData => {
         wellLocationData.map(well => {
           circlesLayer.addLayer(
