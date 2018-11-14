@@ -24,9 +24,7 @@ class Map extends Component {
       })
       .then(wellLocationData => {
         wellLocationData.map(well => {
-          circlesLayer.addLayer(
-            L.circle(well.latlng, { radius: 10, color: "red" })
-          );
+          circlesLayer.addLayer(L.circle(well.latlng, { radius: 10 }));
         });
       });
     circlesLayer.addTo(this.map);
@@ -60,6 +58,10 @@ class Map extends Component {
     let p3 = [37.899613830166174, 118.82475161382335];
     let p4 = [37.83027712360192, 118.82304212267306];
     let bound = [p1, p2, p3, p4];
+
+    L.circle(p1, { radius: 100, color: "red" }).addTo(this.map);
+    L.circle(p3, { radius: 100, color: "black" }).addTo(this.map);
+
     L.polygon(bound, { color: "blue" }).addTo(this.map);
   }
 

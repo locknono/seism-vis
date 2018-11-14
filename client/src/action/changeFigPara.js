@@ -16,10 +16,12 @@ export function changeDepth(depth) {
   };
 }
 
-export function changeSize(width, height) {
+export function changeSizePosition(width, height, left, top) {
   return {
     type: CHANGE_SIZE,
-    figWidth: width,
-    figHeight: height
+    width,
+    height,
+    left,
+    top
   };
 }

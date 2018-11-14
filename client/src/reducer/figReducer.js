@@ -27,7 +27,9 @@ export default function figReducer(state = initialState, action) {
       return {
         ...state,
         figWidth: action.width,
-        figHeight: action.height
+        figHeight: action.height,
+        figLeft: action.left,
+        figTop: action.top
       };
     default:
       return state;
