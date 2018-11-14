@@ -7,11 +7,17 @@ import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
 import figReducer from "./reducer/figReducer";
 import globalVarReducer from "./reducer/globalVarReducer";
+import wellReducer from "./reducer/wellsReducer";
 
-const rootReducer = combineReducers({ figReducer, globalVarReducer });
+const rootReducer = combineReducers({
+  figReducer,
+  wellReducer,
+  globalVarReducer
+});
 
 let store = createStore(rootReducer);
 
+console.log(store.getState());
 ReactDOM.render(
   <Provider store={store}>
     <App />

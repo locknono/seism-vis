@@ -3,12 +3,14 @@ import { connect } from "react-redux";
 
 const mapStateToProps = (state, ownProps) => {
   const { figWidth, figHeight, figLeft, figTop, scaler } = state.figReducer;
+  const { allWells } = state.wellReducer;
   return {
     width: figWidth,
     height: figHeight,
     left: figLeft,
     top: figTop,
-    scaler
+    scaler,
+    allWells
   };
 };
 
@@ -27,7 +29,10 @@ class SvgLayer extends React.Component<Props> {
   componentDidMount() {}
 
   render() {
-    const { width, height, left, top } = this.props;
+    const { width, height, left, top, allWells } = this.props;
+    const wells = allWells.map(e => (
+      <circle key={e.id} cx={e.xOnSvg} cy={e.yOnSvg} r={2} fill="blue" />
+    ));
     const style = {
       position: "absolute",
       width,
@@ -35,7 +40,7 @@ class SvgLayer extends React.Component<Props> {
       left,
       top
     };
-    return <svg style={style} />;
+    return <svg style={style}>{wells}</svg>;
   }
 }
 

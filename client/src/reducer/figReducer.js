@@ -3,7 +3,7 @@ import {
   CHANGE_DEPTH,
   CHANGE_SIZE,
   GET_SCALER
-} from "../action/changeFigPara";
+} from "../action/changeFig";
 
 const initialState = {
   planeName: "xy",

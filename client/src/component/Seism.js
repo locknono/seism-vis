@@ -4,10 +4,10 @@ import Matrix from "./Matrix";
 
 const Seism = function(props) {
   return (
-    <React.Fragment>
+    <div className="seism">
       <Map />
       <Matrix />
-    </React.Fragment>
+    </div>
   );
 };
 

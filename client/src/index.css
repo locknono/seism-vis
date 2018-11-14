@@ -122,3 +122,8 @@ code {
   float: left;
   width: min-content;
 }
+
+.seism {
+  display: flex;
+  margin: 5px;
+}

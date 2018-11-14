@@ -6,7 +6,7 @@ import {
   changeDepth,
   changeSizePosition,
   getScaler
-} from "../action/changeFigPara";
+} from "../action/changeFig";
 import SvgLayer from "./SvgLayer";
 
 const mapStateToProps = (state, ownProps) => {
@@ -39,16 +39,19 @@ class MatrixFigureV2 extends Component<Props, State> {
 
   componentDidMount() {
     const { xStart, xEnd, yStart, yEnd } = this.props;
+    console.log('xStart: ', xStart);
     setTimeout(
       function() {
         const figuerNode = this.figureRef.current;
         const { width, height, left, top } = figuerNode.getBoundingClientRect();
         this.props.changeSizePosition(width, height, left, top);
-
+        console.log("width: ", width);
+        console.log("xStart: ", xStart);
         const xScaler = d3
           .scaleLinear()
           .domain([xStart, xEnd])
           .range([0, width]);
+        console.log(xScaler(100000));
         const yScaler = d3
           .scaleLinear()
           .domain([yStart, yEnd])

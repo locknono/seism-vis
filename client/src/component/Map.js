@@ -2,13 +2,29 @@ import React, { Component } from "react";
 import L from "leaflet";
 import { toLatLon, fromLatLon } from "utm";
 import proj4 from "proj4";
+import { connect } from "react-redux";
+import { getAllWells } from "../action/changeWell";
+const mapStateToProps = (state, ownProps) => {
+  const scaler = state.figReducer.scaler;
+  return { scaler };
+};
+
+const mapDispathToProps = {
+  getAllWells
+};
 
 class Map extends Component {
   constructor(props) {
     super(props);
     this.mapRef = React.createRef();
   }
-  componentDidMount() {
+  componentDidMount() {}
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.props.scaler === prevProps.scaler) {
+      return;
+    }
+    const { scaler, getAllWells } = this.props;
     this.deployMap();
     this.generateBound();
 
@@ -23,14 +39,18 @@ class Map extends Component {
         }
       })
       .then(wellLocationData => {
+        const allWells = [];
         wellLocationData.map(well => {
+          let xOnSvg = scaler.xScaler(well.x);
+          let yOnSvg = scaler.yScaler(well.y);
+          allWells.push({ ...well, xOnSvg, yOnSvg });
           circlesLayer.addLayer(L.circle(well.latlng, { radius: 10 }));
         });
+        getAllWells(allWells);
       });
+
     circlesLayer.addTo(this.map);
   }
-
-  componentDidUpdate(prevProps, prevState, snapshot) {}
 
   deployMap() {
     const center = [37.867271959429445, 118.78092767561518];
@@ -81,4 +101,7 @@ class Map extends Component {
     );
   }
 }
-export default Map;
+export default connect(
+  mapStateToProps,
+  mapDispathToProps
+)(Map);
