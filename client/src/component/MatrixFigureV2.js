@@ -1,21 +1,25 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import * as d3 from "d3";
 import {
   changePlane,
   changeDepth,
-  changeSizePosition
+  changeSizePosition,
+  getScaler
 } from "../action/changeFigPara";
 import SvgLayer from "./SvgLayer";
 
 const mapStateToProps = (state, ownProps) => {
-  const { planeName, depth } = state;
-  return { planeName, depth };
+  const { planeName, depth } = state.figReducer;
+  const { xStart, yStart, xEnd, yEnd } = state.globalVarReducer;
+  return { planeName, depth, xStart, yStart, xEnd, yEnd };
 };
 
 const mapDispatchToProps = {
   changePlane,
   changeDepth,
-  changeSizePosition
+  changeSizePosition,
+  getScaler
 };
 
 interface Props {
@@ -34,11 +38,23 @@ class MatrixFigureV2 extends Component<Props, State> {
   }
 
   componentDidMount() {
+    const { xStart, xEnd, yStart, yEnd } = this.props;
     setTimeout(
       function() {
         const figuerNode = this.figureRef.current;
         const { width, height, left, top } = figuerNode.getBoundingClientRect();
         this.props.changeSizePosition(width, height, left, top);
+
+        const xScaler = d3
+          .scaleLinear()
+          .domain([xStart, xEnd])
+          .range([0, width]);
+        const yScaler = d3
+          .scaleLinear()
+          .domain([yStart, yEnd])
+          .range([height, 0]);
+
+        this.props.getScaler({ xScaler, yScaler });
       }.bind(this),
       0
     );

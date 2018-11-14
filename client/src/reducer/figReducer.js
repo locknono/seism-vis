@@ -1,14 +1,18 @@
 import {
   CHANGE_PLANE,
   CHANGE_DEPTH,
-  CHANGE_SIZE
+  CHANGE_SIZE,
+  GET_SCALER
 } from "../action/changeFigPara";
 
 const initialState = {
   planeName: "xy",
   depth: 300,
   figWidth: null,
-  figHeight: null
+  figHeight: null,
+  figLeft: null,
+  figTop: null,
+  scaler: null
 };
 
 export default function figReducer(state = initialState, action) {
@@ -30,6 +34,11 @@ export default function figReducer(state = initialState, action) {
         figHeight: action.height,
         figLeft: action.left,
         figTop: action.top
+      };
+    case GET_SCALER:
+      return {
+        ...state,
+        scaler: action.scaler
       };
     default:
       return state;
