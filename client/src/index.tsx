@@ -5,9 +5,9 @@ import "./index.css";
 import registerServiceWorker from "./registerServiceWorker";
 import { Provider } from "react-redux";
 import { createStore } from "redux";
-import imgReducer from "./reducer/imgReducer";
+import figReducer from "./reducer/figReducer";
 
-let store = createStore(imgReducer);
+let store = createStore(figReducer);
 
 ReactDOM.render(
   <Provider store={store}>

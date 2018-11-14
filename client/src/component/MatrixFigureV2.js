@@ -1,16 +1,28 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { changePlane, changeDepth } from "../action/changeImgPara";
+import { changePlane, changeDepth, changeSize } from "../action/changeFigPara";
+import SvgLayer from "./SvgLayer";
+
 
 const mapStateToProps = (state, ownProps) => {
-  const { planeName, depth } = state;
-  return { planeName, depth };
+  const { planeName, depth, figWidth, figHeight } = state;
+  return { planeName, depth, figWidth, figHeight };
 };
 
 const mapDispatchToProps = {
   changePlane,
-  changeDepth
+  changeDepth,
+  changeSize
 };
+
+interface Props {
+  planeName: string;
+  depth: number;
+  figWidth: number;
+  figWidth: number;
+}
+
+interface State {}
 
 class MatrixFigureV2 extends Component<Props, State> {
   constructor(props) {
@@ -22,22 +34,26 @@ class MatrixFigureV2 extends Component<Props, State> {
     setTimeout(
       function() {
         const figuerNode = this.figureRef.current;
-        const { width, height } = figuerNode;
-        const { top, left } = figuerNode.getBoundingClientRect();
+        const { width, height } = figuerNode.getBoundingClientRect();
+        this.props.changeSize(width, height);
       }.bind(this),
       0
     );
   }
 
   render() {
-    const { planeName, depth } = this.props;
-
+    const { planeName, depth, figWidth, figHeight } = this.props;
+    let style = {};
+    if (figWidth && figHeight) {
+      style = { width: figWidth, height: figHeight };
+    }
     return (
       <div className="matrix-figure panel panel-default">
         <img
           src={`./imgs/${planeName}/${depth}.png`}
           alt="matrix-figure"
           ref={this.figureRef}
+          style={style}
         />
       </div>
     );
