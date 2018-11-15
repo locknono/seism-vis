@@ -12,7 +12,7 @@ const mapStateToProps = (state, ownProps) => {
     wellMatchDepthScale
   } = state.globalVarReducer;
 
-  const { coupleWell, coupleWellPath } = state.wellReducer;
+  const { coupleWell, coupleWellPath, figURI } = state.wellReducer;
 
   return {
     wellMinDepth,
@@ -22,7 +22,8 @@ const mapStateToProps = (state, ownProps) => {
     height: wellMatchSvgHeight,
     paddingRatio: wellMatchSvgPaddingRatio,
     coupleWell,
-    coupleWellPath
+    coupleWellPath,
+    figURI
   };
 };
 
@@ -70,7 +71,7 @@ class WellMatch extends Component {
     }
   }
   render() {
-    const { width, height, paddingRatio, coupleWellPath } = this.props;
+    const { width, height, paddingRatio, coupleWellPath, figURI } = this.props;
     const { colorScale, pathGen } = this.state;
     const p1 = [paddingRatio * width, paddingRatio * height];
     const p2 = [paddingRatio * width, (1 - paddingRatio) * height];
@@ -107,6 +108,11 @@ class WellMatch extends Component {
           />
           {mapLines}
         </svg>
+        <img
+          alt="Selected Line"
+          src={`data:image/png;base64,${figURI}`}
+          className="matrix-selected-line-img"
+        />
       </div>
     );
   }

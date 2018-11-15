@@ -7,6 +7,7 @@ import pymongo
 import time
 from global_variable import *
 import math
+
 logging.basicConfig(level=logging.INFO)
 client = MongoClient('localhost', 27017)
 db = client.zh_seism
@@ -16,18 +17,18 @@ zCollection = db.z
 
 # 321*309
 def createTraceCollection():
-    # trace.drop()
+    trace.drop()
     for index, tr in enumerate(iread_segy(segyFile)):
         logging.info(index)
         colNumber = (index % yDepth)
         rowNumber = ((index // yDepth))
-
         xCoor = xStart + xySection * colNumber
         yCoor = yStart + xySection * rowNumber
 
         trace.insert_one({"x": xCoor, "y": yCoor, "z": (tr.data).tolist()})
 
 
+"""
 def deleteTraceOutOfBoundary():
     for index, tr in enumerate(iread_segy(segyFile)):
         logging.info(index)
@@ -39,13 +40,11 @@ def deleteTraceOutOfBoundary():
 
         if xCoor < minEasting or xCoor > maxEasting or yCoor < minNorthing or yCoor > maxNorthing:
             trace.delete_one({"x": xCoor, "y": yCoor, "z": (tr.data).tolist()})
+"""
 
 
 def dropZColeection():
-    pass
-
-
-# zCollection.drop()
+    zCollection.drop()
 
 
 def createZCollection():
@@ -79,10 +78,8 @@ def findMinBound():
         colNumber = index % colCount
         xCoor = xStart + xySection * colNumber
         yCoor = yStart + xySection * rowNumber
-        if math.fabs(yCoor-minNorthing)<25:
+        if math.fabs(yCoor - minNorthing) < 25:
             logging.info(str(yCoor))
-
-
 
 
 def logBound(xCoor):
@@ -103,9 +100,9 @@ def createIndex():
 
 
 if __name__ == '__main__':
-    # dropZColeection()
-    # createZCollection()
-    # createTraceCollection()
-    # createIndex()
-    # deleteTraceOutOfBoundary()
-    findMinBound()
+    createTraceCollection()
+    dropZColeection()
+    createZCollection()
+    createIndex()
+# deleteTraceOutOfBoundary()
+# findMinBound()

@@ -48,9 +48,14 @@ def sendPolyLineData(coors):
 @app.route('/drawLine/', methods=['GET', 'POST'])
 def drawLine():
     ods = json.loads(request.data.decode("utf-8"))
+    print(ods)
     matrix = []
     for p in ods:
-        zArray = db.trace.find_one({"x": xStart + p[0] * xySection, "y": yStart + int(p[1]) * xySection})['z']
+        print(p)
+        print(p[0])
+        print(p[1])
+        result=db.trace.find_one({"x": xStart + p[0] * xySection, "y": yStart + p[1] * xySection})
+        zArray = result['z']
         matrix.append(zArray)
 
     fig = plt.imshow((matrix), vmin=vmin, vmax=vmax, cmap=plt.get_cmap("Greys"))

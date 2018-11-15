@@ -72,7 +72,12 @@ class Map extends Component {
                 getCoupleWell(self.internalCoupleIDStore);
                 if (self.internalCoupleIDStore.length === 2) {
                   self.internalCoupleIDStore = [];
-                  self.getPointsOnLine(self.internalCoupleXYStore);
+                  const pointsOnLine = self.getPointsOnLine(
+                    self.internalCoupleXYStore
+                  );
+                  console.log("pointsOnLine: ", pointsOnLine);
+                  const figURI = self.fetchMatchFig(pointsOnLine);
+                  console.log("figURI: ", figURI);
                   self.internalCoupleXYStore = [];
                 }
               }
@@ -132,8 +137,23 @@ class Map extends Component {
       let y = Math.floor(k * x + b);
       pointsOnLine.push([x, y]);
     }
+    return pointsOnLine;
   }
-
+  fetchMatchFig(pointsOnLine) {
+    fetch("http://localhost:5000/drawLine/", {
+      body: JSON.stringify(pointsOnLine), // must match 'Content-Type' header
+      credentials: "same-origin", // include, same-origin, *omit
+      headers: {
+        "content-type": "application/json"
+      },
+      method: "POST", // *GET, POST, PUT, DELETE, etc.
+      mode: "cors" // no-cors, cors, *same-origin
+    })
+      .then(res => res.text())
+      .then(imgURI => {
+        return imgURI;
+      });
+  }
   deployMap() {
     const center = [37.867271959429445, 118.78092767561518];
     const zoom = 13;

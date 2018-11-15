@@ -2,14 +2,16 @@ import {
   GET_ALL_WELLS,
   GET_COUPLEWELL_PATH,
   GET_COUPLE_WELL,
-  GET_COUPLE_WELL_LAYER
+  GET_COUPLE_WELL_LAYER,
+  GET_FIG_URI
 } from "../action/changeWell";
 
 const initialState = {
   allWells: [],
   coupleWell: [],
   coupleWellLayer: [],
-  coupleWellPath: null
+  coupleWellPath: null,
+  figURI: ""
 };
 
 export default function wellReducer(state = initialState, action) {
@@ -31,6 +33,11 @@ export default function wellReducer(state = initialState, action) {
       return {
         ...state,
         coupleWellLayer: [...action.coupleWellLayer]
+      };
+    case GET_FIG_URI:
+      return {
+        ...state,
+        figURI: action.figURI
       };
     default:
       return state;
