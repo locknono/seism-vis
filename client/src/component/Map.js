@@ -3,16 +3,21 @@ import L from "leaflet";
 import { toLatLon, fromLatLon } from "utm";
 import proj4 from "proj4";
 import { connect } from "react-redux";
-import { getAllWells, getCoupleWell } from "../action/changeWell";
+import {
+  getAllWells,
+  getCoupleWell,
+  getCoupleWellLayer
+} from "../action/changeWell";
 const mapStateToProps = (state, ownProps) => {
   const scaler = state.figReducer.scaler;
-  const { allWells, coupleWell } = state.wellReducer;
-  return { scaler, allWells, coupleWell };
+  const { allWells, coupleWell, coupleWellLayer } = state.wellReducer;
+  return { scaler, allWells, coupleWell, coupleWellLayer };
 };
 
 const mapDispathToProps = {
   getAllWells,
-  getCoupleWell
+  getCoupleWell,
+  getCoupleWellLayer
 };
 
 class Map extends Component {
@@ -20,6 +25,7 @@ class Map extends Component {
     super(props);
     this.mapRef = React.createRef();
     this.internalCoupleIDStore = [];
+    this.internalCoupleLayerStore = [];
   }
   componentDidMount() {
     this.deployMap();
@@ -63,12 +69,29 @@ class Map extends Component {
     }
 
     if (this.props.coupleWell.length !== prevProps.coupleWell.length) {
-      const { scaler, coupleWell, allWells } = this.props;
+      const {
+        scaler,
+        coupleWell,
+        allWells,
+        coupleWellLayer,
+        getCoupleWellLayer
+      } = this.props;
+      if (coupleWellLayer.length === 2) {
+        coupleWellLayer[0].remove();
+        coupleWellLayer[1].remove();
+      }
       for (let i = 0; i < allWells.length; i++) {
         if (coupleWell[coupleWell.length - 1] === allWells[i].id) {
-          L.circle(allWells[i].latlng, { radius: 10, color: "red" }).addTo(
-            this.map
-          );
+          let circle = L.circle(allWells[i].latlng, {
+            radius: 10,
+            color: "red"
+          });
+          self.internalCoupleLayerStore.push(circle);
+          getCoupleWellLayer(self.internalCoupleLayerStore);
+          if (self.internalCoupleLayerStore.length === 2) {
+            self.internalCoupleLayerStore = [];
+          }
+          circle.addTo(this.map);
           break;
         }
       }

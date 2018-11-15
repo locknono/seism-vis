@@ -1,10 +1,14 @@
-import { GET_ALL_WELLS } from "../action/changeWell";
-import { GET_COUPLEWELL_PATH } from "../action/changeWell";
-import { GET_COUPLE_WELL } from "../action/changeWell";
+import {
+  GET_ALL_WELLS,
+  GET_COUPLEWELL_PATH,
+  GET_COUPLE_WELL,
+  GET_COUPLE_WELL_LAYER
+} from "../action/changeWell";
 
 const initialState = {
   allWells: [],
-  coupleWell: ["GD1-2X815", "GD1-6-611"],
+  coupleWell: [],
+  coupleWellLayer: [],
   coupleWellPath: null
 };
 
@@ -22,6 +26,11 @@ export default function wellReducer(state = initialState, action) {
       return {
         ...state,
         coupleWell: [...action.coupleWell]
+      };
+    case GET_COUPLE_WELL_LAYER:
+      return {
+        ...state,
+        coupleWellLayer: [...action.coupleWellLayer]
       };
     default:
       return state;
