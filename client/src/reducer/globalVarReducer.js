@@ -6,6 +6,16 @@ const wellMatchSvgWidth = 300;
 const wellMatchSvgHeight = 700;
 const wellMatchSvgPaddingRatio = 0.1;
 
+function getTraceMinMaxDepth() {
+  let d0 = 3846;
+  let beta = 0.2444;
+  let minDepth = d0 * (Math.exp(beta * 0.002) - 1);
+  let maxDepth = d0 * (Math.exp(beta * 6) - 1);
+  return [minDepth, maxDepth];
+}
+
+const [traceMinDepth, traceMaxDepth] = getTraceMinMaxDepth();
+
 const wellMatchDepthScale = d3
   .scaleLinear()
   .domain([wellMinDepth, wellMaxDepth])
@@ -28,7 +38,9 @@ const initialState = {
   wellMatchSvgHeight,
   wellMatchSvgWidth,
   wellMatchSvgPaddingRatio,
-  wellMatchDepthScale
+  wellMatchDepthScale,
+  traceMinDepth,
+  traceMaxDepth
 };
 
 export default function globalVarReducer(state = initialState, action) {

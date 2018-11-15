@@ -11,7 +11,18 @@ import {
 const mapStateToProps = (state, ownProps) => {
   const scaler = state.figReducer.scaler;
   const { allWells, coupleWell, coupleWellLayer } = state.wellReducer;
-  return { scaler, allWells, coupleWell, coupleWellLayer };
+  const { xStart, yStart, xEnd, yEnd, xySection } = state.globalVarReducer;
+  return {
+    scaler,
+    allWells,
+    coupleWell,
+    coupleWellLayer,
+    xStart,
+    yStart,
+    xEnd,
+    yEnd,
+    xySection
+  };
 };
 
 const mapDispathToProps = {
@@ -26,6 +37,8 @@ class Map extends Component {
     this.mapRef = React.createRef();
     this.internalCoupleIDStore = [];
     this.internalCoupleLayerStore = [];
+    this.internalCoupleXYStore = [];
+    this.getPointsOnLine = this.getPointsOnLine.bind(this);
   }
   componentDidMount() {
     this.deployMap();
@@ -55,9 +68,12 @@ class Map extends Component {
               "click",
               function() {
                 self.internalCoupleIDStore.push(well.id);
+                self.internalCoupleXYStore.push([well.x, well.y]);
                 getCoupleWell(self.internalCoupleIDStore);
                 if (self.internalCoupleIDStore.length === 2) {
                   self.internalCoupleIDStore = [];
+                  self.getPointsOnLine(self.internalCoupleXYStore);
+                  self.internalCoupleXYStore = [];
                 }
               }
             );
@@ -86,15 +102,35 @@ class Map extends Component {
             radius: 10,
             color: "red"
           });
+          circle.addTo(this.map);
           self.internalCoupleLayerStore.push(circle);
           getCoupleWellLayer(self.internalCoupleLayerStore);
           if (self.internalCoupleLayerStore.length === 2) {
             self.internalCoupleLayerStore = [];
           }
-          circle.addTo(this.map);
           break;
         }
       }
+    }
+  }
+
+  getPointsOnLine(line) {
+    const { xStart, yStart, xEnd, yEnd, xySection } = this.props;
+    let x1 = (line[0][0] - xStart) / xySection;
+    let y1 = (line[0][1] - yStart) / xySection;
+    let x2 = (line[1][0] - xStart) / xySection;
+    let y2 = (line[1][1] - yStart) / xySection;
+    const matrixCoors = [[x1, y1], [x2, y2]].map(e => e.map(Math.floor));
+    const k =
+      (matrixCoors[0][1] - matrixCoors[1][1]) /
+      (matrixCoors[0][0] - matrixCoors[1][0]);
+    const b = matrixCoors[0][1] - matrixCoors[0][0] * k;
+    let smallerX = matrixCoors[0][0] < matrixCoors[1][0] ? 0 : 1;
+    let biggerX = matrixCoors[0][0] < matrixCoors[1][0] ? 1 : 0;
+    let pointsOnLine = [];
+    for (let x = matrixCoors[smallerX][0]; x < matrixCoors[biggerX][0]; x++) {
+      let y = Math.floor(k * x + b);
+      pointsOnLine.push([x, y]);
     }
   }
 
