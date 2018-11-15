@@ -38,27 +38,6 @@ class MatrixFigureV2 extends Component<Props, State> {
     this.imgOnLoad = this.imgOnLoad.bind(this);
   }
 
-  /*   componentDidMount() {
-    const { xStart, xEnd, yStart, yEnd } = this.props;
-    setTimeout(
-      function() {
-        const figuerNode = this.figureRef.current;
-        const { width, height, left, top } = figuerNode.getBoundingClientRect();
-        this.props.changeSizePosition(width, height, left, top);
-        const xScaler = d3
-          .scaleLinear()
-          .domain([xStart, xEnd])
-          .range([0, width]);
-        const yScaler = d3
-          .scaleLinear()
-          .domain([yStart, yEnd])
-          .range([height, 0]);
-        this.props.getScaler({ xScaler, yScaler });
-      }.bind(this),
-      0
-    );
-  } */
-
   imgOnLoad() {
     const { xStart, xEnd, yStart, yEnd } = this.props;
     const figuerNode = this.figureRef.current;
