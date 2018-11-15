@@ -7,7 +7,7 @@ import { getAllWells, getCoupleWell } from "../action/changeWell";
 const mapStateToProps = (state, ownProps) => {
   const scaler = state.figReducer.scaler;
   const { allWells, coupleWell } = state.wellReducer;
-  return { scaler, coupleWell, allWells };
+  return { scaler, allWells, coupleWell };
 };
 
 const mapDispathToProps = {
@@ -28,6 +28,7 @@ class Map extends Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     let self = this;
+
     if (prevProps.scaler === null) {
       const { scaler, getAllWells, getCoupleWell } = this.props;
       const wellLayers = [];
@@ -47,12 +48,9 @@ class Map extends Component {
             let circle = L.circle(well.latlng, { radius: 10 }).on(
               "click",
               function() {
-                if (self.internalCoupleIDStore.length === 0) {
-                  self.internalCoupleIDStore.push(well.id);
-                } else if (self.internalCoupleIDStore.length === 1) {
-                  self.internalCoupleIDStore.push(well.id);
-                  console.log(self.internalCoupleIDStore);
-                  getCoupleWell(self.internalCoupleIDStore);
+                self.internalCoupleIDStore.push(well.id);
+                getCoupleWell(self.internalCoupleIDStore);
+                if (self.internalCoupleIDStore.length === 2) {
                   self.internalCoupleIDStore = [];
                 }
               }
@@ -64,13 +62,14 @@ class Map extends Component {
       circlesLayer.addTo(this.map);
     }
 
-    if (this.props.allWells !== prevProps.allWells) {
+    if (this.props.coupleWell.length !== prevProps.coupleWell.length) {
       const { scaler, coupleWell, allWells } = this.props;
       for (let i = 0; i < allWells.length; i++) {
-        if (coupleWell.includes(allWells[i].id)) {
-          L.circle(allWells[i].latlng, { radius: 100, color: "red" }).addTo(
+        if (coupleWell[coupleWell.length - 1] === allWells[i].id) {
+          L.circle(allWells[i].latlng, { radius: 10, color: "red" }).addTo(
             this.map
           );
+          break;
         }
       }
     }

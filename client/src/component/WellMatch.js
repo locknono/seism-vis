@@ -46,25 +46,27 @@ class WellMatch extends Component {
 
   componentDidUpdate() {
     const coupleWell = this.props.coupleWell;
-    fetch(`http://localhost:5000/wellMatch/${coupleWell[0]}_${coupleWell[1]}`)
-      .then(res => res.json())
-      .then(data => {
-        const { width, height, paddingRatio, scale } = this.props;
-        let coupleWellPath = [];
-        let x1 = paddingRatio * width;
-        let x2 = width * (1 - paddingRatio);
-        for (let i = 0; i < data[0].value.length; i++) {
-          if (data[0].value[i].topDepth && data[1].value[i].topDepth) {
-            let y1 = scale(data[0].value[i].topDepth);
-            let y2 = scale(data[1].value[i].topDepth);
-            let y3 = scale(data[0].value[i].bottomDepth);
-            let y4 = scale(data[1].value[i].bottomDepth);
-            let path = [[x1, y1], [x2, y2], [x2, y4], [x1, y3]];
-            coupleWellPath.push(path);
+    if (coupleWell.length === 2) {
+      fetch(`http://localhost:5000/wellMatch/${coupleWell[0]}_${coupleWell[1]}`)
+        .then(res => res.json())
+        .then(data => {
+          const { width, height, paddingRatio, scale } = this.props;
+          let coupleWellPath = [];
+          let x1 = paddingRatio * width;
+          let x2 = width * (1 - paddingRatio);
+          for (let i = 0; i < data[0].value.length; i++) {
+            if (data[0].value[i].topDepth && data[1].value[i].topDepth) {
+              let y1 = scale(data[0].value[i].topDepth);
+              let y2 = scale(data[1].value[i].topDepth);
+              let y3 = scale(data[0].value[i].bottomDepth);
+              let y4 = scale(data[1].value[i].bottomDepth);
+              let path = [[x1, y1], [x2, y2], [x2, y4], [x1, y3]];
+              coupleWellPath.push(path);
+            }
           }
-        }
-        this.props.getCoupleWellPath(coupleWellPath);
-      });
+          this.props.getCoupleWellPath(coupleWellPath);
+        });
+    }
   }
   render() {
     const { width, height, paddingRatio, coupleWellPath } = this.props;

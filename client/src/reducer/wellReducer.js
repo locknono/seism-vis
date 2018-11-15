@@ -21,7 +21,7 @@ export default function wellReducer(state = initialState, action) {
     case GET_COUPLE_WELL:
       return {
         ...state,
-        coupleWell: action.coupleWell
+        coupleWell: [...action.coupleWell]
       };
     default:
       return state;
