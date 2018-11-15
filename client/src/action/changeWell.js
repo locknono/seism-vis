@@ -1,5 +1,6 @@
 export const GET_ALL_WELLS = "GET_ALL_WELLS";
 export const GET_COUPLEWELL_PATH = "GET_COUPLEWELL_PATHF";
+export const GET_COUPLE_WELL = "GET_COUPLE_WELL";
 
 export function getAllWells(allWells) {
   return {
@@ -14,3 +15,11 @@ export function getCoupleWellPath(path) {
     coupleWellPath: path
   };
 }
+
+export function getCoupleWell(coupleWell) {
+  return {
+    type: GET_COUPLE_WELL,
+    coupleWell
+  };
+}
+

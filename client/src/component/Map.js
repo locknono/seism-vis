@@ -3,10 +3,11 @@ import L from "leaflet";
 import { toLatLon, fromLatLon } from "utm";
 import proj4 from "proj4";
 import { connect } from "react-redux";
-import { getAllWells } from "../action/changeWell";
+import { getAllWells, getCoupleWell } from "../action/changeWell";
 const mapStateToProps = (state, ownProps) => {
   const scaler = state.figReducer.scaler;
-  return { scaler };
+  const { allWells, coupleWell } = state.wellReducer;
+  return { scaler, coupleWell, allWells };
 };
 
 const mapDispathToProps = {
@@ -18,38 +19,45 @@ class Map extends Component {
     super(props);
     this.mapRef = React.createRef();
   }
-  componentDidMount() {}
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.scaler === prevProps.scaler) {
-      return;
-    }
-    const { scaler, getAllWells } = this.props;
+  componentDidMount() {
     this.deployMap();
     this.generateBound();
+  }
 
-    const utm = "+proj=utm +zone=50";
-    const wgs84 = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
-
-    const circlesLayer = L.layerGroup();
-    fetch("./data/wellFullLocation.json")
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        }
-      })
-      .then(wellLocationData => {
-        const allWells = [];
-        wellLocationData.map(well => {
-          let xOnSvg = scaler.xScaler(well.x);
-          let yOnSvg = scaler.yScaler(well.y);
-          allWells.push({ ...well, xOnSvg, yOnSvg });
-          circlesLayer.addLayer(L.circle(well.latlng, { radius: 10 }));
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevProps.scaler === null) {
+      const { scaler, getAllWells } = this.props;
+      const wellLayers = [];
+      const circlesLayer = L.layerGroup();
+      fetch("./data/wellFullLocation.json")
+        .then(res => {
+          if (res.ok) {
+            return res.json();
+          }
+        })
+        .then(wellLocationData => {
+          const allWells = [];
+          wellLocationData.map(well => {
+            let xOnSvg = scaler.xScaler(well.x);
+            let yOnSvg = scaler.yScaler(well.y);
+            allWells.push({ ...well, xOnSvg, yOnSvg });
+            circlesLayer.addLayer(L.circle(well.latlng, { radius: 10 }));
+          });
+          getAllWells(allWells);
         });
-        getAllWells(allWells);
-      });
+      circlesLayer.addTo(this.map);
+    }
 
-    circlesLayer.addTo(this.map);
+    if (this.props.allWells !== prevProps.allWells) {
+      const { scaler, coupleWell, allWells } = this.props;
+      for (let i = 0; i < allWells.length; i++) {
+        if (coupleWell.includes(allWells[i].id)) {
+          L.circle(allWells[i].latlng, { radius: 100, color: "red" }).addTo(
+            this.map
+          );
+        }
+      }
+    }
   }
 
   deployMap() {

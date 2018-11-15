@@ -1,5 +1,6 @@
 import { GET_ALL_WELLS } from "../action/changeWell";
 import { GET_COUPLEWELL_PATH } from "../action/changeWell";
+import { GET_COUPLE_WELL } from "../action/changeWell";
 
 const initialState = {
   allWells: [],
@@ -16,6 +17,11 @@ export default function wellReducer(state = initialState, action) {
       return {
         ...state,
         coupleWellPath: action.coupleWellPath
+      };
+    case GET_COUPLE_WELL:
+      return {
+        ...state,
+        coupleWell: action.coupleWell
       };
     default:
       return state;
