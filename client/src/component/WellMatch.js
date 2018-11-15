@@ -45,6 +45,7 @@ class WellMatch extends Component {
   }
 
   componentDidUpdate() {
+    const coupleWell = this.props.coupleWell;
     fetch(`http://localhost:5000/wellMatch/${coupleWell[0]}_${coupleWell[1]}`)
       .then(res => res.json())
       .then(data => {

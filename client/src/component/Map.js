@@ -11,13 +11,15 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispathToProps = {
-  getAllWells
+  getAllWells,
+  getCoupleWell
 };
 
 class Map extends Component {
   constructor(props) {
     super(props);
     this.mapRef = React.createRef();
+    this.internalCoupleIDStore = [];
   }
   componentDidMount() {
     this.deployMap();
@@ -25,8 +27,9 @@ class Map extends Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
+    let self = this;
     if (prevProps.scaler === null) {
-      const { scaler, getAllWells } = this.props;
+      const { scaler, getAllWells, getCoupleWell } = this.props;
       const wellLayers = [];
       const circlesLayer = L.layerGroup();
       fetch("./data/wellFullLocation.json")
@@ -41,7 +44,20 @@ class Map extends Component {
             let xOnSvg = scaler.xScaler(well.x);
             let yOnSvg = scaler.yScaler(well.y);
             allWells.push({ ...well, xOnSvg, yOnSvg });
-            circlesLayer.addLayer(L.circle(well.latlng, { radius: 10 }));
+            let circle = L.circle(well.latlng, { radius: 10 }).on(
+              "click",
+              function() {
+                if (self.internalCoupleIDStore.length === 0) {
+                  self.internalCoupleIDStore.push(well.id);
+                } else if (self.internalCoupleIDStore.length === 1) {
+                  self.internalCoupleIDStore.push(well.id);
+                  console.log(self.internalCoupleIDStore);
+                  getCoupleWell(self.internalCoupleIDStore);
+                  self.internalCoupleIDStore = [];
+                }
+              }
+            );
+            circlesLayer.addLayer(circle);
           });
           getAllWells(allWells);
         });
