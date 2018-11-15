@@ -12,7 +12,7 @@ const mapStateToProps = (state, ownProps) => {
     wellMatchDepthScale
   } = state.globalVarReducer;
 
-  const { coupleWell } = state.wellReducer;
+  const { coupleWell, coupleWellPath } = state.wellReducer;
 
   return {
     wellMinDepth,
@@ -21,7 +21,8 @@ const mapStateToProps = (state, ownProps) => {
     width: wellMatchSvgWidth,
     height: wellMatchSvgHeight,
     paddingRatio: wellMatchSvgPaddingRatio,
-    coupleWell
+    coupleWell,
+    coupleWellPath
   };
 };
 
@@ -44,9 +45,9 @@ class WellMatch extends Component {
     const { coupleWell } = this.props;
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps, prevState) {
     const coupleWell = this.props.coupleWell;
-    if (coupleWell.length === 2) {
+    if (coupleWell.length === 2 && prevProps.coupleWell.length === 1) {
       fetch(`http://localhost:5000/wellMatch/${coupleWell[0]}_${coupleWell[1]}`)
         .then(res => res.json())
         .then(data => {
@@ -76,6 +77,7 @@ class WellMatch extends Component {
     const p3 = [(1 - paddingRatio) * width, paddingRatio * height];
     const p4 = [(1 - paddingRatio) * width, (1 - paddingRatio) * height];
     let mapLines = null;
+
     if (coupleWellPath) {
       mapLines = coupleWellPath.map((e, i) => {
         let pathD = pathGen(e);
