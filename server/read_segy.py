@@ -100,9 +100,11 @@ def createIndex():
 
 
 if __name__ == '__main__':
+    """
     createTraceCollection()
     dropZColeection()
     createZCollection()
     createIndex()
+    """
 # deleteTraceOutOfBoundary()
 # findMinBound()

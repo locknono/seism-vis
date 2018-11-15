@@ -47,7 +47,6 @@ code {
 }
 
 .matrix-selected-line-img {
-  margin: auto;
 }
 
 .matrix-polyline {
@@ -119,7 +118,6 @@ code {
 }
 
 .well-match-div {
-  float: left;
   width: min-content;
 }
 

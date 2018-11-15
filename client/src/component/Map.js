@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import * as React from "react";
 import L from "leaflet";
 import { toLatLon, fromLatLon } from "utm";
 import proj4 from "proj4";
@@ -8,6 +8,8 @@ import {
   getCoupleWell,
   getCoupleWellLayer
 } from "../action/changeWell";
+import { getFigURI } from "../action/changeWell";
+
 const mapStateToProps = (state, ownProps) => {
   const scaler = state.figReducer.scaler;
   const { allWells, coupleWell, coupleWellLayer } = state.wellReducer;
@@ -28,10 +30,11 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispathToProps = {
   getAllWells,
   getCoupleWell,
-  getCoupleWellLayer
+  getCoupleWellLayer,
+  getFigURI
 };
 
-class Map extends Component {
+class Map extends React.Component {
   constructor(props) {
     super(props);
     this.mapRef = React.createRef();
@@ -49,7 +52,7 @@ class Map extends Component {
     let self = this;
 
     if (prevProps.scaler === null) {
-      const { scaler, getAllWells, getCoupleWell } = this.props;
+      const { scaler, getAllWells, getCoupleWell, getFigURI } = this.props;
       const wellLayers = [];
       const circlesLayer = L.layerGroup();
       fetch("./data/wellFullLocation.json")
@@ -72,12 +75,17 @@ class Map extends Component {
                 getCoupleWell(self.internalCoupleIDStore);
                 if (self.internalCoupleIDStore.length === 2) {
                   self.internalCoupleIDStore = [];
+
                   const pointsOnLine = self.getPointsOnLine(
                     self.internalCoupleXYStore
                   );
-                  console.log("pointsOnLine: ", pointsOnLine);
-                  const figURI = self.fetchMatchFig(pointsOnLine);
+                  const figURI = self
+                    .fetchMatchFig(pointsOnLine)
+                    .then(figURI => {
+                      getFigURI(figURI);
+                    });
                   console.log("figURI: ", figURI);
+                  getFigURI(figURI);
                   self.internalCoupleXYStore = [];
                 }
               }
@@ -139,8 +147,9 @@ class Map extends Component {
     }
     return pointsOnLine;
   }
+
   fetchMatchFig(pointsOnLine) {
-    fetch("http://localhost:5000/drawLine/", {
+    return fetch("http://localhost:5000/drawLine/", {
       body: JSON.stringify(pointsOnLine), // must match 'Content-Type' header
       credentials: "same-origin", // include, same-origin, *omit
       headers: {
@@ -148,12 +157,9 @@ class Map extends Component {
       },
       method: "POST", // *GET, POST, PUT, DELETE, etc.
       mode: "cors" // no-cors, cors, *same-origin
-    })
-      .then(res => res.text())
-      .then(imgURI => {
-        return imgURI;
-      });
+    }).then(res => res.text());
   }
+
   deployMap() {
     const center = [37.867271959429445, 118.78092767561518];
     const zoom = 13;

@@ -1,19 +1,9 @@
 from flask import Flask, Response, request
 from seismdb import SeismDb
 import json
-from matrix import Drawer
 import matplotlib.pyplot as plt
 import matplotlib
-import numpy as np
-from matplotlib.backends.backend_agg import FigureCanvasAgg
-from matplotlib.figure import Figure
-import random
-from flask import send_file
-import io
-
-from flask import Flask, make_response
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
+from flask import Flask
 import io
 import base64
 from flask_cors import CORS
@@ -23,9 +13,6 @@ app = Flask(__name__)
 CORS(app)
 
 db = SeismDb()
-plt.ioff()
-plt.axis('off')
-matplotlib.use('Agg')
 
 
 @app.route('/')
@@ -47,18 +34,16 @@ def sendPolyLineData(coors):
 
 @app.route('/drawLine/', methods=['GET', 'POST'])
 def drawLine():
+    plt.axis('off')
+    plt.ioff()
+    matplotlib.use('Agg')
     ods = json.loads(request.data.decode("utf-8"))
-    print(ods)
     matrix = []
     for p in ods:
-        print(p)
-        print(p[0])
-        print(p[1])
-        result=db.trace.find_one({"x": xStart + p[0] * xySection, "y": yStart + p[1] * xySection})
+        result = db.trace.find_one({"x": xStart + p[0] * xySection, "y": yStart + p[1] * xySection})
         zArray = result['z']
         matrix.append(zArray)
-
-    fig = plt.imshow((matrix), vmin=vmin, vmax=vmax, cmap=plt.get_cmap("Greys"))
+    fig = plt.imshow(matrix, aspect=1000, vmin=vmin, vmax=vmax, cmap=plt.get_cmap("Greys"))
     fig.axes.get_xaxis().set_visible(False)
     fig.axes.get_yaxis().set_visible(False)
     sio = io.BytesIO()
