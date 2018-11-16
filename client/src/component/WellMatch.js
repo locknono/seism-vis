@@ -96,7 +96,7 @@ class WellMatch extends React.Component {
     if (coupleWellPath) {
       mapLines = coupleWellPath.map((e, i) => {
         let pathD = pathGen(e);
-        let style = { fill: colorScale(i), stroke: "none" };
+        let style = { fill: colorScale(i), stroke: "none", fillOpacity: 0.5 };
         return (
           <path key={i} d={pathD} style={style} className="well-match-axis" />
         );
