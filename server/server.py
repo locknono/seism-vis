@@ -8,6 +8,7 @@ import io
 import base64
 from flask_cors import CORS
 from global_variable import *
+from drawRect import drawLineMatrix
 
 app = Flask(__name__)
 CORS(app)
@@ -34,15 +35,26 @@ def sendPolyLineData(coors):
 
 @app.route('/drawLine/', methods=['GET', 'POST'])
 def drawLine():
-    plt.axis('off')
     plt.ioff()
     matplotlib.use('Agg')
+    plt.axis('off')
     ods = json.loads(request.data.decode("utf-8"))
     matrix = []
     for p in ods:
         result = db.trace.find_one({"x": xStart + p[0] * xySection, "y": yStart + p[1] * xySection})
         zArray = result['z']
         matrix.append(zArray)
+    sio = io.BytesIO()
+    drawLineMatrix(matrix, sio)
+    sio.seek(0)
+    data = base64.encodebytes(sio.getvalue()).decode()
+    resURL = Response(data, mimetype='text/xml')
+    resURL.headers['Access-Control-Allow-Methods'] = 'POST'
+    sio.close()
+
+    return resURL
+
+    """
     fig = plt.imshow(matrix, aspect=1000, vmin=vmin, vmax=vmax, cmap=plt.get_cmap("Greys"))
     fig.axes.get_xaxis().set_visible(False)
     fig.axes.get_yaxis().set_visible(False)
@@ -52,21 +64,13 @@ def drawLine():
 
     data = base64.encodebytes(sio.getvalue()).decode()
 
-    """
-    html = '''
-              <img src="data:image/png;base64,{}" />    
-            '''
-    res = Response(html.format(data), mimetype='text/xml')
-    res.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
-    res.headers['Access-Control-Allow-Methods'] = 'POST'
-    """
-
     resURL = Response(data, mimetype='text/xml')
     resURL.headers['Access-Control-Allow-Methods'] = 'POST'
-
+    
     sio.close()
 
     return resURL
+    """
 
 
 @app.route('/wellMatch/<twoID>')
