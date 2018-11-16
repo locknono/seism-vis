@@ -1,6 +1,7 @@
-import React, { Component } from "react";
+import * as React from "react";
 import { connect } from "react-redux";
 import { getCoupleWellPath } from "../action/changeWell";
+import { changeSvgSize } from "../action/changeWellMatchSvg";
 import * as d3 from "d3";
 const mapStateToProps = (state, ownProps) => {
   const {
@@ -27,9 +28,9 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const mapDispatchToProps = { getCoupleWellPath };
+const mapDispatchToProps = { getCoupleWellPath, changeSvgSize };
 
-class WellMatch extends Component {
+class WellMatch extends React.Component {
   constructor(props) {
     super(props);
     //do not store in `redux store` temporarily
@@ -40,6 +41,9 @@ class WellMatch extends Component {
         .x(d => d[0])
         .y(d => d[1])
     };
+    this.unsafe_figure_loaded = false;
+    this.onImgLoad = this.onImgLoad.bind(this);
+    this.figureRef = React.createRef();
   }
 
   componentDidMount() {
@@ -47,8 +51,8 @@ class WellMatch extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const coupleWell = this.props.coupleWell;
-    if (coupleWell.length === 2 && prevProps.coupleWell.length === 1) {
+    const { coupleWell, scale } = this.props;
+    if (this.unsafe_figure_loaded === true) {
       fetch(`http://localhost:5000/wellMatch/${coupleWell[0]}_${coupleWell[1]}`)
         .then(res => res.json())
         .then(data => {
@@ -68,15 +72,25 @@ class WellMatch extends Component {
           }
           this.props.getCoupleWellPath(coupleWellPath);
         });
+      this.unsafe_figure_loaded = false;
     }
   }
+
+  onImgLoad(e) {
+    this.unsafe_figure_loaded = true;
+    const { changeSvgSize } = this.props;
+    const figuerNode = this.figureRef.current;
+    const { width, height, left, top } = figuerNode.getBoundingClientRect();
+    changeSvgSize(width, height);
+  }
+
   render() {
     const { width, height, paddingRatio, coupleWellPath, figURI } = this.props;
     const { colorScale, pathGen } = this.state;
-    const p1 = [paddingRatio * width, paddingRatio * height];
+    /* const p1 = [paddingRatio * width, paddingRatio * height];
     const p2 = [paddingRatio * width, (1 - paddingRatio) * height];
     const p3 = [(1 - paddingRatio) * width, paddingRatio * height];
-    const p4 = [(1 - paddingRatio) * width, (1 - paddingRatio) * height];
+    const p4 = [(1 - paddingRatio) * width, (1 - paddingRatio) * height]; */
     let mapLines = null;
 
     if (coupleWellPath) {
@@ -88,11 +102,20 @@ class WellMatch extends Component {
         );
       });
     }
-
+    const imgStyle = {};
+    const svgStyle = { width, height };
     return (
       <div className="panel panel-default well-match-div">
-        <svg className="well-match-svg">
-          <line
+        <img
+          alt="Selected Line"
+          style={imgStyle}
+          src={`data:image/png;base64,${figURI}`}
+          className="matrix-selected-line-img"
+          onLoad={this.onImgLoad}
+          ref={this.figureRef}
+        />
+        <svg className="well-match-svg" style={svgStyle}>
+          {/* <line
             x1={p1[0]}
             y1={p1[1]}
             x2={p2[0]}
@@ -105,14 +128,9 @@ class WellMatch extends Component {
             x2={p4[0]}
             y2={p4[1]}
             className="well-match-axis"
-          />
+          /> */}
           {mapLines}
         </svg>
-        <img
-          alt="Selected Line"
-          src={`data:image/png;base64,${figURI}`}
-          className="matrix-selected-line-img"
-        />
       </div>
     );
   }
