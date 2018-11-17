@@ -37,6 +37,10 @@ interface Well {
   y: number;
   latlng: [number, number];
   id: string;
+  xOnSvg?: number;
+  yOnSvg?: number;
+  xOnMatrix: number;
+  yOnMatrix: number;
 }
 interface Props {
   scaler: any;
@@ -70,6 +74,7 @@ class Map extends React.Component<Props, object> {
     this.UNSAFE_internalCoupleLayerStore = [];
     this.UNSAFE_internalCoupleXYStore = [];
     this.getPointsOnLine = this.getPointsOnLine.bind(this);
+    this.getWellIDNearLine = this.getWellIDNearLine.bind(this);
   }
   componentDidMount() {
     this.deployMap();
@@ -80,7 +85,15 @@ class Map extends React.Component<Props, object> {
     let self = this;
 
     if (prevProps.scaler === null) {
-      const { scaler, getAllWells, getCoupleWell, getFigURI } = this.props;
+      const {
+        scaler,
+        getAllWells,
+        getCoupleWell,
+        getFigURI,
+        xStart,
+        yStart,
+        xySection
+      } = this.props;
       const circlesLayer = L.layerGroup();
       fetch("./data/wellFullLocation.json")
         .then(res => {
@@ -94,7 +107,9 @@ class Map extends React.Component<Props, object> {
           wellLocationData.map((well: Well) => {
             let xOnSvg = scaler.xScaler(well.x);
             let yOnSvg = scaler.yScaler(well.y);
-            allWells.push({ ...well, xOnSvg, yOnSvg });
+            let xOnMatrix = Math.floor((well.x - xStart) / xySection);
+            let yOnMatrix = Math.floor((well.y - yStart) / xySection);
+            allWells.push({ ...well, xOnSvg, yOnSvg, xOnMatrix, yOnMatrix });
             let circle = L.circle(well.latlng, { radius: 10 }).on(
               "click",
               function() {
@@ -107,6 +122,8 @@ class Map extends React.Component<Props, object> {
                   const pointsOnLine = self.getPointsOnLine(
                     self.UNSAFE_internalCoupleXYStore
                   );
+                  const wellIDNearLine = self.getWellIDNearLine(pointsOnLine);
+                  console.log("wellIDNearLine: ", wellIDNearLine);
                   const figURI = self
                     .fetchMatchFig(pointsOnLine)
                     .then(figURI => {
@@ -153,7 +170,7 @@ class Map extends React.Component<Props, object> {
     }
   }
 
-  getPointsOnLine(line: [number, number][]) {
+  getPointsOnLine(line: [number, number][]): number[][] {
     const { xStart, yStart, xySection } = this.props;
     let x1 = (line[0][0] - xStart) / xySection;
     let y1 = (line[0][1] - yStart) / xySection;
@@ -172,6 +189,37 @@ class Map extends React.Component<Props, object> {
       pointsOnLine.push([x, y]);
     }
     return pointsOnLine;
+  }
+
+  getWellIDNearLine(pointsOnLine: number[][]): any {
+    const { allWells } = this.props;
+    /*this method can speed up by tranform the 
+    structure of `allWells` from array to obj*/
+    console.log("allWells: ", allWells);
+    let wellIDNearLine: any[] = [];
+    for (let i = 0; i < allWells.length; i++) {
+      let cellPoint: [number, number] = [
+        allWells[i].xOnMatrix,
+        allWells[i].yOnMatrix
+      ];
+      for (let j = 0; j < pointsOnLine.length; j++) {
+        if (isInCell(cellPoint, pointsOnLine[j])) {
+          wellIDNearLine.push(allWells[i].id);
+          break;
+        }
+      }
+    }
+    return wellIDNearLine;
+
+    function isInCell(
+      cellPoint: [number, number],
+      singlePointOnLine: number[]
+    ): boolean {
+      return (
+        cellPoint[0] === singlePointOnLine[0] &&
+        cellPoint[1] === singlePointOnLine[1]
+      );
+    }
   }
 
   fetchMatchFig(pointsOnLine: any) {

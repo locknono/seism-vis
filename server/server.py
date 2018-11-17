@@ -54,24 +54,6 @@ def drawLine():
 
     return resURL
 
-    """
-    fig = plt.imshow(matrix, aspect=1000, vmin=vmin, vmax=vmax, cmap=plt.get_cmap("Greys"))
-    fig.axes.get_xaxis().set_visible(False)
-    fig.axes.get_yaxis().set_visible(False)
-    sio = io.BytesIO()
-    plt.savefig(sio, format='png', bbox_inches='tight', pad_inches=0)
-    sio.seek(0)
-
-    data = base64.encodebytes(sio.getvalue()).decode()
-
-    resURL = Response(data, mimetype='text/xml')
-    resURL.headers['Access-Control-Allow-Methods'] = 'POST'
-    
-    sio.close()
-
-    return resURL
-    """
-
 
 @app.route('/wellMatch/<twoID>')
 def sendWellData(twoID):

@@ -42,36 +42,15 @@ class WellMatch extends React.Component {
         .y(d => d[1])
     };
     this.unsafe_figure_loaded = false;
-    this.onImgLoad = this.onImgLoad.bind(this);
     this.figureRef = React.createRef();
-  }
-
-  componentDidMount() {
-    const { coupleWell } = this.props;
+    this.onImgLoad = this.onImgLoad.bind(this);
+    this.fetchManualWellMatchData = this.fetchManualWellMatchData.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { coupleWell, scale } = this.props;
     if (this.unsafe_figure_loaded === true) {
-      fetch(`http://localhost:5000/wellMatch/${coupleWell[0]}_${coupleWell[1]}`)
-        .then(res => res.json())
-        .then(data => {
-          const { width, height, paddingRatio, scale } = this.props;
-          let coupleWellPath = [];
-          let x1 = paddingRatio * width;
-          let x2 = width * (1 - paddingRatio);
-          for (let i = 0; i < data[0].value.length; i++) {
-            if (data[0].value[i].topDepth && data[1].value[i].topDepth) {
-              let y1 = scale(data[0].value[i].topDepth);
-              let y2 = scale(data[1].value[i].topDepth);
-              let y3 = scale(data[0].value[i].bottomDepth);
-              let y4 = scale(data[1].value[i].bottomDepth);
-              let path = [[x1, y1], [x2, y2], [x2, y4], [x1, y3]];
-              coupleWellPath.push(path);
-            }
-          }
-          this.props.getCoupleWellPath(coupleWellPath);
-        });
+      this.fetchManualWellMatchData(coupleWell, scale);
       this.unsafe_figure_loaded = false;
     }
   }
@@ -82,6 +61,28 @@ class WellMatch extends React.Component {
     const figuerNode = this.figureRef.current;
     const { width, height, left, top } = figuerNode.getBoundingClientRect();
     changeSvgSize(width, height);
+  }
+
+  fetchManualWellMatchData(coupleWell, scale) {
+    fetch(`http://localhost:5000/wellMatch/${coupleWell[0]}_${coupleWell[1]}`)
+      .then(res => res.json())
+      .then(data => {
+        const { width, height, paddingRatio, scale } = this.props;
+        let coupleWellPath = [];
+        let x1 = paddingRatio * width;
+        let x2 = width * (1 - paddingRatio);
+        for (let i = 0; i < data[0].value.length; i++) {
+          if (data[0].value[i].topDepth && data[1].value[i].topDepth) {
+            let y1 = scale(data[0].value[i].topDepth);
+            let y2 = scale(data[1].value[i].topDepth);
+            let y3 = scale(data[0].value[i].bottomDepth);
+            let y4 = scale(data[1].value[i].bottomDepth);
+            let path = [[x1, y1], [x2, y2], [x2, y4], [x1, y3]];
+            coupleWellPath.push(path);
+          }
+        }
+        this.props.getCoupleWellPath(coupleWellPath);
+      });
   }
 
   render() {
