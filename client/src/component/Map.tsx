@@ -89,6 +89,7 @@ class Map extends React.Component<Props, object> {
   componentDidMount() {
     this.deployMap();
     this.generateBound();
+    this.generateGrid();
   }
 
   componentDidUpdate(prevProps: Props, prevState: Props, snapshot: any) {
@@ -120,7 +121,7 @@ class Map extends React.Component<Props, object> {
             let xOnMatrix = Math.floor((well.x - xStart) / xySection);
             let yOnMatrix = Math.floor((well.y - yStart) / xySection);
             allWells.push({ ...well, xOnSvg, yOnSvg, xOnMatrix, yOnMatrix });
-            let circle = L.circle(well.latlng, { radius: 10 }).on(
+            let circle = L.circle(well.latlng, { radius: 5 }).on(
               "click",
               function() {
                 self.UNSAFE_internalCoupleIDStore.push(well.id);
@@ -166,7 +167,7 @@ class Map extends React.Component<Props, object> {
       for (let i = 0; i < allWells.length; i++) {
         if (coupleWell[coupleWell.length - 1] === allWells[i].id) {
           let circle = L.circle(allWells[i].latlng, {
-            radius: 10,
+            radius: 5,
             color: "red"
           });
           circle.addTo(this.map);
@@ -190,7 +191,7 @@ class Map extends React.Component<Props, object> {
         for (let j = 0; j < wellIDNearLine.length; j++) {
           if (wellIDNearLine[j] === allWells[i].id) {
             let circle = L.circle(allWells[i].latlng, {
-              radius: 10,
+              radius: 5,
               color: "green"
             });
             wellIDNearLineLayer.push(circle);
@@ -240,7 +241,6 @@ class Map extends React.Component<Props, object> {
       for (let j = 0; j < pointsOnLine.length; j++) {
         if (isInCell(cellPoint, pointsOnLine[j])) {
           wellIDNearLine.push(allWells[i].id);
-          break;
         }
       }
     }
@@ -296,15 +296,21 @@ class Map extends React.Component<Props, object> {
     let p3: point = [37.899613830166174, 118.82475161382335];
     let p4: point = [37.83027712360192, 118.82304212267306];
     let bound = [p1, p2, p3, p4];
-
-    L.circle(p1, { radius: 100, color: "red" }).addTo(this.map);
-    L.circle(p3, { radius: 100, color: "black" }).addTo(this.map);
-
     L.polygon(bound, { color: "blue" }).addTo(this.map);
   }
 
   generateGrid() {
-    //TO-DO
+    fetch("./data/gridData.json", {})
+      .then(res => res.json())
+      .then(data => {
+        const polylines: any[] = [];
+        data.map((path: [number, number][]) => {
+          const polyline = L.polyline(path, { color: "grey", weight: 0.5 });
+          polylines.push(polyline);
+        });
+        const polylinesLayerGroup = L.layerGroup(polylines);
+        polylinesLayerGroup.addTo(this.map);
+      });
   }
 
   render() {

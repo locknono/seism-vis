@@ -1,5 +1,7 @@
 import math
 from global_variable import *
+import json
+
 
 def GetLatLon2(C, B, IsSix=True):
     # 带号
@@ -32,8 +34,8 @@ def GetLatLon2(C, B, IsSix=True):
     Y = 1 + 2 * S ** 2 + T ** 2
     Z = 5 + 28 * S ** 2 + 24 * S ** 4 + 6 * T + 8 * T * S ** 2
     Lat = (180 / math.pi) * (
-                R - (C - D * 1000000 - 500000) ** 2 * S / (2 * V * U) + (C - D * 1000000 - 500000) ** 4 * W / (
-                24 * U ** 3 * V) - (C - D * 1000000 - 500000) ** 6 * X / (7200 * U ** 5 * V))
+            R - (C - D * 1000000 - 500000) ** 2 * S / (2 * V * U) + (C - D * 1000000 - 500000) ** 4 * W / (
+            24 * U ** 3 * V) - (C - D * 1000000 - 500000) ** 6 * X / (7200 * U ** 5 * V))
     Lon = (180 / math.pi) * (C - D * 1000000 - 500000) * (
             1 - (C - D * 1000000 - 500000) ** 2 * Y / (6 * U ** 2) + (C - D * 1000000 - 500000) ** 4 * Z / (
             120 * U ** 4)) / (U * math.cos(P))
@@ -42,9 +44,23 @@ def GetLatLon2(C, B, IsSix=True):
     return [Lat, Lon]
 
 
+def generateGrid():
+    paths = []
+    for x in range(xStart, xEnd + xySection, xySection):
+        p1 = GetLatLon2(x, yStart)
+        p2 = GetLatLon2(x, yEnd)
+        paths.append([p1, p2])
+    for y in range(int(yStart), int(yEnd + xySection), xySection):
+        p1 = GetLatLon2(xStart, y+0.16)
+        p2 = GetLatLon2(xEnd, y+0.16)
+        paths.append([p1, p2])
+    with open('../client/public/data/gridData.json', 'w', encoding='utf-8')as f:
+        f.write(json.dumps(paths))
+
+
 if __name__ == '__main__':
     print(GetLatLon2(xStart, yStart))
     print(GetLatLon2(xStart, yEnd))
     print(GetLatLon2(xEnd, yEnd))
     print(GetLatLon2(xEnd, yStart))
-
+    generateGrid()
