@@ -7,6 +7,7 @@ import {
   getCoupleWellLayer
 } from "../action/changeWell";
 import { getFigURI, getWellIDNearLine } from "../action/changeWell";
+import { number } from "prop-types";
 
 const mapStateToProps = (state: any, ownProps?: any) => {
   const scaler = state.figReducer.scaler;
@@ -121,31 +122,29 @@ class Map extends React.Component<Props, object> {
             let xOnMatrix = Math.floor((well.x - xStart) / xySection);
             let yOnMatrix = Math.floor((well.y - yStart) / xySection);
             allWells.push({ ...well, xOnSvg, yOnSvg, xOnMatrix, yOnMatrix });
-            let circle = L.circle(well.latlng, { radius: 5 }).on(
-              "click",
-              function() {
-                self.UNSAFE_internalCoupleIDStore.push(well.id);
-                self.UNSAFE_internalCoupleXYStore.push([well.x, well.y]);
-                getCoupleWell(self.UNSAFE_internalCoupleIDStore);
-                if (self.UNSAFE_internalCoupleIDStore.length === 2) {
-                  self.UNSAFE_internalCoupleIDStore = [];
+            let circle = L.circle(well.latlng, {
+              radius: 5,
+              stroke: false,
+              fillOpacity: 1
+            }).on("click", function() {
+              self.UNSAFE_internalCoupleIDStore.push(well.id);
+              self.UNSAFE_internalCoupleXYStore.push([well.x, well.y]);
+              getCoupleWell(self.UNSAFE_internalCoupleIDStore);
+              if (self.UNSAFE_internalCoupleIDStore.length === 2) {
+                self.UNSAFE_internalCoupleIDStore = [];
 
-                  const pointsOnLine = self.getPointsOnLine(
-                    self.UNSAFE_internalCoupleXYStore
-                  );
-                  const wellIDNearLine = self.getWellIDNearLine(pointsOnLine);
-                  console.log("wellIDNearLine: ", wellIDNearLine);
-                  self.props.getWellIDNearLine(wellIDNearLine);
-                  const figURI = self
-                    .fetchMatchFig(pointsOnLine)
-                    .then(figURI => {
-                      getFigURI(figURI);
-                    });
+                const pointsOnLine = self.getPointsOnLine(
+                  self.UNSAFE_internalCoupleXYStore
+                );
+                const wellIDNearLine = self.getWellIDNearLine(pointsOnLine);
+                self.props.getWellIDNearLine(wellIDNearLine);
+                const figURI = self.fetchMatchFig(pointsOnLine).then(figURI => {
                   getFigURI(figURI);
-                  self.UNSAFE_internalCoupleXYStore = [];
-                }
+                });
+                getFigURI(figURI);
+                self.UNSAFE_internalCoupleXYStore = [];
               }
-            );
+            });
             circlesLayer.addLayer(circle);
           });
           getAllWells(allWells);
@@ -206,7 +205,7 @@ class Map extends React.Component<Props, object> {
     }
   }
 
-  getPointsOnLine(line: [number, number][]): number[][] {
+  getPointsOnLine(line: [number, number][]): any[] {
     const { xStart, yStart, xySection } = this.props;
     let x1 = (line[0][0] - xStart) / xySection;
     let y1 = (line[0][1] - yStart) / xySection;
@@ -219,32 +218,48 @@ class Map extends React.Component<Props, object> {
     const b = matrixCoors[0][1] - matrixCoors[0][0] * k;
     let smallerX = matrixCoors[0][0] < matrixCoors[1][0] ? 0 : 1;
     let biggerX = matrixCoors[0][0] < matrixCoors[1][0] ? 1 : 0;
-    let pointsOnLine = [];
-    for (let x = matrixCoors[smallerX][0]; x < matrixCoors[biggerX][0]; x++) {
+    let pointsOnLine: any[] = [];
+    for (
+      let x = matrixCoors[smallerX][0];
+      x < matrixCoors[biggerX][0];
+      x += 0.1
+    ) {
       let y = Math.floor(k * x + b);
-      pointsOnLine.push([x, y]);
+      let exist = false;
+      for (let i = 0; i < pointsOnLine.length; i++) {
+        if (
+          equal(pointsOnLine[i][0], pointsOnLine[i][1], Math.floor(x), y) ===
+          true
+        ) {
+          exist = true;
+        }
+      }
+      if (exist === false) pointsOnLine.push([Math.floor(x), y]);
     }
+    console.log("pointsOnLine: ", pointsOnLine);
     return pointsOnLine;
+    function equal(x1: number, y1: number, x2: number, y2: number): boolean {
+      return x1 === x2 && y1 === y2;
+    }
   }
 
   getWellIDNearLine(pointsOnLine: number[][]): any {
     const { allWells } = this.props;
     /*this method can speed up by tranform the 
     structure of `allWells` from array to obj*/
-    console.log("allWells: ", allWells);
-    let wellIDNearLine: any[] = [];
-    for (let i = 0; i < allWells.length; i++) {
-      let cellPoint: [number, number] = [
-        allWells[i].xOnMatrix,
-        allWells[i].yOnMatrix
-      ];
-      for (let j = 0; j < pointsOnLine.length; j++) {
-        if (isInCell(cellPoint, pointsOnLine[j])) {
-          wellIDNearLine.push(allWells[i].id);
+    let wellIDNearLine = new Set();
+    for (let i = 0; i < pointsOnLine.length; i++) {
+      for (let j = 0; j < allWells.length; j++) {
+        let cellPoint: [number, number] = [
+          allWells[j].xOnMatrix,
+          allWells[j].yOnMatrix
+        ];
+        if (isInCell(cellPoint, pointsOnLine[i])) {
+          wellIDNearLine.add(allWells[j].id);
         }
       }
     }
-    return wellIDNearLine;
+    return Array.from(wellIDNearLine);
 
     function isInCell(
       cellPoint: [number, number],
