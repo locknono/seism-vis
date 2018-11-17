@@ -6,17 +6,23 @@ import {
   getCoupleWell,
   getCoupleWellLayer
 } from "../action/changeWell";
-import { getFigURI } from "../action/changeWell";
+import { getFigURI, getWellIDNearLine } from "../action/changeWell";
 
 const mapStateToProps = (state: any, ownProps?: any) => {
   const scaler = state.figReducer.scaler;
-  const { allWells, coupleWell, coupleWellLayer } = state.wellReducer;
+  const {
+    allWells,
+    coupleWell,
+    coupleWellLayer,
+    wellIDNearLine
+  } = state.wellReducer;
   const { xStart, yStart, xEnd, yEnd, xySection } = state.globalVarReducer;
   return {
     scaler,
     allWells,
     coupleWell,
     coupleWellLayer,
+    wellIDNearLine,
     xStart,
     yStart,
     xEnd,
@@ -29,7 +35,8 @@ const mapDispathToProps = {
   getAllWells,
   getCoupleWell,
   getCoupleWellLayer,
-  getFigURI
+  getFigURI,
+  getWellIDNearLine
 };
 
 interface Well {
@@ -52,10 +59,12 @@ interface Props {
   readonly xEnd: number;
   readonly yEnd: number;
   readonly xySection: number;
+  wellIDNearLine: string[];
   getAllWells: any;
   getCoupleWell: any;
   getCoupleWellLayer: any;
   getFigURI: any;
+  getWellIDNearLine: any;
 }
 
 interface Map {
@@ -64,6 +73,7 @@ interface Map {
   UNSAFE_internalCoupleIDStore: string[];
   UNSAFE_internalCoupleLayerStore: any[];
   UNSAFE_internalCoupleXYStore: [number, number][];
+  UNSAFE_circlesLayer: L.LayerGroup;
 }
 
 class Map extends React.Component<Props, object> {
@@ -124,6 +134,7 @@ class Map extends React.Component<Props, object> {
                   );
                   const wellIDNearLine = self.getWellIDNearLine(pointsOnLine);
                   console.log("wellIDNearLine: ", wellIDNearLine);
+                  self.props.getWellIDNearLine(wellIDNearLine);
                   const figURI = self
                     .fetchMatchFig(pointsOnLine)
                     .then(figURI => {
@@ -167,6 +178,30 @@ class Map extends React.Component<Props, object> {
           break;
         }
       }
+    }
+
+    if (this.props.wellIDNearLine !== prevProps.wellIDNearLine) {
+      if (this.UNSAFE_circlesLayer) {
+        this.UNSAFE_circlesLayer.remove();
+      }
+      const { allWells, wellIDNearLine } = this.props;
+      let wellIDNearLineLayer = [];
+      for (let i = 0; i < allWells.length; i++) {
+        for (let j = 0; j < wellIDNearLine.length; j++) {
+          if (wellIDNearLine[j] === allWells[i].id) {
+            let circle = L.circle(allWells[i].latlng, {
+              radius: 10,
+              color: "green"
+            });
+            wellIDNearLineLayer.push(circle);
+            break;
+          }
+          if (wellIDNearLineLayer.length === wellIDNearLine.length) break;
+        }
+      }
+      const circlesLayer = L.layerGroup(wellIDNearLineLayer);
+      circlesLayer.addTo(this.map);
+      this.UNSAFE_circlesLayer = circlesLayer;
     }
   }
 

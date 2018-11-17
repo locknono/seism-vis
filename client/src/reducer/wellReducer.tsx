@@ -3,7 +3,8 @@ import {
   GET_COUPLEWELL_PATH,
   GET_COUPLE_WELL,
   GET_COUPLE_WELL_LAYER,
-  GET_FIG_URI
+  GET_FIG_URI,
+  GET_WELLID_NEARLINE
 } from "../action/changeWell";
 
 interface WellState {
@@ -12,13 +13,15 @@ interface WellState {
   coupleWellLayer: any[];
   coupleWellPath: any[] | null | undefined;
   figURI: string;
+  wellIDNearLine: string[];
 }
 const initialState: WellState = {
   allWells: [],
   coupleWell: [],
   coupleWellLayer: [],
   coupleWellPath: null,
-  figURI: ""
+  figURI: "",
+  wellIDNearLine: []
 };
 
 export default function wellReducer(
@@ -48,6 +51,11 @@ export default function wellReducer(
       return {
         ...state,
         figURI: action.figURI
+      };
+    case GET_WELLID_NEARLINE:
+      return {
+        ...state,
+        wellIDNearLine: action.wellID
       };
     default:
       return state;
