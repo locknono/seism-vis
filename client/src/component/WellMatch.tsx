@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { getCoupleWellPath } from "../action/changeWell";
 import { changeSvgSize } from "../action/changeWellMatchSvg";
 import * as d3 from "d3";
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state: any, ownProps?: any) => {
   const {
     wellMinDepth,
     wellMaxDepth,
@@ -13,7 +13,12 @@ const mapStateToProps = (state, ownProps) => {
     wellMatchDepthScale
   } = state.globalVarReducer;
 
-  const { coupleWell, coupleWellPath, figURI } = state.wellReducer;
+  const {
+    coupleWell,
+    coupleWellPath,
+    figURI,
+    wellIDNearLine
+  } = state.wellReducer;
 
   return {
     wellMinDepth,
@@ -24,14 +29,39 @@ const mapStateToProps = (state, ownProps) => {
     paddingRatio: wellMatchSvgPaddingRatio,
     coupleWell,
     coupleWellPath,
-    figURI
+    figURI,
+    wellIDNearLine
   };
 };
 
 const mapDispatchToProps = { getCoupleWellPath, changeSvgSize };
 
-class WellMatch extends React.Component {
-  constructor(props) {
+interface Props {
+  readonly wellMinDepth: number;
+  readonly wellMaxDepth: number;
+  scale: any;
+  width: number;
+  height: number;
+  paddingRatio: number;
+  coupleWell: any;
+  coupleWellPath: any;
+  figURI: string;
+  wellIDNearLine: string[];
+  getCoupleWellPath: any;
+  changeSvgSize: any;
+}
+
+interface State {
+  colorScale: any;
+  pathGen: any;
+}
+
+interface WellMatch {
+  unsafe_figure_loaded: boolean;
+  figureRef: any;
+}
+class WellMatch extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     //do not store in `redux store` temporarily
     this.state = {
@@ -48,18 +78,19 @@ class WellMatch extends React.Component {
     this.getManualWellMatchResultNearLine = this.getManualWellMatchResultNearLine.bind(
       this
     );
+    this.generateMatchPath = this.generateMatchPath.bind(this);
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const { coupleWell, scale } = this.props;
+  componentDidUpdate() {
+    const { coupleWell } = this.props;
     if (this.unsafe_figure_loaded === true) {
-      this.fetchManualWellMatchData(coupleWell, scale);
+      this.fetchManualWellMatchData(coupleWell);
       this.getManualWellMatchResultNearLine();
       this.unsafe_figure_loaded = false;
     }
   }
 
-  onImgLoad(e) {
+  onImgLoad(e: any) {
     this.unsafe_figure_loaded = true;
     const { changeSvgSize } = this.props;
     const figuerNode = this.figureRef.current;
@@ -69,7 +100,8 @@ class WellMatch extends React.Component {
 
   getManualWellMatchResultNearLine() {
     const { wellIDNearLine } = this.props;
-    if(!wellIDNearLine) return;
+    console.log("wellIDNearLine: ", wellIDNearLine);
+    if (!wellIDNearLine) return;
     fetch(`http://localhost:5000/nearLineCurve/`, {
       body: JSON.stringify(wellIDNearLine),
       credentials: "same-origin",
@@ -81,16 +113,15 @@ class WellMatch extends React.Component {
     })
       .then(res => res.json())
       .then(data => {
-        console.log("data: ", data);
+        const { width, paddingRatio, scale } = this.props;
       });
   }
 
-  fetchManualWellMatchData(coupleWell, scale) {
+  fetchManualWellMatchData(coupleWell: any) {
     fetch(`http://localhost:5000/wellMatch/${coupleWell[0]}_${coupleWell[1]}`)
       .then(res => res.json())
       .then(data => {
-        console.log("data: ", data);
-        const { width, height, paddingRatio, scale } = this.props;
+        const { width, paddingRatio, scale } = this.props;
         let coupleWellPath = [];
         let x1 = paddingRatio * width;
         let x2 = width * (1 - paddingRatio);
@@ -108,6 +139,7 @@ class WellMatch extends React.Component {
       });
   }
 
+  generateMatchPath() {}
   render() {
     const { width, height, paddingRatio, coupleWellPath, figURI } = this.props;
     const { colorScale, pathGen } = this.state;
@@ -118,7 +150,7 @@ class WellMatch extends React.Component {
     let mapLines = null;
 
     if (coupleWellPath) {
-      mapLines = coupleWellPath.map((e, i) => {
+      mapLines = coupleWellPath.map((e: any, i: number) => {
         let pathD = pathGen(e);
         let style = { fill: colorScale(i), stroke: "none", fillOpacity: 0.5 };
         return (

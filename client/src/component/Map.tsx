@@ -259,6 +259,7 @@ class Map extends React.Component<Props, object> {
         }
       }
     }
+    console.log("Array.from(wellIDNearLine): ", Array.from(wellIDNearLine));
     return Array.from(wellIDNearLine);
 
     function isInCell(

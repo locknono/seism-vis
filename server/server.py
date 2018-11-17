@@ -37,7 +37,6 @@ def sendPolyLineData(coors):
 def nearLineCurve():
     print(request.data)
     ids = json.loads(request.data.decode("utf-8"))
-    print(ids)
     with open('./data/groupWellData.json', 'r') as f:
         wellData = json.loads(f.read())
         returnMatchData = []
