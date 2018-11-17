@@ -33,6 +33,26 @@ def sendPolyLineData(coors):
     return res
 
 
+@app.route('/nearLineCurve/', methods=['GET', 'POST'])
+def nearLineCurve():
+    print(request.data)
+    ids = json.loads(request.data.decode("utf-8"))
+    print(ids)
+    with open('./data/groupWellData.json', 'r') as f:
+        wellData = json.loads(f.read())
+        returnMatchData = []
+        for i in range(len(wellData)):
+            for j in range(len(ids)):
+                if wellData[i]['id'] == ids[j]:
+                    returnMatchData.append(wellData[i])
+                    break
+            if len(returnMatchData) == len(ids):
+                break
+        res = Response(json.dumps(returnMatchData), mimetype='application/json')
+        res.headers['Access-Control-Allow-Methods'] = 'POST'
+        return res
+
+
 @app.route('/drawLine/', methods=['GET', 'POST'])
 def drawLine():
     plt.ioff()
@@ -72,4 +92,6 @@ def sendWellData(twoID):
 
 
 if __name__ == '__main__':
+    plt.ioff()
+    matplotlib.use('Agg')
     app.run()

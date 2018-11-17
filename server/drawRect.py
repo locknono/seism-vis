@@ -62,7 +62,6 @@ def getDepthPixelList(depthList):
         pixelList.append(meterToPixel(depthList[i]))
     return pixelList
 
-showDepthListFig()
 [minDepth, maxDepth] = getMinMaxDepth()
 depthList = getDepthList()
 heightPixelList = getHeightPixelList(depthList)

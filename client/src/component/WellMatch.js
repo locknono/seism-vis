@@ -45,12 +45,16 @@ class WellMatch extends React.Component {
     this.figureRef = React.createRef();
     this.onImgLoad = this.onImgLoad.bind(this);
     this.fetchManualWellMatchData = this.fetchManualWellMatchData.bind(this);
+    this.getManualWellMatchResultNearLine = this.getManualWellMatchResultNearLine.bind(
+      this
+    );
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { coupleWell, scale } = this.props;
     if (this.unsafe_figure_loaded === true) {
       this.fetchManualWellMatchData(coupleWell, scale);
+      this.getManualWellMatchResultNearLine();
       this.unsafe_figure_loaded = false;
     }
   }
@@ -63,10 +67,29 @@ class WellMatch extends React.Component {
     changeSvgSize(width, height);
   }
 
+  getManualWellMatchResultNearLine() {
+    const { wellIDNearLine } = this.props;
+    if(!wellIDNearLine) return;
+    fetch(`http://localhost:5000/nearLineCurve/`, {
+      body: JSON.stringify(wellIDNearLine),
+      credentials: "same-origin",
+      headers: {
+        "content-type": "application/json"
+      },
+      method: "POST",
+      mode: "cors"
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log("data: ", data);
+      });
+  }
+
   fetchManualWellMatchData(coupleWell, scale) {
     fetch(`http://localhost:5000/wellMatch/${coupleWell[0]}_${coupleWell[1]}`)
       .then(res => res.json())
       .then(data => {
+        console.log("data: ", data);
         const { width, height, paddingRatio, scale } = this.props;
         let coupleWellPath = [];
         let x1 = paddingRatio * width;
