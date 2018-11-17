@@ -32,10 +32,16 @@ const mapDispathToProps = {
   getFigURI
 };
 
+interface Well {
+  x: number;
+  y: number;
+  latlng: [number, number];
+  id: string;
+}
 interface Props {
   scaler: any;
-  allWells: any;
-  coupleWell: any;
+  allWells: Well[];
+  coupleWell: string[];
   coupleWellLayer: any;
   readonly xStart: number;
   readonly yStart: number;
@@ -51,9 +57,9 @@ interface Props {
 interface Map {
   map: any;
   mapRef: any;
-  UNSAFE_internalCoupleIDStore: any;
-  UNSAFE_internalCoupleLayerStore: any;
-  UNSAFE_internalCoupleXYStore: any;
+  UNSAFE_internalCoupleIDStore: string[];
+  UNSAFE_internalCoupleLayerStore: any[];
+  UNSAFE_internalCoupleXYStore: [number, number][];
 }
 
 class Map extends React.Component<Props, object> {
@@ -85,7 +91,7 @@ class Map extends React.Component<Props, object> {
         })
         .then(wellLocationData => {
           const allWells: any[] = [];
-          wellLocationData.map((well: any) => {
+          wellLocationData.map((well: Well) => {
             let xOnSvg = scaler.xScaler(well.x);
             let yOnSvg = scaler.yScaler(well.y);
             allWells.push({ ...well, xOnSvg, yOnSvg });
@@ -106,7 +112,6 @@ class Map extends React.Component<Props, object> {
                     .then(figURI => {
                       getFigURI(figURI);
                     });
-                  console.log("figURI: ", figURI);
                   getFigURI(figURI);
                   self.UNSAFE_internalCoupleXYStore = [];
                 }
@@ -148,7 +153,7 @@ class Map extends React.Component<Props, object> {
     }
   }
 
-  getPointsOnLine(line: any) {
+  getPointsOnLine(line: [number, number][]) {
     const { xStart, yStart, xySection } = this.props;
     let x1 = (line[0][0] - xStart) / xySection;
     let y1 = (line[0][1] - yStart) / xySection;
@@ -183,10 +188,10 @@ class Map extends React.Component<Props, object> {
 
   deployMap() {
     const center: [number, number] = [37.867271959429445, 118.78092767561518];
-    const zoom = 13;
-    const preferCanvas = true;
-    const zoomControl = false;
-    const attributionControl = false;
+    const zoom: number = 13;
+    const preferCanvas: boolean = true;
+    const zoomControl: boolean = false;
+    const attributionControl: boolean = false;
     const options: any = {
       center,
       zoom,
@@ -202,10 +207,11 @@ class Map extends React.Component<Props, object> {
 
   generateBound() {
     //clockwise from left-bottom
-    let p1: [number, number] = [37.83164815261103, 118.73221307817226];
-    let p2: [number, number] = [37.90098826849878, 118.73383750454309];
-    let p3: [number, number] = [37.899613830166174, 118.82475161382335];
-    let p4: [number, number] = [37.83027712360192, 118.82304212267306];
+    type point = [number, number]; //like a interface represents tuple
+    let p1: point = [37.83164815261103, 118.73221307817226];
+    let p2: point = [37.90098826849878, 118.73383750454309];
+    let p3: point = [37.899613830166174, 118.82475161382335];
+    let p4: point = [37.83027712360192, 118.82304212267306];
     let bound = [p1, p2, p3, p4];
 
     L.circle(p1, { radius: 100, color: "red" }).addTo(this.map);
