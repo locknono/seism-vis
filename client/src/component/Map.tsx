@@ -1,7 +1,5 @@
 import * as React from "react";
-import L from "leaflet";
-import { toLatLon, fromLatLon } from "utm";
-import proj4 from "proj4";
+import * as L from "leaflet";
 import { connect } from "react-redux";
 import {
   getAllWells,
@@ -10,7 +8,7 @@ import {
 } from "../action/changeWell";
 import { getFigURI } from "../action/changeWell";
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state: any, ownProps?: any) => {
   const scaler = state.figReducer.scaler;
   const { allWells, coupleWell, coupleWellLayer } = state.wellReducer;
   const { xStart, yStart, xEnd, yEnd, xySection } = state.globalVarReducer;
@@ -34,8 +32,32 @@ const mapDispathToProps = {
   getFigURI
 };
 
-class Map extends React.Component {
-  constructor(props) {
+interface Props {
+  scaler: any;
+  allWells: any;
+  coupleWell: any;
+  coupleWellLayer: any;
+  readonly xStart: number;
+  readonly yStart: number;
+  readonly xEnd: number;
+  readonly yEnd: number;
+  readonly xySection: number;
+  getAllWells: any;
+  getCoupleWell: any;
+  getCoupleWellLayer: any;
+  getFigURI: any;
+}
+
+interface Map {
+  map: any;
+  mapRef: any;
+  UNSAFE_internalCoupleIDStore: any;
+  UNSAFE_internalCoupleLayerStore: any;
+  UNSAFE_internalCoupleXYStore: any;
+}
+
+class Map extends React.Component<Props, object> {
+  constructor(props: Props) {
     super(props);
     this.mapRef = React.createRef();
     this.UNSAFE_internalCoupleIDStore = [];
@@ -48,22 +70,22 @@ class Map extends React.Component {
     this.generateBound();
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
+  componentDidUpdate(prevProps: Props, prevState: Props, snapshot: any) {
     let self = this;
 
     if (prevProps.scaler === null) {
       const { scaler, getAllWells, getCoupleWell, getFigURI } = this.props;
-      const wellLayers = [];
       const circlesLayer = L.layerGroup();
       fetch("./data/wellFullLocation.json")
         .then(res => {
           if (res.ok) {
             return res.json();
           }
+          return undefined;
         })
         .then(wellLocationData => {
-          const allWells = [];
-          wellLocationData.map(well => {
+          const allWells: any[] = [];
+          wellLocationData.map((well: any) => {
             let xOnSvg = scaler.xScaler(well.x);
             let yOnSvg = scaler.yScaler(well.y);
             allWells.push({ ...well, xOnSvg, yOnSvg });
@@ -99,7 +121,6 @@ class Map extends React.Component {
 
     if (this.props.coupleWell.length !== prevProps.coupleWell.length) {
       const {
-        scaler,
         coupleWell,
         allWells,
         coupleWellLayer,
@@ -127,8 +148,8 @@ class Map extends React.Component {
     }
   }
 
-  getPointsOnLine(line) {
-    const { xStart, yStart, xEnd, yEnd, xySection } = this.props;
+  getPointsOnLine(line: any) {
+    const { xStart, yStart, xySection } = this.props;
     let x1 = (line[0][0] - xStart) / xySection;
     let y1 = (line[0][1] - yStart) / xySection;
     let x2 = (line[1][0] - xStart) / xySection;
@@ -148,7 +169,7 @@ class Map extends React.Component {
     return pointsOnLine;
   }
 
-  fetchMatchFig(pointsOnLine) {
+  fetchMatchFig(pointsOnLine: any) {
     return fetch("http://localhost:5000/drawLine/", {
       body: JSON.stringify(pointsOnLine), // must match 'Content-Type' header
       credentials: "same-origin", // include, same-origin, *omit
@@ -161,12 +182,12 @@ class Map extends React.Component {
   }
 
   deployMap() {
-    const center = [37.867271959429445, 118.78092767561518];
+    const center: [number, number] = [37.867271959429445, 118.78092767561518];
     const zoom = 13;
     const preferCanvas = true;
     const zoomControl = false;
     const attributionControl = false;
-    const options = {
+    const options: any = {
       center,
       zoom,
       zoomControl,
@@ -181,10 +202,10 @@ class Map extends React.Component {
 
   generateBound() {
     //clockwise from left-bottom
-    let p1 = [37.83164815261103, 118.73221307817226];
-    let p2 = [37.90098826849878, 118.73383750454309];
-    let p3 = [37.899613830166174, 118.82475161382335];
-    let p4 = [37.83027712360192, 118.82304212267306];
+    let p1: [number, number] = [37.83164815261103, 118.73221307817226];
+    let p2: [number, number] = [37.90098826849878, 118.73383750454309];
+    let p3: [number, number] = [37.899613830166174, 118.82475161382335];
+    let p4: [number, number] = [37.83027712360192, 118.82304212267306];
     let bound = [p1, p2, p3, p4];
 
     L.circle(p1, { radius: 100, color: "red" }).addTo(this.map);
