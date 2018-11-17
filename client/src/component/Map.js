@@ -38,9 +38,9 @@ class Map extends React.Component {
   constructor(props) {
     super(props);
     this.mapRef = React.createRef();
-    this.internalCoupleIDStore = [];
-    this.internalCoupleLayerStore = [];
-    this.internalCoupleXYStore = [];
+    this.UNSAFE_internalCoupleIDStore = [];
+    this.UNSAFE_internalCoupleLayerStore = [];
+    this.UNSAFE_internalCoupleXYStore = [];
     this.getPointsOnLine = this.getPointsOnLine.bind(this);
   }
   componentDidMount() {
@@ -70,14 +70,14 @@ class Map extends React.Component {
             let circle = L.circle(well.latlng, { radius: 10 }).on(
               "click",
               function() {
-                self.internalCoupleIDStore.push(well.id);
-                self.internalCoupleXYStore.push([well.x, well.y]);
-                getCoupleWell(self.internalCoupleIDStore);
-                if (self.internalCoupleIDStore.length === 2) {
-                  self.internalCoupleIDStore = [];
+                self.UNSAFE_internalCoupleIDStore.push(well.id);
+                self.UNSAFE_internalCoupleXYStore.push([well.x, well.y]);
+                getCoupleWell(self.UNSAFE_internalCoupleIDStore);
+                if (self.UNSAFE_internalCoupleIDStore.length === 2) {
+                  self.UNSAFE_internalCoupleIDStore = [];
 
                   const pointsOnLine = self.getPointsOnLine(
-                    self.internalCoupleXYStore
+                    self.UNSAFE_internalCoupleXYStore
                   );
                   const figURI = self
                     .fetchMatchFig(pointsOnLine)
@@ -86,7 +86,7 @@ class Map extends React.Component {
                     });
                   console.log("figURI: ", figURI);
                   getFigURI(figURI);
-                  self.internalCoupleXYStore = [];
+                  self.UNSAFE_internalCoupleXYStore = [];
                 }
               }
             );
@@ -116,10 +116,10 @@ class Map extends React.Component {
             color: "red"
           });
           circle.addTo(this.map);
-          self.internalCoupleLayerStore.push(circle);
-          getCoupleWellLayer(self.internalCoupleLayerStore);
-          if (self.internalCoupleLayerStore.length === 2) {
-            self.internalCoupleLayerStore = [];
+          self.UNSAFE_internalCoupleLayerStore.push(circle);
+          getCoupleWellLayer(self.UNSAFE_internalCoupleLayerStore);
+          if (self.UNSAFE_internalCoupleLayerStore.length === 2) {
+            self.UNSAFE_internalCoupleLayerStore = [];
           }
           break;
         }
