@@ -126,25 +126,29 @@ class Map extends React.Component<Props, object> {
               radius: 5,
               stroke: false,
               fillOpacity: 1
-            }).on("click", function() {
-              self.UNSAFE_internalCoupleIDStore.push(well.id);
-              self.UNSAFE_internalCoupleXYStore.push([well.x, well.y]);
-              getCoupleWell(self.UNSAFE_internalCoupleIDStore);
-              if (self.UNSAFE_internalCoupleIDStore.length === 2) {
-                self.UNSAFE_internalCoupleIDStore = [];
+            })
+              .on("click", function() {
+                self.UNSAFE_internalCoupleIDStore.push(well.id);
+                self.UNSAFE_internalCoupleXYStore.push([well.x, well.y]);
+                getCoupleWell(self.UNSAFE_internalCoupleIDStore);
+                if (self.UNSAFE_internalCoupleIDStore.length === 2) {
+                  self.UNSAFE_internalCoupleIDStore = [];
 
-                const pointsOnLine = self.getPointsOnLine(
-                  self.UNSAFE_internalCoupleXYStore
-                );
-                const wellIDNearLine = self.getWellIDNearLine(pointsOnLine);
-                self.props.getWellIDNearLine(wellIDNearLine);
-                const figURI = self.fetchMatchFig(pointsOnLine).then(figURI => {
+                  const pointsOnLine = self.getPointsOnLine(
+                    self.UNSAFE_internalCoupleXYStore
+                  );
+                  const wellIDNearLine = self.getWellIDNearLine(pointsOnLine);
+                  self.props.getWellIDNearLine(wellIDNearLine);
+                  const figURI = self
+                    .fetchMatchFig(pointsOnLine)
+                    .then(figURI => {
+                      getFigURI(figURI);
+                    });
                   getFigURI(figURI);
-                });
-                getFigURI(figURI);
-                self.UNSAFE_internalCoupleXYStore = [];
-              }
-            });
+                  self.UNSAFE_internalCoupleXYStore = [];
+                }
+              })
+              .on("mouseover", () => console.log(well, xOnMatrix, yOnMatrix));
             circlesLayer.addLayer(circle);
           });
           getAllWells(allWells);
@@ -221,7 +225,7 @@ class Map extends React.Component<Props, object> {
     let pointsOnLine: any[] = [];
     for (
       let x = matrixCoors[smallerX][0];
-      x < matrixCoors[biggerX][0];
+      x <= matrixCoors[biggerX][0];
       x += 0.1
     ) {
       let y = Math.floor(k * x + b);
@@ -236,7 +240,14 @@ class Map extends React.Component<Props, object> {
       }
       if (exist === false) pointsOnLine.push([Math.floor(x), y]);
     }
-    console.log("pointsOnLine: ", pointsOnLine);
+    //Ensure the last point is on line
+    let lastPoint = pointsOnLine[pointsOnLine.length - 1];
+    if (
+      lastPoint[0] !== matrixCoors[biggerX][0] ||
+      lastPoint[1] !== matrixCoors[biggerX][1]
+    ) {
+      pointsOnLine.push([matrixCoors[biggerX][0], matrixCoors[biggerX][1]]);
+    }
     return pointsOnLine;
     function equal(x1: number, y1: number, x2: number, y2: number): boolean {
       return x1 === x2 && y1 === y2;
@@ -275,13 +286,13 @@ class Map extends React.Component<Props, object> {
 
   fetchMatchFig(pointsOnLine: any) {
     return fetch("http://localhost:5000/drawLine/", {
-      body: JSON.stringify(pointsOnLine), // must match 'Content-Type' header
-      credentials: "same-origin", // include, same-origin, *omit
+      body: JSON.stringify(pointsOnLine),
+      credentials: "same-origin",
       headers: {
         "content-type": "application/json"
       },
-      method: "POST", // *GET, POST, PUT, DELETE, etc.
-      mode: "cors" // no-cors, cors, *same-origin
+      method: "POST",
+      mode: "cors"
     }).then(res => res.text());
   }
 

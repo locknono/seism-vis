@@ -113,7 +113,9 @@ class WellMatch extends React.Component<Props, State> {
     })
       .then(res => res.json())
       .then(data => {
-        const { width, paddingRatio, scale } = this.props;
+        console.log("data: ", data);
+        const { width, paddingRatio, scale, coupleWell } = this.props;
+        console.log("coupleWell: ", coupleWell);
       });
   }
 
