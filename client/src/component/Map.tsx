@@ -266,7 +266,7 @@ class Map extends React.Component<Props, object> {
     structure of `allWells` from array to obj*/
     const { getWellIDNearLineIndex } = this.props;
     let wellIDNearLine = new Set();
-    let wellIDNearLineIndexOnLine = [0];
+    let wellIDNearLineIndexOnLine = [];
     for (let i = 0; i < pointsOnLine.length; i++) {
       for (let j = 0; j < allWells.length; j++) {
         let cellPoint: [number, number] = [
@@ -280,13 +280,16 @@ class Map extends React.Component<Props, object> {
         }
       }
     }
+    wellIDNearLineIndexOnLine[0] = 0;
+    wellIDNearLineIndexOnLine[wellIDNearLineIndexOnLine.length - 1] = 1;
     getWellIDNearLineIndex(wellIDNearLineIndexOnLine);
     let wellIDNearLineList = Array.from(wellIDNearLine);
-
+    console.log("coupleWell: ", coupleWell);
+    console.log("wellIDNearLineList: ", wellIDNearLineList);
     //ensure the first well of couple well is gotten
     //in the first cell
     wellIDNearLineList[0] = coupleWell[0];
-
+    wellIDNearLineList[wellIDNearLineList.length - 1] = coupleWell[1];
     console.log("wellIDNearLineList: ", wellIDNearLineList);
     return wellIDNearLineList;
 

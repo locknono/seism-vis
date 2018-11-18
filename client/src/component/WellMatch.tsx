@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { getCoupleWellPath } from "../action/changeWell";
+import { getCoupleWellPath, getWellCurve } from "../action/changeWell";
 import { changeSvgSize } from "../action/changeWellMatchSvg";
 import * as d3 from "d3";
 const mapStateToProps = (state: any, ownProps?: any) => {
@@ -18,7 +18,8 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     coupleWellPath,
     figURI,
     wellIDNearLine,
-    wellIDNearLineIndex
+    wellIDNearLineIndex,
+    curvePaths
   } = state.wellReducer;
 
   return {
@@ -32,11 +33,12 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     coupleWellPath,
     figURI,
     wellIDNearLine,
-    wellIDNearLineIndex
+    wellIDNearLineIndex,
+    curvePaths
   };
 };
 
-const mapDispatchToProps = { getCoupleWellPath, changeSvgSize };
+const mapDispatchToProps = { getCoupleWellPath, changeSvgSize, getWellCurve };
 
 interface Props {
   readonly wellMinDepth: number;
@@ -52,6 +54,8 @@ interface Props {
   getCoupleWellPath: any;
   changeSvgSize: any;
   wellIDNearLineIndex: any;
+  getWellCurve: any;
+  curvePaths: any;
 }
 
 interface State {
@@ -103,7 +107,7 @@ class WellMatch extends React.Component<Props, State> {
 
   getManualWellMatchResultNearLine() {
     const { wellIDNearLine } = this.props;
-    console.log("wellIDNearLine: ", wellIDNearLine);
+
     if (!wellIDNearLine) return;
     fetch(`http://localhost:5000/nearLineCurve/`, {
       body: JSON.stringify(wellIDNearLine),
@@ -116,14 +120,15 @@ class WellMatch extends React.Component<Props, State> {
     })
       .then(res => res.json())
       .then(data => {
-        console.log("data: ", data);
         const {
           width,
           paddingRatio,
           scale,
           coupleWell,
-          wellIDNearLineIndex
+          wellIDNearLineIndex,
+          getWellCurve
         } = this.props;
+        console.log("wellIDNearLineIndex: ", wellIDNearLineIndex);
         const drawWidth = width * (1 - 2 * paddingRatio);
         let existLayerIndex: number[] = [];
         for (let i = 0; i < data[0].value.length; i++) {
@@ -134,61 +139,50 @@ class WellMatch extends React.Component<Props, State> {
             existLayerIndex.push(i);
           }
         }
-        const topPathYList = [];
-        const bottomPathYList = [];
+        const paths = [];
         const xList = [];
-        for (let i = 0; i < data.length; i++) {
-          let x = wellIDNearLineIndex[i] * drawWidth;
-          xList.push(x);
-          for (let j = 0; j < existLayerIndex.length; j++) {
-            let index = existLayerIndex[j];
-            let value = data[i].value;
+        for (let i = 0; i < existLayerIndex.length; i++) {
+          let index = existLayerIndex[i];
+          let path = [];
+          for (let j = 0; j < data.length; j++) {
+            let x = wellIDNearLineIndex[j] * drawWidth;
+            let value = data[j].value;
             if (value[index].topDepth) {
-              let y1 = scale(value[index].topDepth);
-              let y2 = scale(value[index].bottomDepth);
-              topPathYList.push(y1);
-              bottomPathYList.push(y2);
+              let y = scale(value[index].topDepth);
+              path.push([x, y]);
             } else {
-              topPathYList.push(null);
-              bottomPathYList.push(null);
+              path.push([x, null]);
+            }
+          }
+          for (let j = data.length - 1; j >= 0; j--) {
+            let x = wellIDNearLineIndex[j] * drawWidth;
+            let value = data[j].value;
+            if (value[index].bottomDepth) {
+              let y = scale(value[index].bottomDepth);
+              path.push([x, y]);
+            } else {
+              path.push([x, null]);
+            }
+          }
+          paths.push(path);
+        }
+        for (let i = 0; i < paths.length; i++) {
+          let path = paths[i];
+          for (let j = 0; j < path.length / 2; j++) {
+            if (!path[j][1]) {
+              path[j][1] = path[j - 1][1];
+            }
+          }
+          for (let j = path.length - 1; j > path.length / 2; j--) {
+            if (!path[j][1]) {
+              path[j][1] = path[j + 1][1];
             }
           }
         }
-
-        for (let i = 0; i < topPathYList.length; i++) {
-          if (!topPathYList[i]) {
-            //do not have to ensure it's a `null`
-            //false-like is ok
-            topPathYList[i] =
-              (topPathYList[i - 1] + bottomPathYList[i - 1]) / 2;
-            bottomPathYList[i] =
-              (topPathYList[i - 1] + bottomPathYList[i - 1]) / 2;
-          }
+        for (let i = 0; i < paths.length; i++) {
+          paths[i].push(paths[i][0]);
         }
-        let path = [];
-        for (let i = 0; i < xList.length; i++) {
-          for (
-            let j = 0;
-            j < topPathYList.length;
-            j += existLayerIndex.length
-          ) {
-            let point = [xList[i], topPathYList[j]];
-            path.push(point);
-          }
-        }
-
-        for (let i = xList.length - 1; i >= 0; i--) {
-          for (
-            let j = bottomPathYList.length - 1;
-            j >= 0;
-            j -= existLayerIndex.length
-          ) {
-            let point = [xList[i], bottomPathYList[j]];
-            path.push(point);
-          }
-        }
-        path.push([xList[0], topPathYList[0]]);
-
+        getWellCurve(paths);
       });
   }
 
@@ -196,7 +190,6 @@ class WellMatch extends React.Component<Props, State> {
     fetch(`http://localhost:5000/wellMatch/${coupleWell[0]}_${coupleWell[1]}`)
       .then(res => res.json())
       .then(data => {
-        console.log("旧data: ", data);
         const { width, paddingRatio, scale } = this.props;
         let coupleWellPath = [];
         let x1 = paddingRatio * width;
@@ -217,18 +210,35 @@ class WellMatch extends React.Component<Props, State> {
 
   generateMatchPath() {}
   render() {
-    const { width, height, paddingRatio, coupleWellPath, figURI } = this.props;
+    const {
+      width,
+      height,
+      paddingRatio,
+      coupleWellPath,
+      figURI,
+      curvePaths
+    } = this.props;
     const { colorScale, pathGen } = this.state;
     /* const p1 = [paddingRatio * width, paddingRatio * height];
     const p2 = [paddingRatio * width, (1 - paddingRatio) * height];
     const p3 = [(1 - paddingRatio) * width, paddingRatio * height];
     const p4 = [(1 - paddingRatio) * width, (1 - paddingRatio) * height]; */
     let mapLines = null;
-
+    let curves = null;
     if (coupleWellPath) {
       mapLines = coupleWellPath.map((e: any, i: number) => {
         let pathD = pathGen(e);
-        let style = { fill: colorScale(i), stroke: "none", fillOpacity: 0.5 };
+        let style = { fill: colorScale(i), stroke: "none", fillOpacity: 0.8 };
+        return (
+          <path key={i} d={pathD} style={style} className="well-match-axis" />
+        );
+      });
+    }
+
+    if (curvePaths) {
+      curves = curvePaths.map((e: any, i: number) => {
+        let pathD = pathGen(e);
+        let style = { fill: colorScale(i), stroke: "none", fillOpacity: 0.8 };
         return (
           <path key={i} d={pathD} style={style} className="well-match-axis" />
         );
@@ -261,7 +271,7 @@ class WellMatch extends React.Component<Props, State> {
             y2={p4[1]}
             className="well-match-axis"
           /> */}
-          {mapLines}
+          {curves}
         </svg>
       </div>
     );

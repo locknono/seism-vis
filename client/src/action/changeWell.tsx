@@ -5,7 +5,7 @@ export const GET_COUPLE_WELL_LAYER = "GET_COUPLE_WELL_LAYER";
 export const GET_FIG_URI = "GET_FIG_URI";
 export const GET_WELLID_NEARLINE = "GET_WELLID_NEARLINE";
 export const GET_WELLIDNEARLINE_INDEX = "GET_WELLIDNEARLINE_INDEX";
-
+export const GET_WELL_CURVE = "GET_WELL_CURVE";
 export function getAllWells(allWells: any) {
   return {
     type: GET_ALL_WELLS,
@@ -52,5 +52,12 @@ export function getWellIDNearLineIndex(index: number[]) {
   return {
     type: GET_WELLIDNEARLINE_INDEX,
     index
+  };
+}
+
+export function getWellCurve(paths: any) {
+  return {
+    type: GET_WELL_CURVE,
+    wellCurve: paths
   };
 }
