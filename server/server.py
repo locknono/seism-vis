@@ -40,14 +40,11 @@ def nearLineCurve():
     with open('./data/groupWellData.json', 'r') as f:
         wellData = json.loads(f.read())
         returnMatchData = []
-
-        for i in range(len(wellData)):
-            for j in range(len(ids)):
-                if wellData[i]['id'] == ids[j]:
-                    returnMatchData.append(wellData[i])
+        for i in range(len(ids)):
+            for j in range(len(wellData)):
+                if (wellData[j]['id'] == ids[i]):
+                    returnMatchData.append(wellData[j])
                     break
-            if len(returnMatchData) == len(ids):
-                break
         res = Response(json.dumps(returnMatchData), mimetype='application/json')
         res.headers['Access-Control-Allow-Methods'] = 'POST'
         return res

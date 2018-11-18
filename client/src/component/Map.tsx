@@ -6,7 +6,11 @@ import {
   getCoupleWell,
   getCoupleWellLayer
 } from "../action/changeWell";
-import { getFigURI, getWellIDNearLine } from "../action/changeWell";
+import {
+  getFigURI,
+  getWellIDNearLine,
+  getWellIDNearLineIndex
+} from "../action/changeWell";
 import { number } from "prop-types";
 
 const mapStateToProps = (state: any, ownProps?: any) => {
@@ -37,7 +41,8 @@ const mapDispathToProps = {
   getCoupleWell,
   getCoupleWellLayer,
   getFigURI,
-  getWellIDNearLine
+  getWellIDNearLine,
+  getWellIDNearLineIndex
 };
 
 interface Well {
@@ -66,6 +71,7 @@ interface Props {
   getCoupleWellLayer: any;
   getFigURI: any;
   getWellIDNearLine: any;
+  getWellIDNearLineIndex: any;
 }
 
 interface Map {
@@ -258,8 +264,9 @@ class Map extends React.Component<Props, object> {
     const { allWells, coupleWell } = this.props;
     /*this method can speed up by tranform the 
     structure of `allWells` from array to obj*/
-
+    const { getWellIDNearLineIndex } = this.props;
     let wellIDNearLine = new Set();
+    let wellIDNearLineIndexOnLine = [0];
     for (let i = 0; i < pointsOnLine.length; i++) {
       for (let j = 0; j < allWells.length; j++) {
         let cellPoint: [number, number] = [
@@ -268,16 +275,18 @@ class Map extends React.Component<Props, object> {
         ];
         if (isInCell(cellPoint, pointsOnLine[i])) {
           wellIDNearLine.add(allWells[j].id);
+          wellIDNearLineIndexOnLine.push((i + 1) / pointsOnLine.length);
           break;
         }
       }
     }
+    getWellIDNearLineIndex(wellIDNearLineIndexOnLine);
     let wellIDNearLineList = Array.from(wellIDNearLine);
 
     //ensure the first well of couple well is gotten
     //in the first cell
     wellIDNearLineList[0] = coupleWell[0];
-    
+
     console.log("wellIDNearLineList: ", wellIDNearLineList);
     return wellIDNearLineList;
 
