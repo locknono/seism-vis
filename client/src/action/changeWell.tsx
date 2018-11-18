@@ -6,6 +6,7 @@ export const GET_FIG_URI = "GET_FIG_URI";
 export const GET_WELLID_NEARLINE = "GET_WELLID_NEARLINE";
 export const GET_WELLIDNEARLINE_INDEX = "GET_WELLIDNEARLINE_INDEX";
 export const GET_WELL_CURVE = "GET_WELL_CURVE";
+
 export function getAllWells(allWells: any) {
   return {
     type: GET_ALL_WELLS,

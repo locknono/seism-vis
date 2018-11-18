@@ -139,7 +139,6 @@ class Map extends React.Component<Props, object> {
                 getCoupleWell(self.UNSAFE_internalCoupleIDStore);
                 if (self.UNSAFE_internalCoupleIDStore.length === 2) {
                   self.UNSAFE_internalCoupleIDStore = [];
-
                   const pointsOnLine = self.getPointsOnLine(
                     self.UNSAFE_internalCoupleXYStore
                   );
@@ -154,7 +153,7 @@ class Map extends React.Component<Props, object> {
                   self.UNSAFE_internalCoupleXYStore = [];
                 }
               })
-              .on("mouseover", () => console.log(well, xOnMatrix, yOnMatrix));
+              .on("mouseover", () => console.log(well));
             circlesLayer.addLayer(circle);
           });
           getAllWells(allWells);
@@ -226,9 +225,9 @@ class Map extends React.Component<Props, object> {
       (matrixCoors[0][1] - matrixCoors[1][1]) /
       (matrixCoors[0][0] - matrixCoors[1][0]);
     const b = matrixCoors[0][1] - matrixCoors[0][0] * k;
-    let smallerX = matrixCoors[0][0] < matrixCoors[1][0] ? 0 : 1;
-    let biggerX = matrixCoors[0][0] < matrixCoors[1][0] ? 1 : 0;
-    let pointsOnLine: any[] = [];
+    const smallerX = matrixCoors[0][0] < matrixCoors[1][0] ? 0 : 1;
+    const biggerX = matrixCoors[0][0] < matrixCoors[1][0] ? 1 : 0;
+    const pointsOnLine: any[] = [];
     for (
       let x = matrixCoors[smallerX][0];
       x <= matrixCoors[biggerX][0];
@@ -237,14 +236,10 @@ class Map extends React.Component<Props, object> {
       let y = Math.floor(k * x + b);
       let exist = false;
       for (let i = 0; i < pointsOnLine.length; i++) {
-        if (
-          equal(pointsOnLine[i][0], pointsOnLine[i][1], Math.floor(x), y) ===
-          true
-        ) {
-          exist = true;
-        }
+        let p = pointsOnLine[i];
+        if (equal(p[0], p[1], Math.floor(x), y)) exist = true;
       }
-      if (exist === false) pointsOnLine.push([Math.floor(x), y]);
+      if (!exist) pointsOnLine.push([Math.floor(x), y]);
     }
     //Ensure the last point is on line
     let lastPoint = pointsOnLine[pointsOnLine.length - 1];
@@ -280,27 +275,23 @@ class Map extends React.Component<Props, object> {
         }
       }
     }
+
     wellIDNearLineIndexOnLine[0] = 0;
     wellIDNearLineIndexOnLine[wellIDNearLineIndexOnLine.length - 1] = 1;
     getWellIDNearLineIndex(wellIDNearLineIndexOnLine);
+
     let wellIDNearLineList = Array.from(wellIDNearLine);
-    console.log("coupleWell: ", coupleWell);
-    console.log("wellIDNearLineList: ", wellIDNearLineList);
     //ensure the first well of couple well is gotten
     //in the first cell
     wellIDNearLineList[0] = coupleWell[0];
     wellIDNearLineList[wellIDNearLineList.length - 1] = coupleWell[1];
-    console.log("wellIDNearLineList: ", wellIDNearLineList);
     return wellIDNearLineList;
 
     function isInCell(
       cellPoint: [number, number],
-      singlePointOnLine: number[]
+      pointOnLine: number[]
     ): boolean {
-      return (
-        cellPoint[0] === singlePointOnLine[0] &&
-        cellPoint[1] === singlePointOnLine[1]
-      );
+      return cellPoint[0] === pointOnLine[0] && cellPoint[1] === pointOnLine[1];
     }
   }
 
