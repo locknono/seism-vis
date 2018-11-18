@@ -255,9 +255,10 @@ class Map extends React.Component<Props, object> {
   }
 
   getWellIDNearLine(pointsOnLine: number[][]): any {
-    const { allWells } = this.props;
+    const { allWells, coupleWell } = this.props;
     /*this method can speed up by tranform the 
     structure of `allWells` from array to obj*/
+
     let wellIDNearLine = new Set();
     for (let i = 0; i < pointsOnLine.length; i++) {
       for (let j = 0; j < allWells.length; j++) {
@@ -267,11 +268,18 @@ class Map extends React.Component<Props, object> {
         ];
         if (isInCell(cellPoint, pointsOnLine[i])) {
           wellIDNearLine.add(allWells[j].id);
+          break;
         }
       }
     }
-    console.log("Array.from(wellIDNearLine): ", Array.from(wellIDNearLine));
-    return Array.from(wellIDNearLine);
+    let wellIDNearLineList = Array.from(wellIDNearLine);
+
+    //ensure the first well of couple well is gotten
+    //in the first cell
+    wellIDNearLineList[0] = coupleWell[0];
+    
+    console.log("wellIDNearLineList: ", wellIDNearLineList);
+    return wellIDNearLineList;
 
     function isInCell(
       cellPoint: [number, number],

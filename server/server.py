@@ -40,6 +40,7 @@ def nearLineCurve():
     with open('./data/groupWellData.json', 'r') as f:
         wellData = json.loads(f.read())
         returnMatchData = []
+
         for i in range(len(wellData)):
             for j in range(len(ids)):
                 if wellData[i]['id'] == ids[j]:
