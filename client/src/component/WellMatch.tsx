@@ -93,9 +93,7 @@ class WellMatch extends React.Component<Props, State> {
         .x(d => d[0])
         .y(d => d[1])
     };
-    this.getManualWellMatchResultNearLine = this.getManualWellMatchResultNearLine.bind(
-      this
-    );
+    this.drawMatch = this.drawMatch.bind(this);
     this.drawTrace = this.drawTrace.bind(this);
   }
 
@@ -103,10 +101,10 @@ class WellMatch extends React.Component<Props, State> {
     const { coupleWell, changeSvgSize, matrixData, width } = this.props;
 
     if (matrixData && matrixData !== prevProps.matrixData) {
-      changeSvgSize(10 * matrixData.length, 800);
+      changeSvgSize(30 * matrixData.length, matrixData[0].length * 5);
     }
     if (width !== prevProps.width) {
-      this.getManualWellMatchResultNearLine();
+      this.drawMatch();
       this.drawTrace();
     }
   }
@@ -123,31 +121,32 @@ class WellMatch extends React.Component<Props, State> {
     console.log("matrixData: ", matrixData);
     const drawWidth = width * (1 - 2 * paddingRatio);
     const pad = drawWidth / matrixData.length;
+    //set xOffsetScope a litter bigger than `pad/2`
+    const xOffsetScope = pad / 1.3;
     const xScale = d3
       .scaleLinear()
       .domain([-13685.379, 15099.375])
-      .range([-pad / 1.3, pad / 1.3]);
+      .range([-xOffsetScope, xOffsetScope]);
     let paths = [];
     for (let i = 0; i < matrixData.length; i++) {
       let path: any = [];
       let x = pad * i + pad / 2;
-      path.push([x, 0]);
-      let thisCol = matrixData[i];
-      for (let j = 0; j < thisCol.length; j++) {
+      for (let j = 0; j < matrixData[i].length; j++) {
+        let xOffset = matrixData[i][j] === 0 ? 0 : xScale(matrixData[i][j]);
         let p1 = [x, scale(depthList[j])];
         let p2 = [
-          x + xScale(thisCol[j]),
+          x + xOffset,
           (scale(depthList[j]) + scale(depthList[j + 1])) / 2
         ];
         path.push(p1, p2);
       }
-      path.push([x, 0]);
+      //path.push([x, 0]);
       paths.push(path);
     }
     getTracePath(paths);
   }
 
-  getManualWellMatchResultNearLine() {
+  drawMatch() {
     const { wellIDNearLine } = this.props;
     if (!wellIDNearLine) return;
     fetch(`http://localhost:5000/nearLineCurve/`, {
@@ -225,7 +224,7 @@ class WellMatch extends React.Component<Props, State> {
   }
 
   render() {
-    const { width, height, figURI, curvePaths, paths } = this.props;
+    const { width, height, curvePaths, paths } = this.props;
     const { colorScale, pathGen } = this.state;
     let curves = null;
     if (curvePaths) {
@@ -241,7 +240,7 @@ class WellMatch extends React.Component<Props, State> {
     if (paths) {
       tracePaths = paths.map((e: any, i: number) => {
         let pathD = pathGen(e);
-        let style = { stroke: "black", strokeWidth: 1 };
+        let style = { fill: "none", stroke: "black", strokeWidth: 0.3 };
         return <path key={i} d={pathD} style={style} className="trace-path" />;
       });
     }

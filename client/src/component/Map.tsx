@@ -113,7 +113,8 @@ class Map extends React.Component<Props, object> {
         getFigURI,
         xStart,
         yStart,
-        xySection
+        xySection,
+        getWellIDNearLine
       } = this.props;
       const circlesLayer = L.layerGroup();
       fetch("./data/wellFullLocation.json")
@@ -146,13 +147,10 @@ class Map extends React.Component<Props, object> {
                     self.UNSAFE_internalCoupleXYStore
                   );
                   const wellIDNearLine = self.getWellIDNearLine(pointsOnLine);
-                  self.props.getWellIDNearLine(wellIDNearLine);
-
-                  const figURI = self
-                    .fetchMatchFig(pointsOnLine)
-                    .then(figURI => {
-                      getFigURI(figURI);
-                    });
+                  getWellIDNearLine(wellIDNearLine);
+                  self.fetchMatchFig(pointsOnLine).then(figURI => {
+                    getFigURI(figURI);
+                  });
                   self.fetchMatrixData(pointsOnLine).then(matrixData => {
                     self.props.getMatrixData(matrixData);
                   });
