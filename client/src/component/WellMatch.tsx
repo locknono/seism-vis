@@ -125,7 +125,7 @@ class WellMatch extends React.Component<Props, State> {
     const xOffsetScope = pad / 1.3;
     const xScale = d3
       .scaleLinear()
-      .domain([-13685.379, 15099.375])
+      .domain([-13685.379, 13685.379])
       .range([-xOffsetScope, xOffsetScope]);
     let paths = [];
     for (let i = 0; i < matrixData.length; i++) {
