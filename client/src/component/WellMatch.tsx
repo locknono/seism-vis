@@ -127,22 +127,38 @@ class WellMatch extends React.Component<Props, State> {
       .scaleLinear()
       .domain([-13685.379, 13685.379])
       .range([-xOffsetScope, xOffsetScope]);
+    let positivePaths = [];
+    let negativePaths = [];
     let paths = [];
     for (let i = 0; i < matrixData.length; i++) {
+      let positivePath: [number, number][] = [];
+      let negativePath: [number, number][] = [];
       let path: any = [];
       let x = pad * i + pad / 2;
       for (let j = 0; j < matrixData[i].length; j++) {
         let xOffset = matrixData[i][j] === 0 ? 0 : xScale(matrixData[i][j]);
-        let p1 = [x, scale(depthList[j])];
-        let p2 = [
+        let p1: [number, number] = [x, scale(depthList[j])];
+        let p2: [number, number] = [
           x + xOffset,
           (scale(depthList[j]) + scale(depthList[j + 1])) / 2
         ];
-        path.push(p1, p2);
+        let p3: [number, number] = [
+          x,
+          (scale(depthList[j]) + scale(depthList[j + 1])) / 2
+        ];
+        if (xOffset > 0) {
+          positivePath.push(p1, p2);
+          negativePath.push(p1, p3);
+        } else {
+          positivePath.push(p1, p3);
+          negativePath.push(p1, p2);
+        }
       }
+      positivePaths.push(positivePath);
+      negativePaths.push(negativePath);
       //path.push([x, 0]);
-      paths.push(path);
     }
+    paths.push(positivePaths, negativePaths);
     getTracePath(paths);
   }
 
@@ -236,9 +252,15 @@ class WellMatch extends React.Component<Props, State> {
         );
       });
     }
-    let tracePaths = null;
+    let positivePaths = null;
+    let negativePaths = null;
     if (paths) {
-      tracePaths = paths.map((e: any, i: number) => {
+      positivePaths = paths[0].map((e: any, i: number) => {
+        let pathD = pathGen(e);
+        let style = { fill: "black", stroke: "black", strokeWidth: 0.3 };
+        return <path key={i} d={pathD} style={style} className="trace-path" />;
+      });
+      negativePaths = paths[1].map((e: any, i: number) => {
         let pathD = pathGen(e);
         let style = { fill: "none", stroke: "black", strokeWidth: 0.3 };
         return <path key={i} d={pathD} style={style} className="trace-path" />;
@@ -249,7 +271,8 @@ class WellMatch extends React.Component<Props, State> {
       <div className="panel panel-default well-match-div" style={svgStyle}>
         <svg className="well-match-svg" style={svgStyle}>
           {curves}
-          {tracePaths}
+          {positivePaths}
+          {negativePaths}
         </svg>
       </div>
     );
