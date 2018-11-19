@@ -154,9 +154,13 @@ class WellMatch extends React.Component<Props, State> {
           negativePath.push(p1, p2);
         }
       }
+
+      //loop the positivePath to ensure it's closed so that css `fill` works
+      positivePath.push([x, scale(depthList[matrixData[0].length + 1])]);
+      positivePath.push([x, scale(depthList[0])]);
+
       positivePaths.push(positivePath);
       negativePaths.push(negativePath);
-      //path.push([x, 0]);
     }
     paths.push(positivePaths, negativePaths);
     getTracePath(paths);
@@ -257,14 +261,14 @@ class WellMatch extends React.Component<Props, State> {
     if (paths) {
       positivePaths = paths[0].map((e: any, i: number) => {
         let pathD = pathGen(e);
-        let style = { fill: "black", stroke: "black", strokeWidth: 0.3 };
-        return <path key={i} d={pathD} style={style} className="trace-path" />;
-      });
-      negativePaths = paths[1].map((e: any, i: number) => {
-        let pathD = pathGen(e);
         let style = { fill: "none", stroke: "black", strokeWidth: 0.3 };
         return <path key={i} d={pathD} style={style} className="trace-path" />;
       });
+      /* negativePaths = paths[1].map((e: any, i: number) => {
+        let pathD = pathGen(e);
+        let style = { fill: "none", stroke: "black", strokeWidth: 0.3 };
+        return <path key={i} d={pathD} style={style} className="trace-path" />;
+      }); */
     }
     const svgStyle = { width, height };
     return (
