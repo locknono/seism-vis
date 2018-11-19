@@ -9,7 +9,8 @@ import {
 import {
   getFigURI,
   getWellIDNearLine,
-  getWellIDNearLineIndex
+  getWellIDNearLineIndex,
+  getMatrixData
 } from "../action/changeWell";
 import { number } from "prop-types";
 
@@ -42,7 +43,8 @@ const mapDispathToProps = {
   getCoupleWellLayer,
   getFigURI,
   getWellIDNearLine,
-  getWellIDNearLineIndex
+  getWellIDNearLineIndex,
+  getMatrixData
 };
 
 interface Well {
@@ -72,6 +74,7 @@ interface Props {
   getFigURI: any;
   getWellIDNearLine: any;
   getWellIDNearLineIndex: any;
+  getMatrixData: any;
 }
 
 interface Map {
@@ -144,12 +147,16 @@ class Map extends React.Component<Props, object> {
                   );
                   const wellIDNearLine = self.getWellIDNearLine(pointsOnLine);
                   self.props.getWellIDNearLine(wellIDNearLine);
+
                   const figURI = self
                     .fetchMatchFig(pointsOnLine)
                     .then(figURI => {
                       getFigURI(figURI);
                     });
-                  getFigURI(figURI);
+                  self.fetchMatrixData(pointsOnLine).then(matrixData => {
+                    console.log("matrixData: ", matrixData);
+                    getMatrixData(matrixData);
+                  });
                   self.UNSAFE_internalCoupleXYStore = [];
                 }
               })
@@ -305,6 +312,18 @@ class Map extends React.Component<Props, object> {
       method: "POST",
       mode: "cors"
     }).then(res => res.text());
+  }
+
+  fetchMatrixData(pointsOnLine: any) {
+    return fetch("http://localhost:5000/returnDrawLineData/", {
+      body: JSON.stringify(pointsOnLine),
+      credentials: "same-origin",
+      headers: {
+        "content-type": "application/json"
+      },
+      method: "POST",
+      mode: "cors"
+    }).then(res => res.json());
   }
 
   deployMap() {

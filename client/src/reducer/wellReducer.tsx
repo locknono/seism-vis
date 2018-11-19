@@ -6,7 +6,8 @@ import {
   GET_FIG_URI,
   GET_WELLID_NEARLINE,
   GET_WELLIDNEARLINE_INDEX,
-  GET_WELL_CURVE
+  GET_WELL_CURVE,
+  GET_MATRIX_DATA
 } from "../action/changeWell";
 
 interface WellState {
@@ -18,6 +19,7 @@ interface WellState {
   wellIDNearLine: string[];
   wellIDNearLineIndex: number[];
   curvePaths: any;
+  matrixData: any;
 }
 
 const initialState: WellState = {
@@ -28,7 +30,8 @@ const initialState: WellState = {
   figURI: "",
   wellIDNearLine: [],
   wellIDNearLineIndex: [],
-  curvePaths: null
+  curvePaths: null,
+  matrixData: null
 };
 
 export default function wellReducer(
@@ -73,6 +76,11 @@ export default function wellReducer(
       return {
         ...state,
         curvePaths: action.wellCurve
+      };
+    case GET_MATRIX_DATA:
+      return {
+        ...state,
+        matrixData: action.matrixData
       };
     default:
       return state;

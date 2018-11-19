@@ -72,6 +72,21 @@ def drawLine():
     return resURL
 
 
+@app.route('/returnDrawLineData/', methods=['GET', 'POST'])
+def returnDrawLineData():
+    ods = json.loads(request.data.decode("utf-8"))
+    matrix = []
+    for p in ods:
+        result = db.trace.find_one({"x": xStart + p[0] * xySection, "y": yStart + p[1] * xySection})
+        zArray = result['z']
+        matrix.append(zArray)
+    for i in range(len(matrix)):
+        matrix[i]=matrix[i][:857]
+    resURL = Response(str(matrix), mimetype='text/xml')
+    resURL.headers['Access-Control-Allow-Methods'] = 'POST'
+    return resURL
+
+
 @app.route('/wellMatch/<twoID>')
 def sendWellData(twoID):
     ID = twoID.split('_')[0]

@@ -86,6 +86,7 @@ class WellMatch extends React.Component<Props, State> {
       this
     );
     this.generateMatchPath = this.generateMatchPath.bind(this);
+    this.drawTrace = this.drawTrace.bind(this);
   }
 
   componentDidUpdate() {
@@ -101,10 +102,13 @@ class WellMatch extends React.Component<Props, State> {
     this.unsafe_figure_loaded = true;
     const { changeSvgSize } = this.props;
     const figuerNode = this.figureRef.current;
-    const { width, height, left, top } = figuerNode.getBoundingClientRect();
+    const { width, height } = figuerNode.getBoundingClientRect();
     changeSvgSize(width, height);
   }
 
+  drawTrace() {
+
+  }
   getManualWellMatchResultNearLine() {
     const { wellIDNearLine } = this.props;
 
