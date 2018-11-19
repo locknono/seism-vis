@@ -82,10 +82,6 @@ interface State {
   pathGen: any;
 }
 
-interface WellMatch {
-  unsafe_figure_loaded: boolean;
-  figureRef: any;
-}
 class WellMatch extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -97,33 +93,22 @@ class WellMatch extends React.Component<Props, State> {
         .x(d => d[0])
         .y(d => d[1])
     };
-    this.unsafe_figure_loaded = false;
-    this.figureRef = React.createRef();
-    this.onImgLoad = this.onImgLoad.bind(this);
-    this.fetchManualWellMatchData = this.fetchManualWellMatchData.bind(this);
     this.getManualWellMatchResultNearLine = this.getManualWellMatchResultNearLine.bind(
       this
     );
-    this.generateMatchPath = this.generateMatchPath.bind(this);
     this.drawTrace = this.drawTrace.bind(this);
   }
 
-  componentDidUpdate() {
-    const { coupleWell } = this.props;
-    if (this.unsafe_figure_loaded === true) {
-      this.fetchManualWellMatchData(coupleWell);
+  componentDidUpdate(prevProps: any) {
+    const { coupleWell, changeSvgSize, matrixData, width } = this.props;
+
+    if (matrixData && matrixData !== prevProps.matrixData) {
+      changeSvgSize(10 * matrixData.length, 800);
+    }
+    if (width !== prevProps.width) {
       this.getManualWellMatchResultNearLine();
-      this.unsafe_figure_loaded = false;
       this.drawTrace();
     }
-  }
-
-  onImgLoad(e: any) {
-    this.unsafe_figure_loaded = true;
-    const { changeSvgSize } = this.props;
-    const figuerNode = this.figureRef.current;
-    const { width, height } = figuerNode.getBoundingClientRect();
-    changeSvgSize(width, height);
   }
 
   drawTrace() {
@@ -164,7 +149,6 @@ class WellMatch extends React.Component<Props, State> {
 
   getManualWellMatchResultNearLine() {
     const { wellIDNearLine } = this.props;
-
     if (!wellIDNearLine) return;
     fetch(`http://localhost:5000/nearLineCurve/`, {
       body: JSON.stringify(wellIDNearLine),
@@ -184,7 +168,6 @@ class WellMatch extends React.Component<Props, State> {
           wellIDNearLineIndex,
           getWellCurve
         } = this.props;
-        console.log("wellIDNearLineIndex: ", wellIDNearLineIndex);
         const drawWidth = width * (1 - 2 * paddingRatio);
         let layerIndexList: number[] = [];
         for (let i = 0; i < data[0].value.length; i++) {
@@ -241,29 +224,6 @@ class WellMatch extends React.Component<Props, State> {
       });
   }
 
-  fetchManualWellMatchData(coupleWell: any) {
-    fetch(`http://localhost:5000/wellMatch/${coupleWell[0]}_${coupleWell[1]}`)
-      .then(res => res.json())
-      .then(data => {
-        const { width, paddingRatio, scale } = this.props;
-        let coupleWellPath = [];
-        let x1 = paddingRatio * width;
-        let x2 = width * (1 - paddingRatio);
-        for (let i = 0; i < data[0].value.length; i++) {
-          if (data[0].value[i].topDepth && data[1].value[i].topDepth) {
-            let y1 = scale(data[0].value[i].topDepth);
-            let y2 = scale(data[1].value[i].topDepth);
-            let y3 = scale(data[0].value[i].bottomDepth);
-            let y4 = scale(data[1].value[i].bottomDepth);
-            let path = [[x1, y1], [x2, y2], [x2, y4], [x1, y3]];
-            coupleWellPath.push(path);
-          }
-        }
-        this.props.getCoupleWellPath(coupleWellPath);
-      });
-  }
-
-  generateMatchPath() {}
   render() {
     const { width, height, figURI, curvePaths, paths } = this.props;
     const { colorScale, pathGen } = this.state;
@@ -277,7 +237,6 @@ class WellMatch extends React.Component<Props, State> {
         );
       });
     }
-    console.log("paths: ", paths);
     let tracePaths = null;
     if (paths) {
       tracePaths = paths.map((e: any, i: number) => {
@@ -286,18 +245,9 @@ class WellMatch extends React.Component<Props, State> {
         return <path key={i} d={pathD} style={style} className="trace-path" />;
       });
     }
-    const imgStyle = {};
     const svgStyle = { width, height };
     return (
-      <div className="panel panel-default well-match-div">
-        <img
-          alt="Selected Line"
-          style={imgStyle}
-          src={`data:image/png;base64,${figURI}`}
-          className="matrix-selected-line-img"
-          onLoad={this.onImgLoad}
-          ref={this.figureRef}
-        />
+      <div className="panel panel-default well-match-div" style={svgStyle}>
         <svg className="well-match-svg" style={svgStyle}>
           {curves}
           {tracePaths}
