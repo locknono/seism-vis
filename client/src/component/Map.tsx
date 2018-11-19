@@ -154,8 +154,7 @@ class Map extends React.Component<Props, object> {
                       getFigURI(figURI);
                     });
                   self.fetchMatrixData(pointsOnLine).then(matrixData => {
-                    console.log("matrixData: ", matrixData);
-                    getMatrixData(matrixData);
+                    self.props.getMatrixData(matrixData);
                   });
                   self.UNSAFE_internalCoupleXYStore = [];
                 }

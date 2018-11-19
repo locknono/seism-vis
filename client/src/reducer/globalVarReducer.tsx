@@ -16,7 +16,19 @@ function getTraceMinMaxDepth() {
   return [minDepth, maxDepth];
 }
 
+function getDepthList() {
+  let depthList = [];
+  for (let i = 2; i <= 6000; i += 2) {
+    let d0 = 3846;
+    let beta = 0.2444;
+    let depth = d0 * (Math.exp((beta * i) / 1000) - 1);
+    depthList.push(depth);
+  }
+  return depthList;
+}
+
 const [traceMinDepth, traceMaxDepth] = getTraceMinMaxDepth();
+const depthList = getDepthList();
 
 const wellMatchDepthScale = d3
   .scaleLinear()
@@ -47,6 +59,7 @@ interface GlobalVarState {
     a string index signature represents traceMaxDepth here
   */
   [propName: string]: any;
+  depthList: number[];
 }
 const initialState: GlobalVarState = {
   xStart: 20652500,
@@ -64,7 +77,8 @@ const initialState: GlobalVarState = {
   wellMatchSvgPaddingRatio,
   wellMatchDepthScale,
   traceMinDepth,
-  traceMaxDepth
+  traceMaxDepth,
+  depthList
 };
 
 export default function globalVarReducer(

@@ -1,6 +1,10 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { getCoupleWellPath, getWellCurve } from "../action/changeWell";
+import {
+  getCoupleWellPath,
+  getWellCurve,
+  getTracePath
+} from "../action/changeWell";
 import { changeSvgSize } from "../action/changeWellMatchSvg";
 import * as d3 from "d3";
 const mapStateToProps = (state: any, ownProps?: any) => {
@@ -10,7 +14,8 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     wellMatchSvgHeight,
     wellMatchSvgWidth,
     wellMatchSvgPaddingRatio,
-    wellMatchDepthScale
+    wellMatchDepthScale,
+    depthList
   } = state.globalVarReducer;
 
   const {
@@ -19,7 +24,9 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     figURI,
     wellIDNearLine,
     wellIDNearLineIndex,
-    curvePaths
+    curvePaths,
+    matrixData,
+    paths
   } = state.wellReducer;
 
   return {
@@ -34,11 +41,19 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     figURI,
     wellIDNearLine,
     wellIDNearLineIndex,
-    curvePaths
+    curvePaths,
+    matrixData,
+    depthList,
+    paths
   };
 };
 
-const mapDispatchToProps = { getCoupleWellPath, changeSvgSize, getWellCurve };
+const mapDispatchToProps = {
+  getCoupleWellPath,
+  changeSvgSize,
+  getWellCurve,
+  getTracePath
+};
 
 interface Props {
   readonly wellMinDepth: number;
@@ -56,6 +71,10 @@ interface Props {
   wellIDNearLineIndex: any;
   getWellCurve: any;
   curvePaths: any;
+  matrixData: any;
+  depthList: number[];
+  paths: any;
+  getTracePath: any;
 }
 
 interface State {
@@ -95,6 +114,7 @@ class WellMatch extends React.Component<Props, State> {
       this.fetchManualWellMatchData(coupleWell);
       this.getManualWellMatchResultNearLine();
       this.unsafe_figure_loaded = false;
+      this.drawTrace();
     }
   }
 
@@ -107,8 +127,41 @@ class WellMatch extends React.Component<Props, State> {
   }
 
   drawTrace() {
-
+    const {
+      width,
+      paddingRatio,
+      scale,
+      matrixData,
+      depthList,
+      getTracePath
+    } = this.props;
+    console.log("matrixData: ", matrixData);
+    const drawWidth = width * (1 - 2 * paddingRatio);
+    const pad = drawWidth / matrixData.length;
+    const xScale = d3
+      .scaleLinear()
+      .domain([-13685.379, 15099.375])
+      .range([-pad / 1.3, pad / 1.3]);
+    let paths = [];
+    for (let i = 0; i < matrixData.length; i++) {
+      let path: any = [];
+      let x = pad * i + pad / 2;
+      path.push([x, 0]);
+      let thisCol = matrixData[i];
+      for (let j = 0; j < thisCol.length; j++) {
+        let p1 = [x, scale(depthList[j])];
+        let p2 = [
+          x + xScale(thisCol[j]),
+          (scale(depthList[j]) + scale(depthList[j + 1])) / 2
+        ];
+        path.push(p1, p2);
+      }
+      path.push([x, 0]);
+      paths.push(path);
+    }
+    getTracePath(paths);
   }
+
   getManualWellMatchResultNearLine() {
     const { wellIDNearLine } = this.props;
 
@@ -212,7 +265,7 @@ class WellMatch extends React.Component<Props, State> {
 
   generateMatchPath() {}
   render() {
-    const { width, height, figURI, curvePaths } = this.props;
+    const { width, height, figURI, curvePaths, paths } = this.props;
     const { colorScale, pathGen } = this.state;
     let curves = null;
     if (curvePaths) {
@@ -222,6 +275,15 @@ class WellMatch extends React.Component<Props, State> {
         return (
           <path key={i} d={pathD} style={style} className="well-match-axis" />
         );
+      });
+    }
+    console.log("paths: ", paths);
+    let tracePaths = null;
+    if (paths) {
+      tracePaths = paths.map((e: any, i: number) => {
+        let pathD = pathGen(e);
+        let style = { stroke: "black", strokeWidth: 1 };
+        return <path key={i} d={pathD} style={style} className="trace-path" />;
       });
     }
     const imgStyle = {};
@@ -238,6 +300,7 @@ class WellMatch extends React.Component<Props, State> {
         />
         <svg className="well-match-svg" style={svgStyle}>
           {curves}
+          {tracePaths}
         </svg>
       </div>
     );

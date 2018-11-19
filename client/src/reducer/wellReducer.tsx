@@ -7,7 +7,8 @@ import {
   GET_WELLID_NEARLINE,
   GET_WELLIDNEARLINE_INDEX,
   GET_WELL_CURVE,
-  GET_MATRIX_DATA
+  GET_MATRIX_DATA,
+  GET_TRACE_PATH
 } from "../action/changeWell";
 
 interface WellState {
@@ -20,6 +21,7 @@ interface WellState {
   wellIDNearLineIndex: number[];
   curvePaths: any;
   matrixData: any;
+  paths: any;
 }
 
 const initialState: WellState = {
@@ -31,7 +33,8 @@ const initialState: WellState = {
   wellIDNearLine: [],
   wellIDNearLineIndex: [],
   curvePaths: null,
-  matrixData: null
+  matrixData: null,
+  paths: null
 };
 
 export default function wellReducer(
@@ -78,9 +81,15 @@ export default function wellReducer(
         curvePaths: action.wellCurve
       };
     case GET_MATRIX_DATA:
+      console.log("rerererduce");
       return {
         ...state,
         matrixData: action.matrixData
+      };
+    case GET_TRACE_PATH:
+      return {
+        ...state,
+        paths: action.paths
       };
     default:
       return state;
