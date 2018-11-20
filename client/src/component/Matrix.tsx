@@ -1,5 +1,5 @@
 import * as React from "react";
-import MatrixFigre from "./MatrixFigureV2";
+import MatrixFigre from "./MatrixFigure";
 import SvgLayer from "./SvgLayer";
 
 class Matrix extends React.Component {

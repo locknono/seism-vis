@@ -3,7 +3,7 @@ export const CHANGE_DEPTH = "CHANGE_DEPTH";
 export const CHANGE_SIZE = "CHANGE_SIZE";
 export const GET_SCALER = "GET_SCALER";
 
-export function changePlane(planeName: string) {
+export function changePlane(planeName: string): object {
   return {
     type: CHANGE_PLANE,
     planeName

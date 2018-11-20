@@ -32,7 +32,7 @@ def getDepthList():
         depthList.append(depth)
         if (depth > 2000):
             break
-    return depthList
+    return depthList[500:]
 
 
 def showDepthListFig():

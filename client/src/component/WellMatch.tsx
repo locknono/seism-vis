@@ -101,7 +101,7 @@ class WellMatch extends React.Component<Props, State> {
     const { coupleWell, changeSvgSize, matrixData, width } = this.props;
 
     if (matrixData && matrixData !== prevProps.matrixData) {
-      changeSvgSize(20 * matrixData.length, matrixData[0].length * 3);
+      changeSvgSize(20 * matrixData.length, matrixData[0].length * 5);
     }
     if (width !== prevProps.width) {
       this.drawMatch();
@@ -308,9 +308,9 @@ class WellMatch extends React.Component<Props, State> {
       });
     }
     const svgStyle = { width, height };
-    const divStyle = { width, height, marginRight: "100px" };
+    const divStyle = { width, height };
     return (
-      <div className="panel panel-default well-match-div" style={divStyle}>
+      <div className=" well-match-div" style={divStyle}>
         <svg className="well-match-svg" style={svgStyle}>
           {curves}
           {positivePaths}

@@ -81,7 +81,7 @@ def returnDrawLineData():
         zArray = result['z']
         matrix.append(zArray)
     for i in range(len(matrix)):
-        matrix[i]=matrix[i][:857]
+        matrix[i]=matrix[i][500:650]
     resURL = Response(str(matrix), mimetype='text/xml')
     resURL.headers['Access-Control-Allow-Methods'] = 'POST'
     return resURL

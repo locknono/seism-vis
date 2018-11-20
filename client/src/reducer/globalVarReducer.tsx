@@ -2,8 +2,7 @@ import * as d3 from "d3";
 import { CHANGE_SVG_SIZE } from "../action/changeWellMatchSvg";
 /* const wellMinDepth = 1082;
 const wellMaxDepth = 1850; */
-const wellMinDepth = 1.8804;
-const wellMaxDepth = 2001.0382;
+
 const wellMatchSvgWidth = 300;
 const wellMatchSvgHeight = 700;
 const wellMatchSvgPaddingRatio = 0;
@@ -24,11 +23,14 @@ function getDepthList() {
     let depth = d0 * (Math.exp((beta * i) / 1000) - 1);
     depthList.push(depth);
   }
+  depthList = depthList.slice(500, 650);
   return depthList;
 }
 
 const [traceMinDepth, traceMaxDepth] = getTraceMinMaxDepth();
 const depthList = getDepthList();
+const wellMinDepth = depthList[0];
+const wellMaxDepth = depthList[depthList.length - 1];
 
 const wellMatchDepthScale = d3
   .scaleLinear()

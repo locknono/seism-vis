@@ -7,7 +7,6 @@ import {
   changeSizePosition,
   getScaler
 } from "../action/changeFig";
-import SvgLayer from "./SvgLayer";
 
 const mapStateToProps = (state: any, ownProps?: any) => {
   const { planeName, depth } = state.figReducer;

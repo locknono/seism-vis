@@ -103,8 +103,7 @@ class Map extends React.Component<Props, object> {
   }
 
   componentDidUpdate(prevProps: Props, prevState: Props, snapshot: any) {
-    let self = this;
-
+    const self = this;
     if (prevProps.scaler === null) {
       const {
         scaler,
@@ -114,7 +113,8 @@ class Map extends React.Component<Props, object> {
         xStart,
         yStart,
         xySection,
-        getWellIDNearLine
+        getWellIDNearLine,
+        getMatrixData
       } = this.props;
       const circlesLayer = L.layerGroup();
       fetch("./data/wellFullLocation.json")
@@ -125,7 +125,7 @@ class Map extends React.Component<Props, object> {
           return undefined;
         })
         .then(wellLocationData => {
-          const allWells: any[] = [];
+          const allWells: object[] = [];
           wellLocationData.map((well: Well) => {
             let xOnSvg = scaler.xScaler(well.x);
             let yOnSvg = scaler.yScaler(well.y);
@@ -152,7 +152,7 @@ class Map extends React.Component<Props, object> {
                     getFigURI(figURI);
                   });
                   self.fetchMatrixData(pointsOnLine).then(matrixData => {
-                    self.props.getMatrixData(matrixData);
+                    getMatrixData(matrixData);
                   });
                   self.UNSAFE_internalCoupleXYStore = [];
                 }
@@ -218,7 +218,7 @@ class Map extends React.Component<Props, object> {
     }
   }
 
-  getPointsOnLine(line: [number, number][]): any[] {
+  getPointsOnLine(line: [number, number][]): [number, number][] {
     const { xStart, yStart, xySection } = this.props;
     let x1 = (line[0][0] - xStart) / xySection;
     let y1 = (line[0][1] - yStart) / xySection;
@@ -231,11 +231,11 @@ class Map extends React.Component<Props, object> {
     const b = matrixCoors[0][1] - matrixCoors[0][0] * k;
     const smallerX = matrixCoors[0][0] < matrixCoors[1][0] ? 0 : 1;
     const biggerX = matrixCoors[0][0] < matrixCoors[1][0] ? 1 : 0;
-    const pointsOnLine: any[] = [];
+    const pointsOnLine: [number, number][] = [];
     for (
       let x = matrixCoors[smallerX][0];
       x <= matrixCoors[biggerX][0];
-      x += 0.1
+      x += 0.05
     ) {
       let y = Math.floor(k * x + b);
       let exist = false;
@@ -259,7 +259,7 @@ class Map extends React.Component<Props, object> {
     }
   }
 
-  getWellIDNearLine(pointsOnLine: number[][]): any {
+  getWellIDNearLine(pointsOnLine: number[][]): string[] {
     const { allWells, coupleWell } = this.props;
     /*this method can speed up by tranform the 
     structure of `allWells` from array to obj*/
@@ -272,7 +272,7 @@ class Map extends React.Component<Props, object> {
           allWells[j].xOnMatrix,
           allWells[j].yOnMatrix
         ];
-        if (isInCell(cellPoint, pointsOnLine[i])) {
+        if (ifInCell(cellPoint, pointsOnLine[i])) {
           wellIDNearLine.add(allWells[j].id);
           wellIDNearLineIndexOnLine.push((i + 1) / pointsOnLine.length);
           break;
@@ -292,7 +292,7 @@ class Map extends React.Component<Props, object> {
 
     return wellIDNearLineList;
 
-    function isInCell(
+    function ifInCell(
       cellPoint: [number, number],
       pointOnLine: number[]
     ): boolean {
