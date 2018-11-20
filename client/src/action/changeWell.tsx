@@ -8,6 +8,8 @@ export const GET_WELLIDNEARLINE_INDEX = "GET_WELLIDNEARLINE_INDEX";
 export const GET_WELL_CURVE = "GET_WELL_CURVE";
 export const GET_MATRIX_DATA = "GET_MATRIX_DATA";
 export const GET_TRACE_PATH = "GET_TRACE_PATH";
+export const GET_ALL_TRACK = "GET_ALL_TRACK";
+
 export function getAllWells(allWells: any) {
   return {
     type: GET_ALL_WELLS,
@@ -76,5 +78,12 @@ export function getTracePath(paths: any) {
   return {
     type: GET_TRACE_PATH,
     paths
+  };
+}
+
+export function getAllTrack(allTrack: any) {
+  return {
+    type: GET_ALL_TRACK,
+    allTrack
   };
 }

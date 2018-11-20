@@ -3,7 +3,8 @@ import { connect } from "react-redux";
 import {
   getCoupleWellPath,
   getWellCurve,
-  getTracePath
+  getTracePath,
+  getAllTrack
 } from "../action/changeWell";
 import { changeSvgSize } from "../action/changeWellMatchSvg";
 import * as d3 from "d3";
@@ -26,7 +27,8 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     wellIDNearLineIndex,
     curvePaths,
     matrixData,
-    paths
+    paths,
+    allTrack
   } = state.wellReducer;
 
   return {
@@ -44,7 +46,8 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     curvePaths,
     matrixData,
     depthList,
-    paths
+    paths,
+    allTrack
   };
 };
 
@@ -52,7 +55,8 @@ const mapDispatchToProps = {
   getCoupleWellPath,
   changeSvgSize,
   getWellCurve,
-  getTracePath
+  getTracePath,
+  getAllTrack
 };
 
 interface Props {
@@ -75,6 +79,8 @@ interface Props {
   depthList: number[];
   paths: any;
   getTracePath: any;
+  getAllTrack: any;
+  allTrack: any;
 }
 
 interface State {
@@ -116,7 +122,8 @@ class WellMatch extends React.Component<Props, State> {
       scale,
       matrixData,
       depthList,
-      getTracePath
+      getTracePath,
+      getAllTrack
     } = this.props;
     console.log("matrixData: ", matrixData);
     const drawWidth = width * (1 - 2 * paddingRatio);
@@ -169,6 +176,7 @@ class WellMatch extends React.Component<Props, State> {
     }
     console.log("allPeaks: ", allPeaks);
     const allTracks = tracking(allPeaks);
+    getAllTrack(allTracks);
     console.log("allTracks: ", allTracks);
     paths.push(positivePaths, negativePaths);
     getTracePath(paths);
@@ -200,21 +208,23 @@ class WellMatch extends React.Component<Props, State> {
     }
 
     function tracking(allPeaks: any) {
-      console.log("allPeaks: ", allPeaks);
       const allTracks = [];
       for (let i = 0; i < allPeaks[0].length; i++) {
         let track = [allPeaks[0][i]];
         for (let j = 1; j < allPeaks.length; j++) {
           let nextPeak = null;
-          let mid = 999;
+          let MaxOffSet = 999;
           for (let s = 0; s < allPeaks[j].length; s++) {
-            if (
-              Math.abs(allPeaks[j][s].mid - track[track.length - 1].mid) < mid
-            ) {
-              mid = Math.abs(allPeaks[j][s].mid - track[track.length - 1].mid);
+            let offset = Math.abs(
+              allPeaks[j][s].mid - track[track.length - 1].mid
+            );
+            if (offset < MaxOffSet) {
+              MaxOffSet = offset;
               nextPeak = allPeaks[j][s];
             }
           }
+          //if offsets too much,stop here
+          if (MaxOffSet > 70) break;
           track.push(nextPeak);
         }
         allTracks.push(track);
@@ -347,7 +357,8 @@ class WellMatch extends React.Component<Props, State> {
   }
 
   render() {
-    const { width, height, curvePaths, paths } = this.props;
+    const { width, height, curvePaths, paths, allTrack } = this.props;
+    console.log("allTrack: ", allTrack);
     const { colorScale, pathGen } = this.state;
     let curves = null;
     if (curvePaths) {
@@ -373,6 +384,24 @@ class WellMatch extends React.Component<Props, State> {
         return <path key={i} d={pathD} style={style} className="trace-path" />;
       });
     }
+    let trackPath = null;
+    if (allTrack) {
+      let pathGene = d3
+        .line()
+        .x((d: any) => {
+          console.log(" d.value: ", d.value);
+          return d.value;
+        })
+        .y((d: any) => {
+          console.log("d.mid: ", d.mid);
+          return d.mid;
+        });
+      trackPath = allTrack.map((track: any, i: number) => {
+        let d: any = pathGene(track);
+        let style = { fill: "none", stroke: "black", strokeWidth: 1 };
+        return <path key={i} d={d} style={style} className="trace-path" />;
+      });
+    }
     const svgStyle = { width, height };
     const divStyle = { width, height };
     return (
@@ -381,6 +410,7 @@ class WellMatch extends React.Component<Props, State> {
           {curves}
           {positivePaths}
           {negativePaths}
+          {trackPath}
         </svg>
       </div>
     );
