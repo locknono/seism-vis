@@ -168,6 +168,8 @@ class WellMatch extends React.Component<Props, State> {
       negativePaths.push(negativePath);
     }
     console.log("allPeaks: ", allPeaks);
+    const allTracks = tracking(allPeaks);
+    console.log("allTracks: ", allTracks);
     paths.push(positivePaths, negativePaths);
     getTracePath(paths);
 
@@ -197,8 +199,27 @@ class WellMatch extends React.Component<Props, State> {
       return path;
     }
 
-    function tracking(allPeaks) {
-      
+    function tracking(allPeaks: any) {
+      console.log("allPeaks: ", allPeaks);
+      const allTracks = [];
+      for (let i = 0; i < allPeaks[0].length; i++) {
+        let track = [allPeaks[0][i]];
+        for (let j = 1; j < allPeaks.length; j++) {
+          let nextPeak = null;
+          let mid = 999;
+          for (let s = 0; s < allPeaks[j].length; s++) {
+            if (
+              Math.abs(allPeaks[j][s].mid - track[track.length - 1].mid) < mid
+            ) {
+              mid = Math.abs(allPeaks[j][s].mid - track[track.length - 1].mid);
+              nextPeak = allPeaks[j][s];
+            }
+          }
+          track.push(nextPeak);
+        }
+        allTracks.push(track);
+      }
+      return allTracks;
     }
 
     function extractPeaks(positivePath: [number, number][], x: number) {
@@ -224,11 +245,10 @@ class WellMatch extends React.Component<Props, State> {
             }
           });
           let peak = {
-            topDepth: peakPoints[0][1],
-            bottomDepth: peakPoints[peakPoints.length - 1][1],
-            minDepth:
-              (peakPoints[0][1] + peakPoints[peakPoints.length - 1][1]) / 2,
-            pos: peakInfo.pos,
+            top: peakPoints[0][1],
+            bottom: peakPoints[peakPoints.length - 1][1],
+            mid: (peakPoints[0][1] + peakPoints[peakPoints.length - 1][1]) / 2,
+            peak: peakInfo.pos,
             value: peakInfo.value
           };
           peaks.push(peak);
