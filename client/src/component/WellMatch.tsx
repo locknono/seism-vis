@@ -154,6 +154,8 @@ class WellMatch extends React.Component<Props, State> {
         }
       }
 
+      positivePath = deleteMidPoint(positivePath, x, true);
+      negativePath = deleteMidPoint(negativePath, x, false);
       //loop the positivePath to ensure it's closed so that css `fill` works
       positivePath.push([x, scale(depthList[matrixData[0].length + 1])]);
       positivePath.push([x, scale(depthList[0])]);
@@ -163,6 +165,32 @@ class WellMatch extends React.Component<Props, State> {
     }
     paths.push(positivePaths, negativePaths);
     getTracePath(paths);
+
+    function deleteMidPoint(
+      path: [number, number][],
+      x: number,
+      ifPositive: boolean
+    ): [number, number][] {
+      const deleteIndicesSet = new Set();
+      if (ifPositive) {
+        for (let i = 1; i < path.length - 2; i += 2) {
+          if (path[i][0] > x && path[i + 2][0] > x) {
+            deleteIndicesSet.add(i + 1);
+          }
+        }
+      } else {
+        for (let i = 1; i < path.length - 2; i += 2) {
+          if (path[i][0] < x && path[i + 2][0] < x) {
+            deleteIndicesSet.add(i + 1);
+          }
+        }
+      }
+      const deleteIndicesList = Array.from(deleteIndicesSet).reverse();
+      for (let i = 0; i < deleteIndicesList.length; i++) {
+        path.splice(deleteIndicesList[i], 1);
+      }
+      return path;
+    }
   }
 
   drawMatch() {
