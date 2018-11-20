@@ -101,7 +101,7 @@ class WellMatch extends React.Component<Props, State> {
     const { coupleWell, changeSvgSize, matrixData, width } = this.props;
 
     if (matrixData && matrixData !== prevProps.matrixData) {
-      changeSvgSize(30 * matrixData.length, matrixData[0].length * 5);
+      changeSvgSize(20 * matrixData.length, matrixData[0].length * 3);
     }
     if (width !== prevProps.width) {
       this.drawMatch();
@@ -133,7 +133,6 @@ class WellMatch extends React.Component<Props, State> {
     for (let i = 0; i < matrixData.length; i++) {
       let positivePath: [number, number][] = [];
       let negativePath: [number, number][] = [];
-      let path: any = [];
       let x = pad * i + pad / 2;
       for (let j = 0; j < matrixData[i].length; j++) {
         let xOffset = matrixData[i][j] === 0 ? 0 : xScale(matrixData[i][j]);
@@ -167,7 +166,7 @@ class WellMatch extends React.Component<Props, State> {
   }
 
   drawMatch() {
-    const { wellIDNearLine } = this.props;
+    const { wellIDNearLine, matrixData } = this.props;
     if (!wellIDNearLine) return;
     fetch(`http://localhost:5000/nearLineCurve/`, {
       body: JSON.stringify(wellIDNearLine),
@@ -188,6 +187,7 @@ class WellMatch extends React.Component<Props, State> {
           getWellCurve
         } = this.props;
         const drawWidth = width * (1 - 2 * paddingRatio);
+        const pad = drawWidth / matrixData.length;
         let layerIndexList: number[] = [];
         for (let i = 0; i < data[0].value.length; i++) {
           if (
@@ -202,7 +202,11 @@ class WellMatch extends React.Component<Props, State> {
           let index = layerIndexList[i];
           let path = [];
           for (let j = 0; j < data.length; j++) {
-            let x = wellIDNearLineIndex[j] * drawWidth;
+            let x =
+              Math.round(wellIDNearLineIndex[j]) *
+                (matrixData.length - 1) *
+                pad +
+              pad / 2;
             let value = data[j].value;
             if (value[index].topDepth) {
               let y = scale(value[index].topDepth);
@@ -211,8 +215,13 @@ class WellMatch extends React.Component<Props, State> {
               path.push([x, null]);
             }
           }
+          console.log("wellIDNearLineIndex: ", wellIDNearLineIndex);
           for (let j = data.length - 1; j >= 0; j--) {
-            let x = wellIDNearLineIndex[j] * drawWidth;
+            let x =
+              Math.round(wellIDNearLineIndex[j]) *
+                (matrixData.length - 1) *
+                pad +
+              pad / 2;
             let value = data[j].value;
             if (value[index].bottomDepth) {
               let y = scale(value[index].bottomDepth);
@@ -261,14 +270,14 @@ class WellMatch extends React.Component<Props, State> {
     if (paths) {
       positivePaths = paths[0].map((e: any, i: number) => {
         let pathD = pathGen(e);
-        let style = { fill: "none", stroke: "black", strokeWidth: 0.3 };
+        let style = { fill: "black", stroke: "black", strokeWidth: 0.3 };
         return <path key={i} d={pathD} style={style} className="trace-path" />;
       });
-      /* negativePaths = paths[1].map((e: any, i: number) => {
+      negativePaths = paths[1].map((e: any, i: number) => {
         let pathD = pathGen(e);
         let style = { fill: "none", stroke: "black", strokeWidth: 0.3 };
         return <path key={i} d={pathD} style={style} className="trace-path" />;
-      }); */
+      });
     }
     const svgStyle = { width, height };
     return (

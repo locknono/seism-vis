@@ -280,15 +280,16 @@ class Map extends React.Component<Props, object> {
       }
     }
 
-    wellIDNearLineIndexOnLine[0] = 0;
-    wellIDNearLineIndexOnLine[wellIDNearLineIndexOnLine.length - 1] = 1;
-    getWellIDNearLineIndex(wellIDNearLineIndexOnLine);
-
     let wellIDNearLineList = Array.from(wellIDNearLine);
     //ensure the first well of couple well is gotten
     //in the first cell
     wellIDNearLineList[0] = coupleWell[0];
     wellIDNearLineList[wellIDNearLineList.length - 1] = coupleWell[1];
+
+    wellIDNearLineIndexOnLine[0] = 0;
+    wellIDNearLineIndexOnLine[wellIDNearLineIndexOnLine.length - 1] = 1;
+    getWellIDNearLineIndex(wellIDNearLineIndexOnLine);
+
     return wellIDNearLineList;
 
     function isInCell(
