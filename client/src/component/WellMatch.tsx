@@ -308,8 +308,9 @@ class WellMatch extends React.Component<Props, State> {
       });
     }
     const svgStyle = { width, height };
+    const divStyle = { width, height, marginRight: "100px" };
     return (
-      <div className="panel panel-default well-match-div" style={svgStyle}>
+      <div className="panel panel-default well-match-div" style={divStyle}>
         <svg className="well-match-svg" style={svgStyle}>
           {curves}
           {positivePaths}

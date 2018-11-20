@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import * as React from "react";
 import { connect } from "react-redux";
 import * as d3 from "d3";
 import {
@@ -9,7 +9,7 @@ import {
 } from "../action/changeFig";
 import SvgLayer from "./SvgLayer";
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state: any, ownProps?: any) => {
   const { planeName, depth } = state.figReducer;
   const { xStart, yStart, xEnd, yEnd } = state.globalVarReducer;
   return { planeName, depth, xStart, yStart, xEnd, yEnd };
@@ -25,14 +25,23 @@ const mapDispatchToProps = {
 interface Props {
   planeName: string;
   depth: number;
-  figWidth: number;
-  figWidth: number;
+  xStart: number;
+  yStart: number;
+  xEnd: number;
+  yEnd: number;
+  changePlane: any;
+  changeDepth: any;
+  changeSizePosition: any;
+  getScaler: any;
 }
 
 interface State {}
 
-class MatrixFigureV2 extends Component<Props, State> {
-  constructor(props) {
+interface MatrixFigureV2 {
+  figureRef: any;
+}
+class MatrixFigureV2 extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.figureRef = React.createRef();
     this.imgOnLoad = this.imgOnLoad.bind(this);
