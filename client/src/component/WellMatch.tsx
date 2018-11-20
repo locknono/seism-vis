@@ -128,7 +128,8 @@ class WellMatch extends React.Component<Props, State> {
       .domain([-13685.379, 13685.379])
       .range([-xOffsetScope, xOffsetScope]);
     let positivePaths = [];
-    let negativePaths = [];
+    let allPeaks = [];
+    let negativePaths: [number, number][][] = [];
     let paths = [];
     for (let i = 0; i < matrixData.length; i++) {
       let positivePath: [number, number][] = [];
@@ -156,6 +157,9 @@ class WellMatch extends React.Component<Props, State> {
 
       positivePath = deleteMidPoint(positivePath, x, true);
       negativePath = deleteMidPoint(negativePath, x, false);
+
+      let peaks = extractPeaks(positivePath, x);
+      allPeaks.push(peaks);
       //loop the positivePath to ensure it's closed so that css `fill` works
       positivePath.push([x, scale(depthList[matrixData[0].length + 1])]);
       positivePath.push([x, scale(depthList[0])]);
@@ -163,6 +167,7 @@ class WellMatch extends React.Component<Props, State> {
       positivePaths.push(positivePath);
       negativePaths.push(negativePath);
     }
+    console.log("allPeaks: ", allPeaks);
     paths.push(positivePaths, negativePaths);
     getTracePath(paths);
 
@@ -190,6 +195,47 @@ class WellMatch extends React.Component<Props, State> {
         path.splice(deleteIndicesList[i], 1);
       }
       return path;
+    }
+
+    function tracking(allPeaks) {
+      
+    }
+
+    function extractPeaks(positivePath: [number, number][], x: number) {
+      let peaks = [];
+      let peakPoints = [];
+      let findFlag = false;
+      for (let i = 0; i < positivePath.length - 1; i++) {
+        let point = positivePath[i];
+        let nextPoint = positivePath[i + 1];
+        if (point[0] === x && nextPoint[0] !== x) findFlag = true;
+        if (point[0] !== x && nextPoint[0] === x) findFlag = false;
+        if (findFlag === true) {
+          peakPoints.push(point);
+        } else if (findFlag === false && peakPoints.length > 0) {
+          let peakInfo = {
+            value: 0,
+            pos: -1
+          };
+          peakPoints.map(e => {
+            if (e[0] > peakInfo.value) {
+              peakInfo.value = e[0];
+              peakInfo.pos = e[1];
+            }
+          });
+          let peak = {
+            topDepth: peakPoints[0][1],
+            bottomDepth: peakPoints[peakPoints.length - 1][1],
+            minDepth:
+              (peakPoints[0][1] + peakPoints[peakPoints.length - 1][1]) / 2,
+            pos: peakInfo.pos,
+            value: peakInfo.value
+          };
+          peaks.push(peak);
+          peakPoints = [];
+        }
+      }
+      return peaks;
     }
   }
 
