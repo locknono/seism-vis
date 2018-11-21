@@ -242,13 +242,12 @@ class WellMatch extends React.Component<Props, State> {
             let curTrack = allTracks[i];
             let nextTrack = allTracks[i + 1];
             if (curTrack[j].mid !== nextTrack[j].mid) continue;
-            console.log(j);
             let curOffSet = Math.abs(curTrack[j].mid - curTrack[j - 1].mid);
             let nextOffSet = Math.abs(nextTrack[j].mid - nextTrack[j - 1].mid);
             if (curOffSet < nextOffSet) {
-              allTracks[i + 1] = allTracks[i];
+              allTracks[i + 1].splice(j, allTracks[i + 1].length - j);
             } else {
-              allTracks[i] = allTracks[i + 1];
+              allTracks[i].splice(j, allTracks[i].length - j);
             }
           }
         }
