@@ -125,7 +125,7 @@ class WellMatch extends React.Component<Props, State> {
       getTracePath,
       getAllTrack
     } = this.props;
-    console.log("matrixData: ", matrixData);
+
     const drawWidth = width * (1 - 2 * paddingRatio);
     const pad = drawWidth / matrixData.length;
     //set xOffsetScope a litter bigger than `pad/2`
@@ -174,10 +174,10 @@ class WellMatch extends React.Component<Props, State> {
       positivePaths.push(positivePath);
       negativePaths.push(negativePath);
     }
-    console.log("allPeaks: ", allPeaks);
+
     const allTracks = tracking(allPeaks);
     getAllTrack(allTracks);
-    console.log("allTracks: ", allTracks);
+
     paths.push(positivePaths, negativePaths);
     getTracePath(paths);
 
@@ -229,7 +229,12 @@ class WellMatch extends React.Component<Props, State> {
         }
         allTracks.push(track);
       }
+      cutoff(allTracks);
       return allTracks;
+
+      function cutoff(allTracks: any[]) {
+        console.log("allTracks: ", allTracks);
+      }
     }
 
     function extractPeaks(positivePath: [number, number][], x: number) {
@@ -245,12 +250,12 @@ class WellMatch extends React.Component<Props, State> {
           peakPoints.push(point);
         } else if (findFlag === false && peakPoints.length > 0) {
           let peakInfo = {
-            value: 0,
+            x: 0,
             pos: -1
           };
           peakPoints.map(e => {
-            if (e[0] > peakInfo.value) {
-              peakInfo.value = e[0];
+            if (e[0] > peakInfo.x) {
+              peakInfo.x = e[0];
               peakInfo.pos = e[1];
             }
           });
@@ -259,7 +264,7 @@ class WellMatch extends React.Component<Props, State> {
             bottom: peakPoints[peakPoints.length - 1][1],
             mid: (peakPoints[0][1] + peakPoints[peakPoints.length - 1][1]) / 2,
             peak: peakInfo.pos,
-            value: peakInfo.value
+            x: peakInfo.x
           };
           peaks.push(peak);
           peakPoints = [];
@@ -319,7 +324,7 @@ class WellMatch extends React.Component<Props, State> {
               path.push([x, null]);
             }
           }
-          console.log("wellIDNearLineIndex: ", wellIDNearLineIndex);
+
           for (let j = data.length - 1; j >= 0; j--) {
             let x =
               Math.round(wellIDNearLineIndex[j]) *
@@ -358,7 +363,7 @@ class WellMatch extends React.Component<Props, State> {
 
   render() {
     const { width, height, curvePaths, paths, allTrack } = this.props;
-    console.log("allTrack: ", allTrack);
+
     const { colorScale, pathGen } = this.state;
     let curves = null;
     if (curvePaths) {
@@ -389,11 +394,9 @@ class WellMatch extends React.Component<Props, State> {
       let pathGene = d3
         .line()
         .x((d: any) => {
-          console.log(" d.value: ", d.value);
-          return d.value;
+          return d.x;
         })
         .y((d: any) => {
-          console.log("d.mid: ", d.mid);
           return d.mid;
         });
       trackPath = allTrack.map((track: any, i: number) => {
