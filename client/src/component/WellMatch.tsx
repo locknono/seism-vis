@@ -224,12 +224,13 @@ class WellMatch extends React.Component<Props, State> {
             }
           }
           //if offsets too much,stop here
-          if (MaxOffSet > 70) break;
+          if (MaxOffSet > 50) break;
           track.push(nextPeak);
         }
         allTracks.push(track);
       }
       cutoff(allTracks);
+      console.log("allTracks: ", allTracks);
       return allTracks;
 
       function cutoff(allTracks: any[]) {
@@ -241,13 +242,13 @@ class WellMatch extends React.Component<Props, State> {
             let curTrack = allTracks[i];
             let nextTrack = allTracks[i + 1];
             if (curTrack[j].mid !== nextTrack[j].mid) continue;
-
-            let curOffSet = curTrack[j].mid - curTrack[j - 1].mid;
-            let nextOffSet = nextTrack[j].mid - nextTrack[j - 1].mid;
+            console.log(j);
+            let curOffSet = Math.abs(curTrack[j].mid - curTrack[j - 1].mid);
+            let nextOffSet = Math.abs(nextTrack[j].mid - nextTrack[j - 1].mid);
             if (curOffSet < nextOffSet) {
-              nextTrack.splice(0, j);
+              allTracks[i + 1] = allTracks[i];
             } else {
-              curTrack.splice(0, j);
+              allTracks[i] = allTracks[i + 1];
             }
           }
         }
