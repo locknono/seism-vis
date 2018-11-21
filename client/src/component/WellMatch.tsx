@@ -234,6 +234,23 @@ class WellMatch extends React.Component<Props, State> {
 
       function cutoff(allTracks: any[]) {
         console.log("allTracks: ", allTracks);
+        for (let i = 0; i < allTracks.length - 1; i++) {
+          for (let j = 0; j < allTracks[i].length; j++) {
+            if (!allTracks[i + 1][j]) continue;
+
+            let curTrack = allTracks[i];
+            let nextTrack = allTracks[i + 1];
+            if (curTrack[j].mid !== nextTrack[j].mid) continue;
+
+            let curOffSet = curTrack[j].mid - curTrack[j - 1].mid;
+            let nextOffSet = nextTrack[j].mid - nextTrack[j - 1].mid;
+            if (curOffSet < nextOffSet) {
+              nextTrack.splice(0, j);
+            } else {
+              curTrack.splice(0, j);
+            }
+          }
+        }
       }
     }
 
