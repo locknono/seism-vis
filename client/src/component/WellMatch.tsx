@@ -170,7 +170,7 @@ class WellMatch extends React.Component<Props, State> {
       //loop the positivePath to ensure it's closed so that css `fill` works
       positivePath.push([x, scale(depthList[matrixData[0].length + 1])]);
       positivePath.push([x, scale(depthList[0])]);
-
+      negativePaths.push([x, scale(depthList[matrixData[0].length + 1])]);
       positivePaths.push(positivePath);
       negativePaths.push(negativePath);
     }
@@ -297,10 +297,10 @@ class WellMatch extends React.Component<Props, State> {
         }
       }
       let removeList = Array.from(removeSet).sort((a, b) => b - a);
+      console.log("removeList: ", removeList);
       for (let i = 0; i < removeList.length; i++) {
         allTracks.splice(removeList[i], 1);
       }
-      console.log("removeList: ", removeList);
     }
 
     function extractPeaks(positivePath: [number, number][], x: number) {
@@ -474,8 +474,8 @@ class WellMatch extends React.Component<Props, State> {
         return <path key={i} d={d} style={style} className="trace-path" />;
       });
     }
-    const svgStyle = { width, height };
-    const divStyle = { width, height };
+    const svgStyle = { width, height: height + 15 };
+    const divStyle = { width, height: height + 15 };
     return (
       <div className=" well-match-div" style={divStyle}>
         <svg className="well-match-svg" style={svgStyle}>

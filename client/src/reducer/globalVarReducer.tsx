@@ -37,7 +37,7 @@ const wellMatchDepthScale = d3
   .domain([wellMinDepth, wellMaxDepth])
   .range([
     wellMatchSvgHeight * wellMatchSvgPaddingRatio,
-    wellMatchSvgHeight * (1 - wellMatchSvgPaddingRatio)
+    wellMatchSvgHeight * (1 - wellMatchSvgPaddingRatio) 
   ]);
 
 interface GlobalVarState {
