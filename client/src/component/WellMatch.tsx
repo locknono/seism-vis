@@ -174,8 +174,12 @@ class WellMatch extends React.Component<Props, State> {
       positivePaths.push(positivePath);
       negativePaths.push(negativePath);
     }
-
-    const allTracks = tracking(allPeaks, 0);
+    let allTracks: any = [];
+    for (let i = 0; i < allPeaks.length / 2; i++) {
+      allTracks.push(...tracking(allPeaks, i));
+    }
+    console.log("allTracks: ", allTracks);
+    cutOffAllTracks(allTracks, allPeaks.length);
     getAllTrack(allTracks);
 
     paths.push(positivePaths, negativePaths);
@@ -230,7 +234,6 @@ class WellMatch extends React.Component<Props, State> {
         allTracks.push(track);
       }
       cutoff(allTracks);
-      console.log("allTracks: ", allTracks);
       return allTracks;
 
       function cutoff(allTracks: any[]) {
@@ -258,6 +261,46 @@ class WellMatch extends React.Component<Props, State> {
           }
         }
       }
+    }
+
+    function cutOffAllTracks(allTracks: any, traceCount: number) {
+      console.log("cutOffAllTracks");
+      for (let i = allTracks.length - 1; i >= 0; i--) {
+        if (allTracks[i].length < traceCount / 2) {
+          allTracks.splice(i, 1);
+        }
+      }
+      let removeSet = new Set();
+      for (let i = 0; i < allTracks.length; i++) {
+        labelStop: for (let j = 0; j < allTracks.length; j++) {
+          if (i === j) continue;
+          let track1 = allTracks[i];
+          let track2 = allTracks[j];
+          if (track1.length === track2.length) continue;
+          for (let s = 1; s < track1.length; s++) {
+            for (let m = 1; m < track2.length; m++) {
+              if (
+                track1[s].mid === track2[m].mid &&
+                track1[s].x === track2[m].x &&
+                track1[s - 1].mid !== track2[m - 1].mid
+              ) {
+                if (track1.length < track2.length) {
+                  removeSet.add(i);
+                  break labelStop;
+                } else {
+                  removeSet.add(j);
+                  break labelStop;
+                }
+              }
+            }
+          }
+        }
+      }
+      let removeList = Array.from(removeSet).sort((a, b) => b - a);
+      for (let i = 0; i < removeList.length; i++) {
+        allTracks.splice(removeList[i], 1);
+      }
+      console.log("removeList: ", removeList);
     }
 
     function extractPeaks(positivePath: [number, number][], x: number) {
