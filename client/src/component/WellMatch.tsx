@@ -178,7 +178,7 @@ class WellMatch extends React.Component<Props, State> {
     for (let i = 0; i < allPeaks.length / 2; i++) {
       allTracks.push(...tracking(allPeaks, i));
     }
-    console.log("allTracks: ", allTracks);
+
     cutOffAllTracks(allTracks, allPeaks.length);
     getAllTrack(allTracks);
 
@@ -264,7 +264,6 @@ class WellMatch extends React.Component<Props, State> {
     }
 
     function cutOffAllTracks(allTracks: any, traceCount: number) {
-      console.log("cutOffAllTracks");
       for (let i = allTracks.length - 1; i >= 0; i--) {
         if (allTracks[i].length < traceCount / 2) {
           allTracks.splice(i, 1);
@@ -297,7 +296,6 @@ class WellMatch extends React.Component<Props, State> {
         }
       }
       let removeList = Array.from(removeSet).sort((a, b) => b - a);
-      console.log("removeList: ", removeList);
       for (let i = 0; i < removeList.length; i++) {
         allTracks.splice(removeList[i], 1);
       }
@@ -357,6 +355,7 @@ class WellMatch extends React.Component<Props, State> {
     })
       .then(res => res.json())
       .then(data => {
+        console.log("data: ", data);
         const {
           width,
           paddingRatio,
@@ -364,6 +363,7 @@ class WellMatch extends React.Component<Props, State> {
           wellIDNearLineIndex,
           getWellCurve
         } = this.props;
+        console.log("wellIDNearLineIndex: ", wellIDNearLineIndex);
         const drawWidth = width * (1 - 2 * paddingRatio);
         const pad = drawWidth / matrixData.length;
         let layerIndexList: number[] = [];
@@ -379,12 +379,10 @@ class WellMatch extends React.Component<Props, State> {
         for (let i = 0; i < layerIndexList.length; i++) {
           let index = layerIndexList[i];
           let path = [];
+
           for (let j = 0; j < data.length; j++) {
             let x =
-              Math.round(wellIDNearLineIndex[j]) *
-                (matrixData.length - 1) *
-                pad +
-              pad / 2;
+              wellIDNearLineIndex[j] * (matrixData.length - 1) * pad + pad / 2;
             let value = data[j].value;
             if (value[index].topDepth) {
               let y = scale(value[index].topDepth);
@@ -396,10 +394,7 @@ class WellMatch extends React.Component<Props, State> {
 
           for (let j = data.length - 1; j >= 0; j--) {
             let x =
-              Math.round(wellIDNearLineIndex[j]) *
-                (matrixData.length - 1) *
-                pad +
-              pad / 2;
+              wellIDNearLineIndex[j] * (matrixData.length - 1) * pad + pad / 2;
             let value = data[j].value;
             if (value[index].bottomDepth) {
               let y = scale(value[index].bottomDepth);
@@ -408,24 +403,27 @@ class WellMatch extends React.Component<Props, State> {
               path.push([x, null]);
             }
           }
+          console.log("path: ", path);
           paths.push(path);
         }
         for (let i = 0; i < paths.length; i++) {
           let path = paths[i];
           for (let j = 0; j < path.length / 2; j++) {
-            if (!path[j][1]) {
+            if (path[j][1] === null) {
               path[j][1] = path[j - 1][1];
             }
           }
           for (let j = path.length - 1; j > path.length / 2; j--) {
-            if (!path[j][1]) {
+            if (path[j][1] === null) {
               path[j][1] = path[j + 1][1];
             }
           }
         }
+
         for (let i = 0; i < paths.length; i++) {
           paths[i].push(paths[i][0]);
         }
+        console.log("paths: ", paths);
         getWellCurve(paths);
       });
   }
@@ -435,6 +433,7 @@ class WellMatch extends React.Component<Props, State> {
 
     const { colorScale, pathGen } = this.state;
     let curves = null;
+    let circles = null;
     if (curvePaths) {
       curves = curvePaths.map((e: any, i: number) => {
         let pathD = pathGen(e);
@@ -443,7 +442,21 @@ class WellMatch extends React.Component<Props, State> {
           <path key={i} d={pathD} style={style} className="well-match-axis" />
         );
       });
+      circles = curvePaths.map((e: any, i: number) => {
+        return e.map((d: any, index: number) => {
+          return (
+            <circle
+              key={i + index}
+              cx={d[0]}
+              cy={d[1]}
+              r={3}
+              style={{ fill: "black", stroke: "black" }}
+            />
+          );
+        });
+      });
     }
+
     let positivePaths = null;
     let negativePaths = null;
     if (paths) {
@@ -483,6 +496,7 @@ class WellMatch extends React.Component<Props, State> {
           {positivePaths}
           {negativePaths}
           {trackPath}
+          {circles}
         </svg>
       </div>
     );
