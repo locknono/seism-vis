@@ -175,7 +175,7 @@ class WellMatch extends React.Component<Props, State> {
       negativePaths.push(negativePath);
     }
 
-    const allTracks = tracking(allPeaks);
+    const allTracks = tracking(allPeaks, 0);
     getAllTrack(allTracks);
 
     paths.push(positivePaths, negativePaths);
@@ -207,11 +207,11 @@ class WellMatch extends React.Component<Props, State> {
       return path;
     }
 
-    function tracking(allPeaks: any) {
+    function tracking(allPeaks: any, original: number) {
       const allTracks = [];
-      for (let i = 0; i < allPeaks[0].length; i++) {
-        let track = [allPeaks[0][i]];
-        for (let j = 1; j < allPeaks.length; j++) {
+      for (let i = 0; i < allPeaks[original].length; i++) {
+        let track = [allPeaks[original][i]];
+        for (let j = original + 1; j < allPeaks.length; j++) {
           let nextPeak = null;
           let MaxOffSet = 999;
           for (let s = 0; s < allPeaks[j].length; s++) {
@@ -234,17 +234,23 @@ class WellMatch extends React.Component<Props, State> {
       return allTracks;
 
       function cutoff(allTracks: any[]) {
-        console.log("allTracks: ", allTracks);
         for (let i = 0; i < allTracks.length - 1; i++) {
           for (let j = 0; j < allTracks[i].length; j++) {
             if (!allTracks[i + 1][j]) continue;
-
             let curTrack = allTracks[i];
             let nextTrack = allTracks[i + 1];
             if (curTrack[j].mid !== nextTrack[j].mid) continue;
             let curOffSet = Math.abs(curTrack[j].mid - curTrack[j - 1].mid);
             let nextOffSet = Math.abs(nextTrack[j].mid - nextTrack[j - 1].mid);
-            if (curOffSet < nextOffSet) {
+            let curValueDiff = Math.abs(
+              curTrack[j].value - curTrack[j - 1].value
+            );
+            let nextValueDiff = Math.abs(
+              nextTrack[j].value - nextTrack[j - 1].value
+            );
+            let curDiff = 0.5 * curOffSet + 0.5 * curValueDiff;
+            let nextDiff = 0.5 * nextOffSet + 0.5 * nextValueDiff;
+            if (curDiff < nextDiff) {
               allTracks[i + 1].splice(j, allTracks[i + 1].length - j);
             } else {
               allTracks[i].splice(j, allTracks[i].length - j);
