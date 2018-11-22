@@ -268,12 +268,14 @@ class WellMatch extends React.Component<Props, State> {
         } else if (findFlag === false && peakPoints.length > 0) {
           let peakInfo = {
             x: 0,
-            pos: -1
+            pos: -1,
+            value: -1
           };
           peakPoints.map(e => {
             if (e[0] > peakInfo.x) {
               peakInfo.x = e[0];
               peakInfo.pos = e[1];
+              peakInfo.value = e[0] - x;
             }
           });
           let peak = {
@@ -281,7 +283,8 @@ class WellMatch extends React.Component<Props, State> {
             bottom: peakPoints[peakPoints.length - 1][1],
             mid: (peakPoints[0][1] + peakPoints[peakPoints.length - 1][1]) / 2,
             peak: peakInfo.pos,
-            x: peakInfo.x
+            x: peakInfo.x,
+            value: peakInfo.value
           };
           peaks.push(peak);
           peakPoints = [];
