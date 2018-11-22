@@ -98,6 +98,7 @@ class WellMatch extends React.Component<Props, State> {
         .line()
         .x(d => d[0])
         .y(d => d[1])
+        .curve(d3.curveCardinal)
     };
     this.drawMatch = this.drawMatch.bind(this);
     this.drawTrace = this.drawTrace.bind(this);
@@ -433,7 +434,6 @@ class WellMatch extends React.Component<Props, State> {
 
     const { colorScale, pathGen } = this.state;
     let curves = null;
-    let circles = null;
     if (curvePaths) {
       curves = curvePaths.map((e: any, i: number) => {
         let pathD = pathGen(e);
@@ -441,19 +441,6 @@ class WellMatch extends React.Component<Props, State> {
         return (
           <path key={i} d={pathD} style={style} className="well-match-axis" />
         );
-      });
-      circles = curvePaths.map((e: any, i: number) => {
-        return e.map((d: any, index: number) => {
-          return (
-            <circle
-              key={i + index}
-              cx={d[0]}
-              cy={d[1]}
-              r={3}
-              style={{ fill: "black", stroke: "black" }}
-            />
-          );
-        });
       });
     }
 
@@ -496,7 +483,6 @@ class WellMatch extends React.Component<Props, State> {
           {positivePaths}
           {negativePaths}
           {trackPath}
-          {circles}
         </svg>
       </div>
     );
