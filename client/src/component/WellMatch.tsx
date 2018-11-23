@@ -98,7 +98,7 @@ class WellMatch extends React.Component<Props, State> {
         .line()
         .x(d => d[0])
         .y(d => d[1])
-        .curve(d3.curveCardinal)
+       //.curve(d3.curveCardinal)
     };
     this.drawMatch = this.drawMatch.bind(this);
     this.drawTrace = this.drawTrace.bind(this);

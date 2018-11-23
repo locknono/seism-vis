@@ -98,7 +98,7 @@ class Map extends React.Component<Props, object> {
   }
   componentDidMount() {
     this.deployMap();
-    this.generateBound();
+    //this.generateBound();
     this.generateGrid();
   }
 
@@ -351,7 +351,7 @@ class Map extends React.Component<Props, object> {
     let p3: point = [37.899613830166174, 118.82475161382335];
     let p4: point = [37.83027712360192, 118.82304212267306];
     let bound = [p1, p2, p3, p4];
-    L.polygon(bound, { color: "blue" }).addTo(this.map);
+    L.polygon(bound, { color: "blue", fill: false }).addTo(this.map);
   }
 
   generateGrid() {
@@ -360,11 +360,27 @@ class Map extends React.Component<Props, object> {
       .then(data => {
         const polylines: any[] = [];
         data.map((path: [number, number][]) => {
-          const polyline = L.polyline(path, { color: "grey", weight: 0.5 });
+          const polyline = L.polyline(path, {
+            color: "grey",
+            weight: 0.5
+          });
           polylines.push(polyline);
         });
         const polylinesLayerGroup = L.layerGroup(polylines);
-        polylinesLayerGroup.addTo(this.map);
+
+        const imageUrl = "http://localhost:3000/imgs/xy/300.png";
+        const imageBounds: [number, number][] = [
+          [37.90098826849878, 118.73383750454309],
+          [37.899613830166174, 118.82475161382335],
+          [37.83027712360192, 118.82304212267306],
+          [37.83164815261103, 118.73221307817226]
+        ];
+        const imgOverlay = L.imageOverlay(imageUrl, imageBounds);
+        const overlayMaps = {
+          imgOverlay: imgOverlay,
+          polylinesLayerGroup: polylinesLayerGroup
+        };
+        L.control.layers(undefined, overlayMaps).addTo(this.map);
       });
   }
 
