@@ -8,7 +8,6 @@ const Seism = function() {
     <React.Fragment>
       <div className="seism">
         <Map />
-        <Matrix />
         <WellMatch />
       </div>
       <ControlPanel />
