@@ -171,7 +171,8 @@ class WellMatch extends React.Component<Props, State> {
       //loop the positivePath to ensure it's closed so that css `fill` works
       positivePath.push([x, scale(depthList[matrixData[0].length + 1])]);
       positivePath.push([x, scale(depthList[0])]);
-      negativePaths.push([x, scale(depthList[matrixData[0].length + 1])]);
+      negativePath.push([x, scale(depthList[matrixData[0].length + 1])]);
+
       positivePaths.push(positivePath);
       negativePaths.push(negativePath);
     }
@@ -313,7 +314,7 @@ class WellMatch extends React.Component<Props, State> {
         <svg className="well-match-svg" style={svgStyle}>
           {curves}
           {positivePaths}
-          {/*  {negativePaths} */}
+          {negativePaths}
           {trackPath}
         </svg>
       </div>
