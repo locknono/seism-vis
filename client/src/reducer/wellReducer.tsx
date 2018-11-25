@@ -84,7 +84,6 @@ export default function wellReducer(
         curvePaths: action.wellCurve
       };
     case GET_MATRIX_DATA:
-      console.log("rerererduce");
       return {
         ...state,
         matrixData: action.matrixData

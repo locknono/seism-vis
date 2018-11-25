@@ -166,7 +166,7 @@ class WellMatch extends React.Component<Props, State> {
 
       positivePath = trakcer.clearSawtooth(positivePath, x, true);
       negativePath = trakcer.clearSawtooth(negativePath, x, false);
-      let peaks = trakcer.extractPeaks(positivePath, x);
+      const peaks = trakcer.extractPeaks(positivePath, x);
       allPeaks.push(peaks);
       //loop the positivePath to ensure it's closed so that css `fill` works
       positivePath.push([x, scale(depthList[matrixData[0].length + 1])]);
@@ -175,7 +175,7 @@ class WellMatch extends React.Component<Props, State> {
       positivePaths.push(positivePath);
       negativePaths.push(negativePath);
     }
-    let allTracks: any = [];
+    const allTracks: any = [];
     for (let i = 0; i < allPeaks.length / 2; i++) {
       allTracks.push(...trakcer.tracking(allPeaks, i));
     }
@@ -227,7 +227,7 @@ class WellMatch extends React.Component<Props, State> {
         }
         const paths = [];
         for (let i = 0; i < layerIndexList.length; i++) {
-          let index = layerIndexList[i];
+          const index = layerIndexList[i];
           const topPath = [];
           const bottomPath = [];
           for (let j = 0; j < data.length; j++) {

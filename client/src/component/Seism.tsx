@@ -3,6 +3,7 @@ import Map from "./Map";
 import Matrix from "./Matrix";
 import WellMatch from "./WellMatch";
 import ControlPanel from "./ControlPanel";
+import InfoPanel from "./InfoPanel";
 const Seism = function() {
   return (
     <React.Fragment>
@@ -11,6 +12,7 @@ const Seism = function() {
         <WellMatch />
       </div>
       <ControlPanel />
+      <InfoPanel />
     </React.Fragment>
   );
 };
