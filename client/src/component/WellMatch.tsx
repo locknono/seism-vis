@@ -180,9 +180,16 @@ class WellMatch extends React.Component<Props, State> {
     for (let i = 0; i < allPeaks.length / 2; i++) {
       allTracks.push(...trakcer.tracking(allPeaks, i));
     }
+
     trakcer.cutOffAllTracks(allTracks, allPeaks.length);
-    getAllTrack(allTracks);
+    console.log('allTracks: ', allTracks);
+
     paths.push(positivePaths, negativePaths);
+
+
+    //draw tracking line
+    getAllTrack(allTracks);
+    //draw trace
     getTracePath(paths);
   }
 
@@ -306,7 +313,7 @@ class WellMatch extends React.Component<Props, State> {
       let pathGene = d3
         .line()
         .x((d: any) => {
-          return d.x;
+          return d.highestX;
         })
         .y((d: any) => {
           return d.mid;

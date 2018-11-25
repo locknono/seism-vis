@@ -1,3 +1,12 @@
+interface Peak {
+  top: number;
+  bottom: number;
+  mid: number;
+  highestX: number;
+  highestY: number;
+  value: number;
+}
+
 export default class Tracker {
   constructor() {}
   clearSawtooth(
@@ -54,8 +63,8 @@ export default class Tracker {
           top: peakPoints[0][1],
           bottom: peakPoints[peakPoints.length - 1][1],
           mid: (peakPoints[0][1] + peakPoints[peakPoints.length - 1][1]) / 2,
-          peak: peakInfo.pos,
-          x: peakInfo.x,
+          highestY: peakInfo.pos,
+          highestX: peakInfo.x,
           value: peakInfo.value
         };
         peaks.push(peak);
@@ -63,44 +72,6 @@ export default class Tracker {
       }
     }
     return peaks;
-  }
-
-  cutOffAllTracks(allTracks: any, traceCount: number) {
-    for (let i = allTracks.length - 1; i >= 0; i--) {
-      if (allTracks[i].length < traceCount / 2) {
-        allTracks.splice(i, 1);
-      }
-    }
-    let removeSet = new Set();
-    for (let i = 0; i < allTracks.length; i++) {
-      labelStop: for (let j = 0; j < allTracks.length; j++) {
-        if (i === j) continue;
-        let track1 = allTracks[i];
-        let track2 = allTracks[j];
-        if (track1.length === track2.length) continue;
-        for (let s = 1; s < track1.length; s++) {
-          for (let m = 1; m < track2.length; m++) {
-            if (
-              track1[s].mid === track2[m].mid &&
-              track1[s].x === track2[m].x &&
-              track1[s - 1].mid !== track2[m - 1].mid
-            ) {
-              if (track1.length < track2.length) {
-                removeSet.add(i);
-                break labelStop;
-              } else {
-                removeSet.add(j);
-                break labelStop;
-              }
-            }
-          }
-        }
-      }
-    }
-    let removeList = Array.from(removeSet).sort((a, b) => b - a);
-    for (let i = 0; i < removeList.length; i++) {
-      allTracks.splice(removeList[i], 1);
-    }
   }
 
   tracking(allPeaks: any, startTrackNumber: number) {
@@ -112,7 +83,7 @@ export default class Tracker {
         let MaxOffSet = 999;
         for (let s = 0; s < allPeaks[j].length; s++) {
           let offset = Math.abs(
-            allPeaks[j][s].mid - track[track.length - 1].mid
+            allPeaks[j][s].highestY - track[track.length - 1].highestY
           );
           if (offset < MaxOffSet) {
             MaxOffSet = offset;
@@ -134,9 +105,13 @@ export default class Tracker {
           if (!allTracks[i + 1][j]) continue;
           let curTrack = allTracks[i];
           let nextTrack = allTracks[i + 1];
-          if (curTrack[j].mid !== nextTrack[j].mid) continue;
-          let curOffSet = Math.abs(curTrack[j].mid - curTrack[j - 1].mid);
-          let nextOffSet = Math.abs(nextTrack[j].mid - nextTrack[j - 1].mid);
+          if (curTrack[j].highestY !== nextTrack[j].highestY) continue;
+          let curOffSet = Math.abs(
+            curTrack[j].highestY - curTrack[j - 1].highestY
+          );
+          let nextOffSet = Math.abs(
+            nextTrack[j].highestY - nextTrack[j - 1].highestY
+          );
           let curValueDiff = Math.abs(
             curTrack[j].value - curTrack[j - 1].value
           );
@@ -153,5 +128,93 @@ export default class Tracker {
         }
       }
     }
+  }
+
+  cutOffAllTracks(allTracks: any, traceCount: number) {
+    for (let i = allTracks.length - 1; i >= 0; i--) {
+      if (allTracks[i].length < traceCount / 2) {
+        allTracks.splice(i, 1);
+      }
+    }
+    let removeSet = new Set();
+    for (let i = 0; i < allTracks.length; i++) {
+      labelStop: for (let j = 0; j < allTracks.length; j++) {
+        if (i === j) continue;
+        let track1 = allTracks[i];
+        let track2 = allTracks[j];
+        if (track1.length === track2.length) continue;
+        for (let s = 1; s < track1.length; s++) {
+          for (let m = 1; m < track2.length; m++) {
+            if (
+              track1[s].highestY === track2[m].highestY &&
+              track1[s].x === track2[m].x &&
+              track1[s - 1].highestY !== track2[m - 1].highestY
+            ) {
+              if (track1.length < track2.length) {
+                removeSet.add(i);
+                break labelStop;
+              } else {
+                removeSet.add(j);
+                break labelStop;
+              }
+            }
+          }
+        }
+      }
+    }
+    let removeList = Array.from(removeSet).sort((a, b) => b - a);
+    for (let i = 0; i < removeList.length; i++) {
+      allTracks.splice(removeList[i], 1);
+    }
+
+    this.RemoveOverlapTrackingPath(allTracks);
+  }
+
+  getFourVertex() {}
+
+  RemoveOverlapTrackingPath(allTracks: any) {
+    const removeSet = new Set();
+    for (let i = 0; i < allTracks.length; i++) {
+      for (let j = i + 1; j < allTracks.length; j++) {
+        if (i === j) continue;
+        if (this.ifTrackOverlap(allTracks[i], allTracks[j])) {
+          removeSet.add(allTracks[i].length > allTracks[j].length ? j : i);
+        }
+      }
+    }
+    const removeList = Array.from(removeSet).sort((a, b) => b - a);
+    for (let i = 0; i < removeList.length; i++) {
+      allTracks.splice(removeList[i], 1);
+    }
+    console.log("allTracks: ", allTracks);
+    console.log("removeList: ", removeList);
+  }
+  ifPeakEqual(peak1: Peak, peak2: Peak): boolean {
+    return (
+      peak1.highestX === peak2.highestX &&
+      peak1.highestY === peak2.highestY &&
+      peak1.value === peak2.value
+    );
+  }
+
+  ifTrackOverlap(track1: Peak[], track2: Peak[]): boolean {
+    if (track1.length === track2.length) return false;
+    let overlap = false;
+    let [longTrack, shortTrack] =
+      track1.length > track2.length ? [track1, track2] : [track2, track1];
+    for (let i = 0, j = 0; i < longTrack.length && j < shortTrack.length; ) {
+      if (this.ifPeakEqual(longTrack[i], shortTrack[j])) {
+        i += 1;
+        j += 1;
+      } else {
+        i += 1;
+        j = 0;
+      }
+
+      if (j === shortTrack.length) {
+        overlap = true;
+      }
+    }
+    return overlap;
   }
 }
