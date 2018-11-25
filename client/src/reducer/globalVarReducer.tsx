@@ -23,21 +23,21 @@ function getDepthList() {
     let depth = d0 * (Math.exp((beta * i) / 1000) - 1);
     depthList.push(depth);
   }
-  depthList = depthList.slice(500, 650);
+  depthList = depthList.slice(500, 652);
   return depthList;
 }
 
 const [traceMinDepth, traceMaxDepth] = getTraceMinMaxDepth();
 const depthList = getDepthList();
 const wellMinDepth = depthList[0];
-const wellMaxDepth = depthList[depthList.length - 1];
+const wellMaxDepth = depthList[depthList.length - 3];
 
-const wellMatchDepthScale = d3
+const initialWellMatchDepthScale = d3
   .scaleLinear()
   .domain([wellMinDepth, wellMaxDepth])
   .range([
     wellMatchSvgHeight * wellMatchSvgPaddingRatio,
-    wellMatchSvgHeight * (1 - wellMatchSvgPaddingRatio) 
+    wellMatchSvgHeight * (1 - wellMatchSvgPaddingRatio)
   ]);
 
 interface GlobalVarState {
@@ -77,7 +77,7 @@ const initialState: GlobalVarState = {
   wellMatchSvgHeight,
   wellMatchSvgWidth,
   wellMatchSvgPaddingRatio,
-  wellMatchDepthScale,
+  wellMatchDepthScale: initialWellMatchDepthScale,
   traceMinDepth,
   traceMaxDepth,
   depthList

@@ -136,10 +136,10 @@ class WellMatch extends React.Component<Props, State> {
       .scaleLinear()
       .domain([-13685.379, 13685.379])
       .range([-xOffsetScope, xOffsetScope]);
-    let positivePaths = [];
-    let allPeaks = [];
-    let negativePaths: [number, number][][] = [];
-    let paths = [];
+    const allPeaks = [];
+    const positivePaths: [number, number][][] = [];
+    const negativePaths: [number, number][][] = [];
+    const paths = [];
     for (let i = 0; i < matrixData.length; i++) {
       let positivePath: [number, number][] = [];
       let negativePath: [number, number][] = [];
@@ -166,7 +166,6 @@ class WellMatch extends React.Component<Props, State> {
 
       positivePath = trakcer.clearSawtooth(positivePath, x, true);
       negativePath = trakcer.clearSawtooth(negativePath, x, false);
-
       let peaks = trakcer.extractPeaks(positivePath, x);
       allPeaks.push(peaks);
       //loop the positivePath to ensure it's closed so that css `fill` works
@@ -206,7 +205,7 @@ class WellMatch extends React.Component<Props, State> {
     })
       .then(res => res.json())
       .then(data => {
-        console.log("data:gi", data);
+        console.log("data: ", data);
         const {
           width,
           paddingRatio,
@@ -229,8 +228,8 @@ class WellMatch extends React.Component<Props, State> {
         const paths = [];
         for (let i = 0; i < layerIndexList.length; i++) {
           let index = layerIndexList[i];
-          let topPath = [];
-          let bottomPath = [];
+          const topPath = [];
+          const bottomPath = [];
           for (let j = 0; j < data.length; j++) {
             let x =
               wellIDNearLineIndex[j] * (matrixData.length - 1) * pad + pad / 2;
@@ -270,7 +269,7 @@ class WellMatch extends React.Component<Props, State> {
     if (curvePaths) {
       curves = curvePaths.map((e: any, i: number) => {
         let pathD = pathGen(e);
-        let style = { fill: colorScale(i), stroke: "none", fillOpacity: 0.8 };
+        let style = { fill: "grey", stroke: "none", fillOpacity: 0.8 };
         return (
           <path key={i} d={pathD} style={style} className="well-match-axis" />
         );
@@ -314,7 +313,7 @@ class WellMatch extends React.Component<Props, State> {
         <svg className="well-match-svg" style={svgStyle}>
           {curves}
           {positivePaths}
-          {negativePaths}
+          {/*  {negativePaths} */}
           {trackPath}
         </svg>
       </div>
