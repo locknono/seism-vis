@@ -182,10 +182,9 @@ class WellMatch extends React.Component<Props, State> {
     }
 
     trakcer.cutOffAllTracks(allTracks, allPeaks.length);
-    console.log('allTracks: ', allTracks);
+    console.log("allTracks: ", allTracks);
 
     paths.push(positivePaths, negativePaths);
-
 
     //draw tracking line
     getAllTrack(allTracks);
@@ -207,7 +206,7 @@ class WellMatch extends React.Component<Props, State> {
     })
       .then(res => res.json())
       .then(data => {
-        console.log("data: ", data);
+        console.log("data:gi", data);
         const {
           width,
           paddingRatio,
@@ -230,45 +229,29 @@ class WellMatch extends React.Component<Props, State> {
         const paths = [];
         for (let i = 0; i < layerIndexList.length; i++) {
           let index = layerIndexList[i];
-          let path = [];
-
+          let topPath = [];
+          let bottomPath = [];
           for (let j = 0; j < data.length; j++) {
             let x =
               wellIDNearLineIndex[j] * (matrixData.length - 1) * pad + pad / 2;
             let value = data[j].value;
             if (value[index].topDepth) {
-              let y = scale(value[index].topDepth);
-              path.push([x, y]);
+              let topY = scale(value[index].topDepth);
+              let bottomY = scale(value[index].bottomDepth);
+              topPath.push([x, topY]);
+              bottomPath.push([x, bottomY]);
             } else {
-              path.push([x, null]);
+              topPath.push([x, null]);
+              bottomPath.push([x, null]);
             }
           }
-
-          for (let j = data.length - 1; j >= 0; j--) {
-            let x =
-              wellIDNearLineIndex[j] * (matrixData.length - 1) * pad + pad / 2;
-            let value = data[j].value;
-            if (value[index].bottomDepth) {
-              let y = scale(value[index].bottomDepth);
-              path.push([x, y]);
-            } else {
-              path.push([x, null]);
+          for (let i = 0; i < topPath.length; i++) {
+            if (topPath[i][1] === null) {
+              topPath[i][1] = topPath[i - 1][1];
+              bottomPath[i][1] = bottomPath[i - 1][1];
             }
           }
-          paths.push(path);
-        }
-        for (let i = 0; i < paths.length; i++) {
-          let path = paths[i];
-          for (let j = 0; j < path.length / 2; j++) {
-            if (path[j][1] === null) {
-              path[j][1] = path[j - 1][1];
-            }
-          }
-          for (let j = path.length - 1; j > path.length / 2; j--) {
-            if (path[j][1] === null) {
-              path[j][1] = path[j + 1][1];
-            }
-          }
+          paths.push([...topPath, ...bottomPath.reverse()]);
         }
 
         for (let i = 0; i < paths.length; i++) {
