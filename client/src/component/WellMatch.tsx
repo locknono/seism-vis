@@ -8,12 +8,7 @@ import {
 } from "../action/changeWell";
 import { changeSvgSize } from "../action/changeWellMatchSvg";
 import * as d3 from "d3";
-import {
-  clearSawtooth,
-  cutOffAllTracks,
-  extractPeaks,
-  tracking
-} from "../API/tracking";
+import Tracker from "../API/tracking";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const {
     wellMinDepth,
@@ -132,6 +127,7 @@ class WellMatch extends React.Component<Props, State> {
       getTracePath,
       getAllTrack
     } = this.props;
+    const trakcer = new Tracker();
     const drawWidth = width * (1 - 2 * paddingRatio);
     const pad = drawWidth / matrixData.length;
     //set xOffsetScope a litter bigger than `pad/2`
@@ -168,10 +164,10 @@ class WellMatch extends React.Component<Props, State> {
         }
       }
 
-      positivePath = clearSawtooth(positivePath, x, true);
-      negativePath = clearSawtooth(negativePath, x, false);
+      positivePath = trakcer.clearSawtooth(positivePath, x, true);
+      negativePath = trakcer.clearSawtooth(negativePath, x, false);
 
-      let peaks = extractPeaks(positivePath, x);
+      let peaks = trakcer.extractPeaks(positivePath, x);
       allPeaks.push(peaks);
       //loop the positivePath to ensure it's closed so that css `fill` works
       positivePath.push([x, scale(depthList[matrixData[0].length + 1])]);
@@ -182,9 +178,9 @@ class WellMatch extends React.Component<Props, State> {
     }
     let allTracks: any = [];
     for (let i = 0; i < allPeaks.length / 2; i++) {
-      allTracks.push(...tracking(allPeaks, i));
+      allTracks.push(...trakcer.tracking(allPeaks, i));
     }
-    cutOffAllTracks(allTracks, allPeaks.length);
+    trakcer.cutOffAllTracks(allTracks, allPeaks.length);
     getAllTrack(allTracks);
     paths.push(positivePaths, negativePaths);
     getTracePath(paths);
