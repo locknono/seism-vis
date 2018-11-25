@@ -7,6 +7,10 @@ interface Peak {
   value: number;
 }
 
+type Track = Peak[];
+
+type AllTracks = Track[];
+
 export default class Tracker {
   constructor() {}
   clearSawtooth(
@@ -170,9 +174,7 @@ export default class Tracker {
     this.RemoveOverlapTrackingPath(allTracks);
   }
 
-  getFourVertex() {}
-
-  RemoveOverlapTrackingPath(allTracks: any) {
+  RemoveOverlapTrackingPath(allTracks: AllTracks) {
     const removeSet = new Set();
     for (let i = 0; i < allTracks.length; i++) {
       for (let j = i + 1; j < allTracks.length; j++) {
@@ -197,7 +199,7 @@ export default class Tracker {
     );
   }
 
-  ifTrackOverlap(track1: Peak[], track2: Peak[]): boolean {
+  ifTrackOverlap(track1: Track, track2: Track): boolean {
     if (track1.length === track2.length) return false;
     let overlap = false;
     let [longTrack, shortTrack] =
@@ -210,7 +212,6 @@ export default class Tracker {
         i += 1;
         j = 0;
       }
-
       if (j === shortTrack.length) {
         overlap = true;
       }
