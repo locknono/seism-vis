@@ -143,15 +143,15 @@ class WellMatch extends React.Component<Props, State> {
     for (let i = 0; i < matrixData.length; i++) {
       let positivePath: [number, number][] = [];
       let negativePath: [number, number][] = [];
-      let x = pad * i + pad / 2;
+      const x = pad * i + pad / 2;
       for (let j = 0; j < matrixData[i].length; j++) {
-        let xOffset = matrixData[i][j] === 0 ? 0 : xScale(matrixData[i][j]);
-        let p1: [number, number] = [x, scale(depthList[j])];
-        let p2: [number, number] = [
+        const xOffset = matrixData[i][j] === 0 ? 0 : xScale(matrixData[i][j]);
+        const p1: [number, number] = [x, scale(depthList[j])];
+        const p2: [number, number] = [
           x + xOffset,
           (scale(depthList[j]) + scale(depthList[j + 1])) / 2
         ];
-        let p3: [number, number] = [
+        const p3: [number, number] = [
           x,
           (scale(depthList[j]) + scale(depthList[j + 1])) / 2
         ];
@@ -166,7 +166,11 @@ class WellMatch extends React.Component<Props, State> {
 
       positivePath = trakcer.clearSawtooth(positivePath, x, true);
       negativePath = trakcer.clearSawtooth(negativePath, x, false);
-      const peaks = trakcer.extractPeaks(positivePath, x);
+
+      const peaks = [
+        ...trakcer.extractPeaks(positivePath, x),
+        ...trakcer.extractPeaks(negativePath, x)
+      ];
       allPeaks.push(peaks);
       //loop the positivePath to ensure it's closed so that css `fill` works
       positivePath.push([x, scale(depthList[matrixData[0].length + 1])]);
@@ -176,6 +180,7 @@ class WellMatch extends React.Component<Props, State> {
       positivePaths.push(positivePath);
       negativePaths.push(negativePath);
     }
+    console.log("allPeaks: ", allPeaks);
     const allTracks: any = [];
     for (let i = 0; i < allPeaks.length / 2; i++) {
       allTracks.push(...trakcer.tracking(allPeaks, i));
@@ -232,12 +237,12 @@ class WellMatch extends React.Component<Props, State> {
           const topPath = [];
           const bottomPath = [];
           for (let j = 0; j < data.length; j++) {
-            let x =
+            const x =
               wellIDNearLineIndex[j] * (matrixData.length - 1) * pad + pad / 2;
-            let value = data[j].value;
+            const value = data[j].value;
             if (value[index].topDepth) {
-              let topY = scale(value[index].topDepth);
-              let bottomY = scale(value[index].bottomDepth);
+              const topY = scale(value[index].topDepth);
+              const bottomY = scale(value[index].bottomDepth);
               topPath.push([x, topY]);
               bottomPath.push([x, bottomY]);
             } else {

@@ -40,6 +40,8 @@ export default class Tracker {
   }
 
   extractPeaks(positivePath: [number, number][], x: number) {
+    console.log("x: ", x);
+    console.log("positivePath: ", positivePath);
     const peaks = [];
     let peakPoints = [];
     let findFlag = false;
@@ -52,24 +54,25 @@ export default class Tracker {
         peakPoints.push(point);
       } else if (findFlag === false && peakPoints.length > 0) {
         let peakInfo = {
-          x: 0,
-          pos: -1,
-          value: -1
+          highestX: -1,
+          highestY: -1,
+          value: 0
         };
         peakPoints.map(e => {
-          if (e[0] > peakInfo.x) {
-            peakInfo.x = e[0];
-            peakInfo.pos = e[1];
+          if (Math.abs(e[0] - x) > peakInfo.value) {
+            peakInfo.highestX = e[0];
+            peakInfo.highestY = e[1];
             peakInfo.value = e[0] - x;
           }
         });
         let peak = {
+          highestX: peakInfo.highestX,
+          highestY: peakInfo.highestY,
+          value: Math.abs(peakInfo.value),
+          positiveFlag: peakInfo.value > 0 ? true : false,
           top: peakPoints[0][1],
           bottom: peakPoints[peakPoints.length - 1][1],
-          mid: (peakPoints[0][1] + peakPoints[peakPoints.length - 1][1]) / 2,
-          highestY: peakInfo.pos,
-          highestX: peakInfo.x,
-          value: peakInfo.value
+          mid: (peakPoints[0][1] + peakPoints[peakPoints.length - 1][1]) / 2
         };
         peaks.push(peak);
         peakPoints = [];
