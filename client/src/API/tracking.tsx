@@ -40,7 +40,7 @@ export default class Tracker {
   }
 
   extractPeaks(positivePath: [number, number][], x: number) {
-    let peaks = [];
+    const peaks = [];
     let peakPoints = [];
     let findFlag = false;
     for (let i = 0; i < positivePath.length - 1; i++) {
@@ -81,7 +81,7 @@ export default class Tracker {
   tracking(allPeaks: any, startTrackNumber: number) {
     const allTracks = [];
     for (let i = 0; i < allPeaks[startTrackNumber].length; i++) {
-      let track = [allPeaks[startTrackNumber][i]];
+      const track = [allPeaks[startTrackNumber][i]];
       for (let j = startTrackNumber + 1; j < allPeaks.length; j++) {
         let nextPeak = null;
         let MaxOffSet = 999;

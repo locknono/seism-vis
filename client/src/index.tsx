@@ -8,11 +8,12 @@ import { createStore, combineReducers } from "redux";
 import figReducer from "./reducer/figReducer";
 import globalVarReducer from "./reducer/globalVarReducer";
 import wellReducer from "./reducer/wellReducer";
-
+import storageReducer from "./reducer/storageReducer";
 const rootReducer = combineReducers({
   figReducer,
   wellReducer,
-  globalVarReducer
+  globalVarReducer,
+  storageReducer
 });
 
 let store = createStore(rootReducer);
