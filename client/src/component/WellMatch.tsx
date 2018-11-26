@@ -131,6 +131,7 @@ class WellMatch extends React.Component<Props, State> {
     const drawWidth = width * (1 - 2 * paddingRatio);
     const pad = drawWidth / matrixData.length;
     //set xOffsetScope a litter bigger than `pad/2`
+    //TODO: restrict the biggest xOffsetScope
     const xOffsetScope = pad / 0.8;
     const xScale = d3
       .scaleLinear()
@@ -304,6 +305,7 @@ class WellMatch extends React.Component<Props, State> {
           return d.highestX;
         })
         .y((d: any) => {
+          //TODO:fix bug:highestY on negative path is not accurate
           return d.mid;
         });
       trackPath = allTrack.map((track: any, i: number) => {

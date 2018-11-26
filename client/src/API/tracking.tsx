@@ -49,7 +49,10 @@ export default class Tracker {
       let point = positivePath[i];
       let nextPoint = positivePath[i + 1];
       if (point[0] === x && nextPoint[0] !== x) findFlag = true;
-      if (point[0] !== x && nextPoint[0] === x) findFlag = false;
+      if (point[0] !== x && nextPoint[0] === x) {
+        peakPoints.push(nextPoint);
+        findFlag = false;
+      }
       if (findFlag === true) {
         peakPoints.push(point);
       } else if (findFlag === false && peakPoints.length > 0) {
@@ -87,18 +90,21 @@ export default class Tracker {
       const track = [allPeaks[startTrackNumber][i]];
       for (let j = startTrackNumber + 1; j < allPeaks.length; j++) {
         let nextPeak = null;
-        let MaxOffSet = 999;
+        let MinOffset = 999;
+        const lastPeakOnTrack = track[track.length - 1];
         for (let s = 0; s < allPeaks[j].length; s++) {
+          if (allPeaks[j][s].positiveFlag !== lastPeakOnTrack.positiveFlag)
+            continue;
           let offset = Math.abs(
-            allPeaks[j][s].highestY - track[track.length - 1].highestY
+            allPeaks[j][s].highestY - lastPeakOnTrack.highestY
           );
-          if (offset < MaxOffSet) {
-            MaxOffSet = offset;
+          if (offset < MinOffset) {
+            MinOffset = offset;
             nextPeak = allPeaks[j][s];
           }
         }
         //if offsets too much,stop here
-        if (MaxOffSet > 50) break;
+        if (MinOffset > 50) break;
         track.push(nextPeak);
       }
       allTracks.push(track);
