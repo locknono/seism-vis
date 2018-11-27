@@ -9,7 +9,9 @@ import {
   GET_WELL_CURVE,
   GET_MATRIX_DATA,
   GET_TRACE_PATH,
-  GET_ALL_TRACK
+  GET_ALL_TRACK,
+  GET_TRACK_VERTEX,
+  getTrackVertex
 } from "../action/changeWell";
 
 interface WellState {
@@ -24,6 +26,7 @@ interface WellState {
   matrixData: any;
   paths: any;
   allTrack: any;
+  vertex: any[];
 }
 
 const initialState: WellState = {
@@ -37,7 +40,8 @@ const initialState: WellState = {
   curvePaths: null,
   matrixData: null,
   paths: null,
-  allTrack: null
+  allTrack: null,
+  vertex: []
 };
 
 export default function wellReducer(
@@ -97,6 +101,11 @@ export default function wellReducer(
       return {
         ...state,
         allTrack: action.allTrack
+      };
+    case GET_TRACK_VERTEX:
+      return {
+        ...state,
+        vertex: action.vertex
       };
     default:
       return state;

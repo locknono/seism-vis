@@ -227,4 +227,13 @@ export default class Tracker {
     }
     return overlap;
   }
+
+  getFourVertex(track: Track) {
+    return [
+      track[0].top,
+      track[0].bottom,
+      track[track.length - 1].top,
+      track[track.length - 1].bottom
+    ];
+  }
 }

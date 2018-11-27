@@ -9,6 +9,7 @@ export const GET_WELL_CURVE = "GET_WELL_CURVE";
 export const GET_MATRIX_DATA = "GET_MATRIX_DATA";
 export const GET_TRACE_PATH = "GET_TRACE_PATH";
 export const GET_ALL_TRACK = "GET_ALL_TRACK";
+export const GET_TRACK_VERTEX = "GET_TRACK_VERTEX";
 
 export function getAllWells(allWells: any) {
   return {
@@ -85,5 +86,12 @@ export function getAllTrack(allTrack: any) {
   return {
     type: GET_ALL_TRACK,
     allTrack
+  };
+}
+
+export function getTrackVertex(vertex: any) {
+  return {
+    type: GET_TRACK_VERTEX,
+    vertex
   };
 }

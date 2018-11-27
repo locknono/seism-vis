@@ -4,7 +4,8 @@ import {
   getCoupleWellPath,
   getWellCurve,
   getTracePath,
-  getAllTrack
+  getAllTrack,
+  getTrackVertex
 } from "../action/changeWell";
 import { changeSvgSize } from "../action/changeWellMatchSvg";
 import * as d3 from "d3";
@@ -29,7 +30,8 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     curvePaths,
     matrixData,
     paths,
-    allTrack
+    allTrack,
+    vertex
   } = state.wellReducer;
 
   return {
@@ -48,7 +50,8 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     matrixData,
     depthList,
     paths,
-    allTrack
+    allTrack,
+    vertex
   };
 };
 
@@ -57,7 +60,8 @@ const mapDispatchToProps = {
   changeSvgSize,
   getWellCurve,
   getTracePath,
-  getAllTrack
+  getAllTrack,
+  getTrackVertex
 };
 
 interface Props {
@@ -82,6 +86,8 @@ interface Props {
   getTracePath: any;
   getAllTrack: any;
   allTrack: any;
+  getTrackVertex: any;
+  vertex: any[];
 }
 
 interface State {
@@ -125,7 +131,8 @@ class WellMatch extends React.Component<Props, State> {
       matrixData,
       depthList,
       getTracePath,
-      getAllTrack
+      getAllTrack,
+      getTrackVertex
     } = this.props;
     const trakcer = new Tracker();
     const drawWidth = width * (1 - 2 * paddingRatio);
@@ -189,7 +196,12 @@ class WellMatch extends React.Component<Props, State> {
 
     trakcer.cutOffAllTracks(allTracks, allPeaks.length);
     console.log("allTracks: ", allTracks);
-
+    const vertex: any = [];
+    allTracks.map((e: any) => {
+      vertex.push(trakcer.getFourVertex(e));
+    });
+    console.log("vertex: ", vertex);
+    getTrackVertex(vertex);
     paths.push(positivePaths, negativePaths);
 
     //draw tracking line
@@ -270,7 +282,16 @@ class WellMatch extends React.Component<Props, State> {
   calUncertainty() {}
 
   render() {
-    const { width, height, curvePaths, paths, allTrack } = this.props;
+    const {
+      width,
+      height,
+      curvePaths,
+      paths,
+      allTrack,
+      vertex,
+      matrixData,
+      paddingRatio
+    } = this.props;
     const { colorScale, pathGen } = this.state;
     let curves = null;
     if (curvePaths) {
@@ -314,6 +335,21 @@ class WellMatch extends React.Component<Props, State> {
         return <path key={i} d={d} style={style} className="trace-path" />;
       });
     }
+
+    let vertexPath = null;
+    if (vertex.length > 0) {
+      const drawWidth = width * (1 - 2 * paddingRatio);
+      const pad = drawWidth / matrixData.length;
+      const x1 = pad * 0 + pad / 2;
+      const x2 = pad * (matrixData.length - 1) + pad / 2;
+      vertexPath = vertex.map((fourVertex: number[], i: number) => {
+        return fourVertex.map((pointY: number, index: number) => {
+          const cx = index <= 1 ? x1 : x2;
+          const cy = pointY;
+          return <circle cx={cx} cy={cy} r={5} fill="none" stroke="blue" />;
+        });
+      });
+    }
     const svgStyle = { width, height: height + 15 };
     const divStyle = { width, height: height + 15 };
     return (
@@ -323,6 +359,7 @@ class WellMatch extends React.Component<Props, State> {
           {positivePaths}
           {negativePaths}
           {trackPath}
+          {vertexPath}
         </svg>
       </div>
     );
