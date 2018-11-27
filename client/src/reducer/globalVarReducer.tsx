@@ -5,7 +5,7 @@ const wellMaxDepth = 1850; */
 
 const wellMatchSvgWidth = 300;
 const wellMatchSvgHeight = 700;
-const wellMatchSvgPaddingRatio = 0;
+const wellMatchSvgPaddingRatio = 0.1;
 
 function getTraceMinMaxDepth() {
   let d0 = 3846;

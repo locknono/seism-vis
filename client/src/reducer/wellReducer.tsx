@@ -11,7 +11,7 @@ import {
   GET_TRACE_PATH,
   GET_ALL_TRACK,
   GET_TRACK_VERTEX,
-  getTrackVertex
+  GET_UC_PATH
 } from "../action/changeWell";
 
 interface WellState {
@@ -27,6 +27,7 @@ interface WellState {
   paths: any;
   allTrack: any;
   vertex: any[];
+  ucPath: any[];
 }
 
 const initialState: WellState = {
@@ -41,7 +42,8 @@ const initialState: WellState = {
   matrixData: null,
   paths: null,
   allTrack: null,
-  vertex: []
+  vertex: [],
+  ucPath: []
 };
 
 export default function wellReducer(
@@ -106,6 +108,11 @@ export default function wellReducer(
       return {
         ...state,
         vertex: action.vertex
+      };
+    case GET_UC_PATH:
+      return {
+        ...state,
+        ucPath: action.path
       };
     default:
       return state;
