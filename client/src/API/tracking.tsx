@@ -40,8 +40,6 @@ export default class Tracker {
   }
 
   extractPeaks(positivePath: [number, number][], x: number) {
-    console.log("x: ", x);
-    console.log("positivePath: ", positivePath);
     const peaks = [];
     let peakPoints = [];
     let findFlag = false;
@@ -198,7 +196,6 @@ export default class Tracker {
       allTracks.splice(removeList[i], 1);
     }
     console.log("allTracks: ", allTracks);
-    console.log("removeList: ", removeList);
   }
   ifPeakEqual(peak1: Peak, peak2: Peak): boolean {
     return (

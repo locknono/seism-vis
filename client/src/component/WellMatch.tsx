@@ -10,6 +10,7 @@ import {
 import { changeSvgSize } from "../action/changeWellMatchSvg";
 import * as d3 from "d3";
 import Tracker from "../API/tracking";
+import Uncertainty from "../API/uncertainty";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const {
     wellMinDepth,
@@ -109,10 +110,18 @@ class WellMatch extends React.Component<Props, State> {
     };
     this.drawMatch = this.drawMatch.bind(this);
     this.drawTrace = this.drawTrace.bind(this);
+    this.calUncertainty = this.calUncertainty.bind(this);
   }
 
   componentDidUpdate(prevProps: any) {
-    const { coupleWell, changeSvgSize, matrixData, width } = this.props;
+    const {
+      coupleWell,
+      changeSvgSize,
+      matrixData,
+      width,
+      curvePaths,
+      vertex
+    } = this.props;
 
     if (matrixData && matrixData !== prevProps.matrixData) {
       changeSvgSize(20 * matrixData.length, matrixData[0].length * 5);
@@ -120,6 +129,9 @@ class WellMatch extends React.Component<Props, State> {
     if (width !== prevProps.width) {
       this.drawMatch();
       this.drawTrace();
+    }
+    if (vertex.length > 0 && curvePaths !== null) {
+      this.calUncertainty();
     }
   }
 
@@ -279,7 +291,12 @@ class WellMatch extends React.Component<Props, State> {
       });
   }
 
-  calUncertainty() {}
+  calUncertainty() {
+    const { vertex, curvePaths } = this.props;
+    const uc = new Uncertainty();
+    const ucValue = uc.cal(vertex, curvePaths);
+    console.log("ucValue: ", ucValue);
+  }
 
   render() {
     const {
@@ -346,7 +363,16 @@ class WellMatch extends React.Component<Props, State> {
         return fourVertex.map((pointY: number, index: number) => {
           const cx = index <= 1 ? x1 : x2;
           const cy = pointY;
-          return <circle cx={cx} cy={cy} r={5} fill="none" stroke="blue" />;
+          return (
+            <circle
+              key={i * fourVertex.length + index}
+              cx={cx}
+              cy={cy}
+              r={3}
+              fill="none"
+              stroke="blue"
+            />
+          );
         });
       });
     }
