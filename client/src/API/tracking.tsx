@@ -159,7 +159,7 @@ export default class Tracker {
     }
     let removeSet = new Set();
     for (let i = 0; i < allTracks.length; i++) {
-      for (let j = i + 1; j < allTracks.length; j++) {
+      loop: for (let j = i + 1; j < allTracks.length; j++) {
         let track1 = allTracks[i];
         let track2 = allTracks[j];
         for (let s = 1; s < track1.length; s++) {
@@ -171,8 +171,10 @@ export default class Tracker {
             ) {
               if (track1.length < track2.length) {
                 removeSet.add(i);
+                break loop;
               } else {
                 removeSet.add(j);
+                break loop;
               }
             }
           }
