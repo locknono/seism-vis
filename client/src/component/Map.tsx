@@ -265,11 +265,11 @@ class Map extends React.Component<Props, object> {
 
   deployMap() {
     const center: [number, number] = [37.867271959429445, 118.78092767561518];
-    const zoom: number = 13;
+    const zoom: number = 14.5;
     const preferCanvas: boolean = true;
     const zoomControl: boolean = false;
     const attributionControl: boolean = false;
-    const options: any = {
+    const options: object = {
       center,
       zoom,
       zoomControl,

@@ -5,6 +5,7 @@ interface Peak {
   highestX: number;
   highestY: number;
   value: number;
+  positiveFlag: boolean;
 }
 
 type Track = Peak[];
@@ -129,8 +130,16 @@ export default class Tracker {
           let nextValueDiff = Math.abs(
             nextTrack[j].value - nextTrack[j - 1].value
           );
-          let curDiff = 0.5 * curOffSet + 0.5 * curValueDiff;
-          let nextDiff = 0.5 * nextOffSet + 0.5 * nextValueDiff;
+          let curHeight = Math.abs(
+            curTrack[j - 1].bottom - curTrack[j - 1].top
+          );
+          let nextHeight = Math.abs(
+            nextTrack[j - 1].bottom - nextTrack[j - 1].top
+          );
+          let curShapeDiff = curHeight * curTrack[j - 1].value;
+          let nextShapeDiff = nextHeight * nextTrack[j - 1].value;
+          let curDiff = 0.5 * curOffSet + 0.5 * curShapeDiff;
+          let nextDiff = 0.5 * nextOffSet + 0.5 * nextShapeDiff;
           if (curDiff < nextDiff) {
             allTracks[i + 1].splice(j, allTracks[i + 1].length - j);
           } else {
@@ -179,6 +188,7 @@ export default class Tracker {
     }
 
     this.RemoveOverlapTrackingPath(allTracks);
+    this.RemoveValleyAndPeakCross(allTracks);
   }
 
   RemoveOverlapTrackingPath(allTracks: AllTracks) {
@@ -195,7 +205,6 @@ export default class Tracker {
     for (let i = 0; i < removeList.length; i++) {
       allTracks.splice(removeList[i], 1);
     }
-    console.log("allTracks: ", allTracks);
   }
   ifPeakEqual(peak1: Peak, peak2: Peak): boolean {
     return (
@@ -205,6 +214,82 @@ export default class Tracker {
     );
   }
 
+  RemoveValleyAndPeakCross(allTracks: AllTracks) {
+    const crossList = [];
+    for (let i = 0; i < allTracks.length; i++) {
+      for (let j = i + 1; j < allTracks.length; j++) {
+        if (allTracks[i][0].positiveFlag === allTracks[j][0].positiveFlag)
+          continue;
+        const curTrack = allTracks[i];
+        const nextTrack = allTracks[j];
+        for (let s = 0; s < curTrack.length - 1; s++) {
+          for (let m = 0; m < nextTrack.length - 1; m++) {
+            let curTrackX =
+              curTrack[s].positiveFlag === true
+                ? curTrack[s].highestX - curTrack[s].value
+                : curTrack[s].highestX + curTrack[s].value;
+            let nextTrackX =
+              nextTrack[m].positiveFlag === true
+                ? nextTrack[m].highestX - nextTrack[m].value
+                : nextTrack[m].highestX + nextTrack[m].value;
+            if (curTrackX !== nextTrackX) continue;
+            if (
+              (curTrack[s].bottom > nextTrack[m].top &&
+                curTrack[s + 1].top < nextTrack[m + 1].bottom) ||
+              (curTrack[s].top < nextTrack[m].bottom &&
+                curTrack[s + 1].bottom > nextTrack[m + 1].top)
+            ) {
+              crossList.push(`${i}-${s}_${j}-${m}`);
+            }
+          }
+        }
+      }
+    }
+    const sliceList: any = [];
+    for (let crossIndexStr of crossList) {
+      let [cur, next] = crossIndexStr.split("_");
+      let [i, s] = cur.split("-").map((e: any) => (e = parseInt(e)));
+      let [j, m] = next.split("-").map((e: any) => (e = parseInt(e)));
+      let curTrack = allTracks[i];
+      let nextTrack = allTracks[j];
+      if (curTrack.length > nextTrack.length) {
+        sliceList.push(`${j}-${m}`);
+      } else if (curTrack.length < nextTrack.length) {
+        sliceList.push(`${i}-${s}`);
+      } else {
+        let curOffset = Math.abs(
+          allTracks[i][s + 1].highestY - allTracks[i][s].highestY
+        );
+        let nextOffset = Math.abs(
+          allTracks[j][m + 1].highestY - allTracks[j][m].highestY
+        );
+        if (curOffset < nextOffset) {
+          sliceList.push(`${j}-${m}`);
+        } else {
+          sliceList.push(`${i}-${s}`);
+        }
+      }
+    }
+
+    const spliceSet = new Set();
+    for (let sliceIndexStr of sliceList) {
+      let i = parseInt(sliceIndexStr.split("-")[0]);
+      let s = parseInt(sliceIndexStr.split("-")[1]);
+
+      spliceSet.add(i);
+      let [splitTrack1, splitTrack2] = [
+        allTracks[i].slice(0, s + 1),
+        allTracks[i].slice(s + 1, allTracks[i].length)
+      ];
+      allTracks.push(splitTrack1, splitTrack2);
+    }
+    const spliceList: number[] = Array.from(spliceSet);
+    spliceList.sort((a: number, b: number) => b - a);
+
+    for (let i = 0; i < spliceList.length; i++) {
+      allTracks.splice(spliceList[i], 1);
+    }
+  }
   ifTrackOverlap(track1: Track, track2: Track): boolean {
     if (track1.length === track2.length) return false;
     let overlap = false;
