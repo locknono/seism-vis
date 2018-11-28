@@ -69,7 +69,6 @@ export function getWellCurve(paths: any) {
 }
 
 export function getMatrixData(matrixData: any) {
-  console.log("matrixData: ", matrixData);
   return {
     type: GET_MATRIX_DATA,
     matrixData

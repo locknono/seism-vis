@@ -31,8 +31,7 @@ export default class Uncertainty {
       });
       trackVertex.push(vertex2);
     });
-    console.log("trackVertex: ", trackVertex);
-    console.log("matchVertex: ", matchVertex);
+
     let ucList: number[] = [];
     for (let i = 0; i < trackVertex.length; i++) {
       let curTrackUc: number = 0;
@@ -69,7 +68,7 @@ export default class Uncertainty {
       const path = [topPoint, midPoint, bottomPoint];
       ucPath.push(path);
     }
-    console.log("ucPath: ", ucPath);
+
     return ucPath;
   }
 }

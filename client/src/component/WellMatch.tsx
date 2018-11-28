@@ -130,7 +130,7 @@ class WellMatch extends React.Component<Props, State> {
       vertex,
       ucPath
     } = this.props;
-    console.log(curvePaths, vertex);
+
     if (matrixData && matrixData !== prevProps.matrixData) {
       changeSvgSize(40 * matrixData.length, matrixData[0].length * 5);
     }

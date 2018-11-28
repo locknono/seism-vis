@@ -151,6 +151,7 @@ export default class Tracker {
   }
 
   cutOffAllTracks(allTracks: any, traceCount: number) {
+    this.RemoveOverlapTrackingPath(allTracks);
     for (let i = allTracks.length - 1; i >= 0; i--) {
       if (allTracks[i].length < traceCount / 2) {
         allTracks.splice(i, 1);
@@ -158,11 +159,9 @@ export default class Tracker {
     }
     let removeSet = new Set();
     for (let i = 0; i < allTracks.length; i++) {
-      labelStop: for (let j = 0; j < allTracks.length; j++) {
-        if (i === j) continue;
+      for (let j = i + 1; j < allTracks.length; j++) {
         let track1 = allTracks[i];
         let track2 = allTracks[j];
-        if (track1.length === track2.length) continue;
         for (let s = 1; s < track1.length; s++) {
           for (let m = 1; m < track2.length; m++) {
             if (
@@ -172,10 +171,8 @@ export default class Tracker {
             ) {
               if (track1.length < track2.length) {
                 removeSet.add(i);
-                break labelStop;
               } else {
                 removeSet.add(j);
-                break labelStop;
               }
             }
           }
@@ -183,19 +180,19 @@ export default class Tracker {
       }
     }
     let removeList = Array.from(removeSet).sort((a, b) => b - a);
+    console.log("removeList: ", removeList);
     for (let i = 0; i < removeList.length; i++) {
       allTracks.splice(removeList[i], 1);
     }
 
     this.RemoveOverlapTrackingPath(allTracks);
-    this.RemoveValleyAndPeakCross(allTracks);
+    this.RemoveValleyAndPeakCross(allTracks, traceCount);
   }
 
   RemoveOverlapTrackingPath(allTracks: AllTracks) {
     const removeSet = new Set();
     for (let i = 0; i < allTracks.length; i++) {
       for (let j = i + 1; j < allTracks.length; j++) {
-        if (i === j) continue;
         if (this.ifTrackOverlap(allTracks[i], allTracks[j])) {
           removeSet.add(allTracks[i].length > allTracks[j].length ? j : i);
         }
@@ -214,7 +211,7 @@ export default class Tracker {
     );
   }
 
-  RemoveValleyAndPeakCross(allTracks: AllTracks) {
+  RemoveValleyAndPeakCross(allTracks: AllTracks, traceCount: number) {
     const crossList = [];
     for (let i = 0; i < allTracks.length; i++) {
       for (let j = i + 1; j < allTracks.length; j++) {
@@ -245,6 +242,7 @@ export default class Tracker {
         }
       }
     }
+    console.log("crossList: ", crossList);
     const sliceList: any = [];
     for (let crossIndexStr of crossList) {
       let [cur, next] = crossIndexStr.split("_");
@@ -281,9 +279,15 @@ export default class Tracker {
         allTracks[i].slice(0, s + 1),
         allTracks[i].slice(s + 1, allTracks[i].length)
       ];
-      allTracks.push(splitTrack1, splitTrack2);
+      if (splitTrack1.length > traceCount / 2) {
+        allTracks.push(splitTrack1);
+      }
+      if (splitTrack2.length > traceCount / 2) {
+        allTracks.push(splitTrack2);
+      }
     }
     const spliceList: number[] = Array.from(spliceSet);
+    console.log("spliceList: ", spliceList);
     spliceList.sort((a: number, b: number) => b - a);
 
     for (let i = 0; i < spliceList.length; i++) {
