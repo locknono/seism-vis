@@ -305,13 +305,29 @@ class WellMatch extends React.Component<Props, State> {
   }
 
   calUncertainty() {
-    const { vertex, curvePaths, getUcPath } = this.props;
+    const { vertex, curvePaths, getUcPath, coupleWell } = this.props;
     const uc = new Uncertainty();
     const ucPath = uc.cal(vertex, curvePaths).path;
     const ucList = uc.cal(vertex, curvePaths).ucList;
     const ucSum = uc.getUcSum(ucList);
-    console.log("ucS: ", ucSum);
+    const id1 = coupleWell[0];
+    const id2 = coupleWell[1];
+    const coupleWellUc = {
+      id1,
+      id2,
+      value: ucSum
+    };
+    console.log("coupleWellUc: ", coupleWellUc);
     getUcPath(ucPath);
+    fetch(`http://localhost:5000/storeUcSum/`, {
+      body: JSON.stringify(coupleWellUc),
+      credentials: "same-origin",
+      headers: {
+        "content-type": "application/json"
+      },
+      method: "POST",
+      mode: "cors"
+    });
   }
 
   render() {

@@ -9,6 +9,7 @@ import base64
 from flask_cors import CORS
 from global_variable import *
 from drawRect import drawLineMatrix
+import csv
 
 app = Flask(__name__)
 CORS(app)
@@ -82,7 +83,7 @@ def returnDrawLineData():
         zArray = result['z']
         matrix.append(zArray)
     for i in range(len(matrix)):
-        matrix[i]=matrix[i][500:650]
+        matrix[i] = matrix[i][500:650]
     resURL = Response(str(matrix), mimetype='text/xml')
     resURL.headers['Access-Control-Allow-Methods'] = 'POST'
     return resURL
@@ -102,6 +103,22 @@ def sendWellData(twoID):
                 break
         res = Response(json.dumps(twoWellData), mimetype='application/json')
         return res
+
+
+@app.route('/storeUcSum/', methods=['GET', 'POST'])
+def storeUcSum():
+    try:
+        data = json.loads(request.data.decode("utf-8"))
+        print(data)
+        id1 = data['id1']
+        id2 = data['id2']
+        value = data['value']
+        with open('./data/ucSum.csv', 'a+', newline='') as f:
+            csvF = csv.writer(f)
+            csvF.writerow([str(id1), str(id2), str(value)])
+    except:
+        return 'err'
+    return 'store'
 
 
 if __name__ == '__main__':
