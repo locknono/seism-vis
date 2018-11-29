@@ -48,7 +48,10 @@ export default class Uncertainty {
       }
       ucList.push(curTrackUc);
     }
-    return this.getUcPath(matchVertex, ucList);
+    return {
+      path: this.getUcPath(matchVertex, ucList),
+      ucList
+    };
   }
 
   getUcPath(matchVertex: [number, number][][], ucList: number[]) {
@@ -73,5 +76,11 @@ export default class Uncertainty {
     }
 
     return ucPath;
+  }
+
+  getUcSum(ucList: number[]) {
+    const reducer = (accumulator: number, currentValue: number) =>
+      accumulator + currentValue;
+    return ucList.reduce(reducer);
   }
 }

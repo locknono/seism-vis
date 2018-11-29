@@ -307,8 +307,10 @@ class WellMatch extends React.Component<Props, State> {
   calUncertainty() {
     const { vertex, curvePaths, getUcPath } = this.props;
     const uc = new Uncertainty();
-    const ucPath = uc.cal(vertex, curvePaths);
-
+    const ucPath = uc.cal(vertex, curvePaths).path;
+    const ucList = uc.cal(vertex, curvePaths).ucList;
+    const ucSum = uc.getUcSum(ucList);
+    console.log("ucS: ", ucSum);
     getUcPath(ucPath);
   }
 
