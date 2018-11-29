@@ -31,34 +31,37 @@ export default class Uncertainty {
       });
       trackVertex.push(vertex2);
     });
-
+    console.log("trackVertex: ", trackVertex);
+    console.log("matchVertex: ", matchVertex);
     let ucList: number[] = [];
-    for (let i = 0; i < trackVertex.length; i++) {
+    for (let i = 0; i < matchVertex.length; i++) {
       let curTrackUc: number = 0;
-      for (let j = 0; j < matchVertex.length; j++) {
+      for (let j = 0; j < trackVertex.length; j++) {
         if (
-          (trackVertex[i][1][1] > matchVertex[j][0][1] &&
-            trackVertex[i][2][1] < matchVertex[j][3][1]) ||
-          (trackVertex[i][0][1] < matchVertex[j][1][1] &&
-            trackVertex[i][3][1] > matchVertex[j][2][1])
+          (matchVertex[i][1][1] > trackVertex[j][0][1] &&
+            matchVertex[i][2][1] < trackVertex[j][3][1]) ||
+          (matchVertex[i][0][1] < trackVertex[j][1][1] &&
+            matchVertex[i][3][1] > trackVertex[j][2][1])
         ) {
           curTrackUc += 1;
         }
       }
       ucList.push(curTrackUc);
     }
-    return this.getUcPath(trackVertex, ucList);
+    return this.getUcPath(matchVertex, ucList);
   }
 
-  getUcPath(trackVertex: [number, number][][], ucList: number[]) {
+  getUcPath(matchVertex: [number, number][][], ucList: number[]) {
+    console.log("ucList: ", ucList);
+    console.log("matchVertex: ", matchVertex);
     //TODO:Change pad to padding-ratio raleted value
     const pad = 30;
-    const xStart = trackVertex[0][0][0];
-    const xEnd = trackVertex[0][2][0];
+    const xStart = matchVertex[0][0][0];
+    const xEnd = matchVertex[0][2][0];
     const ucPath = [];
-    for (let i = 0; i < trackVertex.length; i++) {
+    for (let i = 0; i < matchVertex.length; i++) {
       const value = ucList[i];
-      const track = trackVertex[i];
+      const track = matchVertex[i];
       const topPoint = [xEnd + pad, track[2][1]];
       const midPoint = [
         xEnd + pad + value * 2,

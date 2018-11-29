@@ -76,6 +76,7 @@ def drawLine():
 def returnDrawLineData():
     ods = json.loads(request.data.decode("utf-8"))
     matrix = []
+    print(ods)
     for p in ods:
         result = db.trace.find_one({"x": xStart + p[0] * xySection, "y": yStart + p[1] * xySection})
         zArray = result['z']
