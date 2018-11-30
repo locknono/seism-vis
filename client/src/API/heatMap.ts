@@ -1,4 +1,12 @@
-import { getPointsOnLine, mapapi_getWellIDNearLine } from "../API/mapAPI";
+import {
+  getPointsOnLine,
+  mapapi_getWellIDNearLine,
+  fetchMatrixData
+} from "../API/mapAPI";
+import { getSize } from "../API/wellMatchAPI";
+
+const paddingRatio = 0.1;
+
 function getTwoWellUc(well1: any, well2: any, allWells: any) {
   const idStore = [well1.id, well2.id];
   const xyStore: any = [[well1.x, well1.y], [well2.x, well2.y]];
@@ -10,6 +18,10 @@ function getTwoWellUc(well1: any, well2: any, allWells: any) {
     allWells,
     coupleWell
   );
+  fetchMatrixData(pointsOnLine).then(matrixData => {
+    console.log("matrixData: ", matrixData);
+    const [width, height] = getSize(matrixData);
+  });
   console.log("wellIDNearLineIndexOnLine: ", wellIDNearLineIndexOnLine);
   console.log("wellIDNearLine: ", wellIDNearLine);
 }

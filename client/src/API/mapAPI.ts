@@ -109,3 +109,20 @@ export function mapapi_getWellIDNearLine(
     return cellPoint[0] === pointOnLine[0] && cellPoint[1] === pointOnLine[1];
   }
 }
+
+export function fetchMatrixData(pointsOnLine: any) {
+  return fetch("http://localhost:5000/returnDrawLineData/", {
+    body: JSON.stringify(pointsOnLine),
+    credentials: "same-origin",
+    headers: {
+      "content-type": "application/json"
+    },
+    method: "POST",
+    mode: "cors"
+  }).then(res => {
+    if (res.ok) {
+      return res.json();
+    }
+    return [[]];
+  });
+}

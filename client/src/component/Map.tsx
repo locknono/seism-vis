@@ -10,7 +10,8 @@ import {
   idIndexMap,
   getNearIndexList,
   getPointsOnLine,
-  mapapi_getWellIDNearLine
+  mapapi_getWellIDNearLine,
+  fetchMatrixData
 } from "../API/mapAPI";
 import {
   getFigURI,
@@ -172,23 +173,6 @@ class Map extends React.Component<Props, object> {
     }).then(res => res.text());
   }
 
-  fetchMatrixData(pointsOnLine: any) {
-    return fetch("http://localhost:5000/returnDrawLineData/", {
-      body: JSON.stringify(pointsOnLine),
-      credentials: "same-origin",
-      headers: {
-        "content-type": "application/json"
-      },
-      method: "POST",
-      mode: "cors"
-    }).then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-      return [[]];
-    });
-  }
-
   deployMap() {
     const center: [number, number] = [37.867271959429445, 118.78092767561518];
     const zoom: number = 14.5;
@@ -301,7 +285,7 @@ class Map extends React.Component<Props, object> {
                 self.UNSAFE_IDStore = [];
                 getWellIDNearLine(wellIDNearLine);
                 getWellIDNearLineIndex(wellIDNearLineIndexOnLine);
-                self.fetchMatrixData(pointsOnLine).then(matrixData => {
+                fetchMatrixData(pointsOnLine).then(matrixData => {
                   getMatrixData(matrixData);
                 });
                 self.UNSAFE_XYStore = [];
