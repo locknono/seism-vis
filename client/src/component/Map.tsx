@@ -228,10 +228,12 @@ class Map extends React.Component<Props, object> {
         ];
         const imgOverlay = L.imageOverlay(imageUrl, imageBounds);
         const overlayMaps = {
-          imgOverlay: imgOverlay,
-          polylinesLayerGroup: polylinesLayerGroup
+          Grid: polylinesLayerGroup,
+          Grayscale: imgOverlay
         };
-        const layerControl = L.control.layers(undefined, overlayMaps);
+        const layerControl = L.control.layers(undefined, overlayMaps, {
+          collapsed: false
+        });
         layerControl.addTo(this.map);
         return layerControl;
       });
@@ -303,8 +305,8 @@ class Map extends React.Component<Props, object> {
         //storeUcData(allWells);
         getHeatData(allWells).then((heatData: any) => {
           console.log("heatData: ", heatData);
-          const heatLayer = (L as any).heatLayer(heatData, { radius: 10 });
-          layerControl.addOverlay(heatLayer, "heatmap");
+          const heatLayer = (L as any).heatLayer(heatData, { radius: 8 });
+          layerControl.addOverlay(heatLayer, "Heatmap");
         });
       });
     circlesLayer.addTo(this.map);

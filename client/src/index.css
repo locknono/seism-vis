@@ -127,3 +127,8 @@ code {
   display: flex;
   margin: 5px;
 }
+
+.leaflet-heatmap-layer {
+  z-index: -300;
+  pointer-events: none;
+}
