@@ -6,13 +6,13 @@ import {
   getCoupleWell,
   getCoupleWellLayer
 } from "../action/changeWell";
+import { idIndexMap, getNearIndexList } from "../API/mapAPI";
 import {
   getFigURI,
   getWellIDNearLine,
   getWellIDNearLineIndex,
   getMatrixData
 } from "../action/changeWell";
-import { number } from "prop-types";
 
 const mapStateToProps = (state: any, ownProps?: any) => {
   const scaler = state.figReducer.scaler;
@@ -383,16 +383,20 @@ class Map extends React.Component<Props, object> {
           allCircles.push(circle);
         });
         getAllWells(allWells);
-        const coupleClickInterval = 2000;
-        for (let i = 0; i < allCircles.length; i++) {
-          for (let j = 0; j < 5; j++) {
-            if (i === j) continue;
-            setTimeout(() => {
-              allCircles[i].fire("click");
-              allCircles[j].fire("click");
-            }, 3000 + j * coupleClickInterval + i * 5 * coupleClickInterval);
-          }
-        }
+        getNearIndexList(allWells).then(nearIndexList => {
+          const coupleClickInterval = 2000;
+          const autoClick = () => {
+            for (let i = 0; i < nearIndexList.length; i++) {
+              setTimeout(() => {
+                let index1 = nearIndexList[i][0];
+                let index2 = nearIndexList[i][1];
+                allCircles[index1].fire("click");
+                allCircles[index2].fire("click");
+              }, 3000 + coupleClickInterval * i);
+            }
+          };
+          autoClick();
+        });
       });
     circlesLayer.addTo(this.map);
   }
