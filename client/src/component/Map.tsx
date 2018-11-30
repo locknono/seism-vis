@@ -370,9 +370,6 @@ class Map extends React.Component<Props, object> {
                 );
                 const wellIDNearLine = self.getWellIDNearLine(pointsOnLine);
                 getWellIDNearLine(wellIDNearLine);
-                self.fetchMatchFig(pointsOnLine).then(figURI => {
-                  getFigURI(figURI);
-                });
                 self.fetchMatrixData(pointsOnLine).then(matrixData => {
                   getMatrixData(matrixData);
                 });

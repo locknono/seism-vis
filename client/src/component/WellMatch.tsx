@@ -239,17 +239,22 @@ class WellMatch extends React.Component<Props, State> {
   drawMatch() {
     const { wellIDNearLine, matrixData } = this.props;
     if (!wellIDNearLine) return;
-    fetch(`http://localhost:5000/nearLineCurve/`, {
-      body: JSON.stringify(wellIDNearLine),
-      credentials: "same-origin",
-      headers: {
-        "content-type": "application/json"
-      },
-      method: "POST",
-      mode: "cors"
-    })
+    fetch(`./data/groupWellData.json`)
       .then(res => res.json())
-      .then(data => {
+      .then(groupWellData => {
+        console.log("groupWellData: ", groupWellData);
+        console.log("wellIDNearLine: ", wellIDNearLine);
+        console.log();
+        const data = [];
+        for (let i = 0; i < wellIDNearLine.length; i++) {
+          for (let j = 0; j < groupWellData.length; j++) {
+            if (groupWellData[j]["id"] === wellIDNearLine[i]) {
+              data.push(groupWellData[j]);
+              break;
+            }
+          }
+        }
+        console.log("data: ", data);
         const {
           width,
           paddingRatio,
@@ -296,7 +301,6 @@ class WellMatch extends React.Component<Props, State> {
           }
           paths.push([...topPath, ...bottomPath.reverse()]);
         }
-
         for (let i = 0; i < paths.length; i++) {
           paths[i].push(paths[i][0]);
         }
