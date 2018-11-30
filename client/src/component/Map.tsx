@@ -260,7 +260,12 @@ class Map extends React.Component<Props, object> {
       },
       method: "POST",
       mode: "cors"
-    }).then(res => res.json());
+    }).then(res => {
+      if (res.ok) {
+        return res.json();
+      }
+      return [[]];
+    });
   }
 
   deployMap() {
