@@ -36,7 +36,6 @@ def sendPolyLineData(coors):
 
 @app.route('/nearLineCurve/', methods=['GET', 'POST'])
 def nearLineCurve():
-    print(request.data)
     ids = json.loads(request.data.decode("utf-8"))
     with open('./data/groupWellData.json', 'r') as f:
         wellData = json.loads(f.read())
@@ -77,7 +76,6 @@ def drawLine():
 def returnDrawLineData():
     ods = json.loads(request.data.decode("utf-8"))
     matrix = []
-    print(ods)
     for p in ods:
         result = db.trace.find_one({"x": xStart + p[0] * xySection, "y": yStart + p[1] * xySection})
         zArray = result['z']
@@ -109,7 +107,6 @@ def sendWellData(twoID):
 def storeUcSum():
     try:
         data = json.loads(request.data.decode("utf-8"))
-        print(data)
         id1 = data['id1']
         id2 = data['id2']
         value = data['value']

@@ -242,9 +242,6 @@ class WellMatch extends React.Component<Props, State> {
     fetch(`./data/groupWellData.json`)
       .then(res => res.json())
       .then(groupWellData => {
-        console.log("groupWellData: ", groupWellData);
-        console.log("wellIDNearLine: ", wellIDNearLine);
-        console.log();
         const data = [];
         for (let i = 0; i < wellIDNearLine.length; i++) {
           for (let j = 0; j < groupWellData.length; j++) {
@@ -254,7 +251,6 @@ class WellMatch extends React.Component<Props, State> {
             }
           }
         }
-        console.log("data: ", data);
         const {
           width,
           paddingRatio,
@@ -321,7 +317,7 @@ class WellMatch extends React.Component<Props, State> {
       id2,
       value: ucSum
     };
-    console.log("coupleWellUc: ", coupleWellUc);
+
     getUcPath(ucPath);
     fetch(`http://localhost:5000/storeUcSum/`, {
       body: JSON.stringify(coupleWellUc),

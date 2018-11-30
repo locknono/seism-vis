@@ -182,7 +182,7 @@ export default class Tracker {
       }
     }
     let removeList = Array.from(removeSet).sort((a, b) => b - a);
-    console.log("removeList: ", removeList);
+
     for (let i = 0; i < removeList.length; i++) {
       allTracks.splice(removeList[i], 1);
     }
@@ -244,7 +244,7 @@ export default class Tracker {
         }
       }
     }
-    console.log("crossList: ", crossList);
+
     const sliceList: any = [];
     for (let crossIndexStr of crossList) {
       let [cur, next] = crossIndexStr.split("_");
@@ -289,7 +289,7 @@ export default class Tracker {
       }
     }
     const spliceList: number[] = Array.from(spliceSet);
-    console.log("spliceList: ", spliceList);
+
     spliceList.sort((a: number, b: number) => b - a);
 
     for (let i = 0; i < spliceList.length; i++) {

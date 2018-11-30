@@ -349,6 +349,7 @@ class Map extends React.Component<Props, object> {
         return undefined;
       })
       .then(wellLocationData => {
+        const allCircles: any[] = [];
         const allWells: object[] = [];
         wellLocationData.map((well: Well) => {
           let xOnMatrix = Math.floor((well.x - xStart) / xySection);
@@ -360,6 +361,7 @@ class Map extends React.Component<Props, object> {
             fillOpacity: 1
           })
             .on("click", function() {
+              console.log(`click${well.id}`);
               self.UNSAFE_internalCoupleIDStore.push(well.id);
               self.UNSAFE_internalCoupleXYStore.push([well.x, well.y]);
               getCoupleWell(self.UNSAFE_internalCoupleIDStore);
@@ -378,8 +380,19 @@ class Map extends React.Component<Props, object> {
             })
             .on("mouseover", () => console.log(well));
           circlesLayer.addLayer(circle);
+          allCircles.push(circle);
         });
         getAllWells(allWells);
+        const coupleClickInterval = 2000;
+        for (let i = 0; i < allCircles.length; i++) {
+          for (let j = 0; j < 5; j++) {
+            if (i === j) continue;
+            setTimeout(() => {
+              allCircles[i].fire("click");
+              allCircles[j].fire("click");
+            }, 3000 + j * coupleClickInterval + i * 5 * coupleClickInterval);
+          }
+        }
       });
     circlesLayer.addTo(this.map);
   }

@@ -31,8 +31,7 @@ export default class Uncertainty {
       });
       trackVertex.push(vertex2);
     });
-    console.log("trackVertex: ", trackVertex);
-    console.log("matchVertex: ", matchVertex);
+
     let ucList: number[] = [];
     for (let i = 0; i < matchVertex.length; i++) {
       let curTrackUc: number = 0;
@@ -55,8 +54,6 @@ export default class Uncertainty {
   }
 
   getUcPath(matchVertex: [number, number][][], ucList: number[]) {
-    console.log("ucList: ", ucList);
-    console.log("matchVertex: ", matchVertex);
     //TODO:Change pad to padding-ratio raleted value
     const pad = 30;
     const xStart = matchVertex[0][0][0];
