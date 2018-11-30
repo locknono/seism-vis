@@ -103,8 +103,9 @@ class Map extends React.Component<Props, object> {
   }
   componentDidMount() {
     this.deployMap();
-    this.generateGrid();
-    this.drawWells();
+    this.generateGrid().then(layerControl => {
+      this.drawWells(layerControl);
+    });
   }
 
   componentDidUpdate(prevProps: Props, prevState: Props, snapshot: any) {
@@ -205,7 +206,7 @@ class Map extends React.Component<Props, object> {
   }
 
   generateGrid() {
-    fetch("./data/gridData.json", {})
+    return fetch("./data/gridData.json", {})
       .then(res => res.json())
       .then(data => {
         const polylines: any[] = [];
@@ -230,11 +231,13 @@ class Map extends React.Component<Props, object> {
           imgOverlay: imgOverlay,
           polylinesLayerGroup: polylinesLayerGroup
         };
-        L.control.layers(undefined, overlayMaps).addTo(this.map);
+        const layerControl = L.control.layers(undefined, overlayMaps);
+        layerControl.addTo(this.map);
+        return layerControl;
       });
   }
 
-  drawWells() {
+  drawWells(layerControl: any) {
     const self = this;
     const {
       getAllWells,
@@ -300,9 +303,8 @@ class Map extends React.Component<Props, object> {
         //storeUcData(allWells);
         getHeatData(allWells).then((heatData: any) => {
           console.log("heatData: ", heatData);
-          const heatLayer = (L as any)
-            .heatLayer(heatData, { radius: 10 })
-            .addTo(this.map);
+          const heatLayer = (L as any).heatLayer(heatData, { radius: 10 });
+          layerControl.addOverlay(heatLayer, "heatmap");
         });
       });
     circlesLayer.addTo(this.map);
