@@ -6,7 +6,12 @@ import {
   getCoupleWell,
   getCoupleWellLayer
 } from "../action/changeWell";
-import { idIndexMap, getNearIndexList } from "../API/mapAPI";
+import {
+  idIndexMap,
+  getNearIndexList,
+  getPointsOnLine,
+  mapapi_getWellIDNearLine
+} from "../API/mapAPI";
 import {
   getFigURI,
   getWellIDNearLine,
@@ -80,9 +85,9 @@ interface Props {
 interface Map {
   map: any;
   mapRef: any;
-  UNSAFE_internalCoupleIDStore: string[];
+  UNSAFE_IDStore: string[];
   UNSAFE_internalCoupleLayerStore: any[];
-  UNSAFE_internalCoupleXYStore: [number, number][];
+  UNSAFE_XYStore: [number, number][];
   UNSAFE_circlesLayer: L.LayerGroup;
 }
 
@@ -90,11 +95,9 @@ class Map extends React.Component<Props, object> {
   constructor(props: Props) {
     super(props);
     this.mapRef = React.createRef();
-    this.UNSAFE_internalCoupleIDStore = [];
+    this.UNSAFE_IDStore = [];
     this.UNSAFE_internalCoupleLayerStore = [];
-    this.UNSAFE_internalCoupleXYStore = [];
-    this.getPointsOnLine = this.getPointsOnLine.bind(this);
-    this.getWellIDNearLine = this.getWellIDNearLine.bind(this);
+    this.UNSAFE_XYStore = [];
   }
   componentDidMount() {
     this.deployMap();
@@ -154,88 +157,6 @@ class Map extends React.Component<Props, object> {
       const circlesLayer = L.layerGroup(wellIDNearLineLayer);
       circlesLayer.addTo(this.map);
       this.UNSAFE_circlesLayer = circlesLayer;
-    }
-  }
-
-  getPointsOnLine(line: [number, number][]): [number, number][] {
-    const { xStart, yStart, xySection } = this.props;
-    const x1 = (line[0][0] - xStart) / xySection;
-    const y1 = (line[0][1] - yStart) / xySection;
-    const x2 = (line[1][0] - xStart) / xySection;
-    const y2 = (line[1][1] - yStart) / xySection;
-    const matrixCoors = [[x1, y1], [x2, y2]].map(e => e.map(Math.floor));
-    const k =
-      (matrixCoors[0][1] - matrixCoors[1][1]) /
-      (matrixCoors[0][0] - matrixCoors[1][0]);
-    const b = matrixCoors[0][1] - matrixCoors[0][0] * k;
-    const smallerX = matrixCoors[0][0] < matrixCoors[1][0] ? 0 : 1;
-    const biggerX = matrixCoors[0][0] < matrixCoors[1][0] ? 1 : 0;
-    const pointsOnLine: [number, number][] = [];
-    for (
-      let x = matrixCoors[smallerX][0];
-      x <= matrixCoors[biggerX][0];
-      x += 0.05
-    ) {
-      let y = Math.floor(k * x + b);
-      let exist = false;
-      for (let i = 0; i < pointsOnLine.length; i++) {
-        let p = pointsOnLine[i];
-        if (equal(p[0], p[1], Math.floor(x), y)) exist = true;
-      }
-      if (!exist) pointsOnLine.push([Math.floor(x), y]);
-    }
-    //Ensure the last point is on line
-    let lastPoint = pointsOnLine[pointsOnLine.length - 1];
-    if (
-      lastPoint[0] !== matrixCoors[biggerX][0] ||
-      lastPoint[1] !== matrixCoors[biggerX][1]
-    ) {
-      pointsOnLine.push([matrixCoors[biggerX][0], matrixCoors[biggerX][1]]);
-    }
-    return pointsOnLine;
-    function equal(x1: number, y1: number, x2: number, y2: number): boolean {
-      return x1 === x2 && y1 === y2;
-    }
-  }
-
-  getWellIDNearLine(pointsOnLine: number[][]): string[] {
-    const { allWells, coupleWell } = this.props;
-    /*this method can speed up by tranform the 
-    structure of `allWells` from array to obj*/
-    const { getWellIDNearLineIndex } = this.props;
-    const wellIDNearLine = new Set();
-    const wellIDNearLineIndexOnLine = [];
-    for (let i = 0; i < pointsOnLine.length; i++) {
-      for (let j = 0; j < allWells.length; j++) {
-        let cellPoint: [number, number] = [
-          allWells[j].xOnMatrix,
-          allWells[j].yOnMatrix
-        ];
-        if (ifInCell(cellPoint, pointsOnLine[i])) {
-          wellIDNearLine.add(allWells[j].id);
-          wellIDNearLineIndexOnLine.push((i + 1) / pointsOnLine.length);
-          break;
-        }
-      }
-    }
-
-    let wellIDNearLineList = Array.from(wellIDNearLine);
-    //ensure the first well of couple well is gotten
-    //in the first cell
-    wellIDNearLineList[0] = coupleWell[0];
-    wellIDNearLineList[wellIDNearLineList.length - 1] = coupleWell[1];
-
-    wellIDNearLineIndexOnLine[0] = 0;
-    wellIDNearLineIndexOnLine[wellIDNearLineIndexOnLine.length - 1] = 1;
-    getWellIDNearLineIndex(wellIDNearLineIndexOnLine);
-
-    return wellIDNearLineList;
-
-    function ifInCell(
-      cellPoint: [number, number],
-      pointOnLine: number[]
-    ): boolean {
-      return cellPoint[0] === pointOnLine[0] && cellPoint[1] === pointOnLine[1];
     }
   }
 
@@ -338,7 +259,9 @@ class Map extends React.Component<Props, object> {
       yStart,
       xySection,
       getWellIDNearLine,
-      getMatrixData
+      getMatrixData,
+      getWellIDNearLineIndex,
+      coupleWell
     } = this.props;
     const circlesLayer = L.layerGroup();
     fetch("./data/wellFullLocation.json")
@@ -362,20 +285,26 @@ class Map extends React.Component<Props, object> {
           })
             .on("click", function() {
               console.log(`click${well.id}`);
-              self.UNSAFE_internalCoupleIDStore.push(well.id);
-              self.UNSAFE_internalCoupleXYStore.push([well.x, well.y]);
-              getCoupleWell(self.UNSAFE_internalCoupleIDStore);
-              if (self.UNSAFE_internalCoupleIDStore.length === 2) {
-                self.UNSAFE_internalCoupleIDStore = [];
-                const pointsOnLine = self.getPointsOnLine(
-                  self.UNSAFE_internalCoupleXYStore
+              self.UNSAFE_IDStore.push(well.id);
+              self.UNSAFE_XYStore.push([well.x, well.y]);
+              getCoupleWell(self.UNSAFE_IDStore);
+              if (self.UNSAFE_IDStore.length === 2) {
+                const pointsOnLine = getPointsOnLine(self.UNSAFE_XYStore);
+                const [
+                  wellIDNearLine,
+                  wellIDNearLineIndexOnLine
+                ] = mapapi_getWellIDNearLine(
+                  pointsOnLine,
+                  allWells,
+                  self.UNSAFE_IDStore
                 );
-                const wellIDNearLine = self.getWellIDNearLine(pointsOnLine);
+                self.UNSAFE_IDStore = [];
                 getWellIDNearLine(wellIDNearLine);
+                getWellIDNearLineIndex(wellIDNearLineIndexOnLine);
                 self.fetchMatrixData(pointsOnLine).then(matrixData => {
                   getMatrixData(matrixData);
                 });
-                self.UNSAFE_internalCoupleXYStore = [];
+                self.UNSAFE_XYStore = [];
               }
             })
             .on("mouseover", () => console.log(well));
@@ -395,7 +324,7 @@ class Map extends React.Component<Props, object> {
               }, 3000 + coupleClickInterval * i);
             }
           };
-          autoClick();
+          //autoClick();
         });
       });
     circlesLayer.addTo(this.map);
