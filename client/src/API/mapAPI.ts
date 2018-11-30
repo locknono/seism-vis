@@ -71,7 +71,6 @@ export function mapapi_getWellIDNearLine(
   allWells: any,
   coupleWell: any
 ): any {
-  console.log("coupleWell: ", coupleWell);
   /*this method can speed up by tranform the 
   structure of `allWells` from list to hashmap*/
   const wellIDNearLine = new Set();
@@ -98,8 +97,7 @@ export function mapapi_getWellIDNearLine(
 
   wellIDNearLineIndexOnLine[0] = 0;
   wellIDNearLineIndexOnLine[wellIDNearLineIndexOnLine.length - 1] = 1;
-  console.log("wellIDNearLineList: ", wellIDNearLineList);
-  console.log("wellIDNearLineIndexOnLine: ", wellIDNearLineIndexOnLine);
+
   return [wellIDNearLineList, wellIDNearLineIndexOnLine];
 
   function ifInCell(

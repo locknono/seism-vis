@@ -35,7 +35,7 @@ export function getTwoWellUc(well1: any, well2: any, allWells: any) {
       .scaleLinear()
       .domain([wellMinDepth, wellMaxDepth])
       .range([height * paddingRatio, height * (1 - paddingRatio)]);
-    getWellMatchPath(
+    return getWellMatchPath(
       wellIDNearLine,
       paddingRatio,
       width,
@@ -61,6 +61,7 @@ export function getTwoWellUc(well1: any, well2: any, allWells: any) {
         id2,
         value: ucSum
       };
+
       return coupleWellUc;
     });
   });
@@ -69,19 +70,39 @@ export function getTwoWellUc(well1: any, well2: any, allWells: any) {
 export function storeUcData(allWells: any) {
   getNearIndexList(allWells).then(nearIndexList => {
     for (let i = 0; i < nearIndexList.length; i++) {
-      getTwoWellUc(allWells[i][0], allWells[i][1], allWells).then(
-        coupleWellUc => {
-          fetch(`http://localhost:5000/storeUcSum/`, {
-            body: JSON.stringify(coupleWellUc),
-            credentials: "same-origin",
-            headers: {
-              "content-type": "application/json"
-            },
-            method: "POST",
-            mode: "cors"
-          });
-        }
-      );
+      setTimeout(() => {
+        let index1 = nearIndexList[i][0];
+        let index2 = nearIndexList[i][1];
+        getTwoWellUc(allWells[index1], allWells[index2], allWells).then(
+          coupleWellUc => {
+            fetch(`http://localhost:5000/storeUcSum/`, {
+              body: JSON.stringify(coupleWellUc),
+              credentials: "same-origin",
+              headers: {
+                "content-type": "application/json"
+              },
+              method: "POST",
+              mode: "cors"
+            });
+          }
+        );
+      }, 500 * i);
     }
+  });
+}
+
+export function getHeatData(allWells: any) {
+  const heatData: [number, number, number][] = [];
+  const idCoorsMap = new Map();
+  allWells.map((e: any) => {
+    idCoorsMap.set(e.id, e.latlng);
+  });
+  return d3.json("./data/ucSum.json").then((data: any) => {
+    for (let e of data) {
+      const [lat, lng]: [number, number] = idCoorsMap.get(e.id);
+      const heatPoint = [lat, lng, e.value];
+      heatData.push(heatPoint as any);
+    }
+    return heatData;
   });
 }

@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as L from "leaflet";
+import "leaflet.heat";
 import { connect } from "react-redux";
 import {
   getAllWells,
@@ -19,7 +20,7 @@ import {
   getWellIDNearLineIndex,
   getMatrixData
 } from "../action/changeWell";
-import { getTwoWellUc, storeUcData } from "../API/heatMap";
+import { getTwoWellUc, storeUcData, getHeatData } from "../API/heatMap";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const scaler = state.figReducer.scaler;
   const {
@@ -296,20 +297,12 @@ class Map extends React.Component<Props, object> {
           allCircles.push(circle);
         });
         getAllWells(allWells);
-        storeUcData(allWells);
-        getNearIndexList(allWells).then(nearIndexList => {
-          const coupleClickInterval = 2000;
-          const autoClick = () => {
-            for (let i = 0; i < nearIndexList.length; i++) {
-              setTimeout(() => {
-                let index1 = nearIndexList[i][0];
-                let index2 = nearIndexList[i][1];
-                allCircles[index1].fire("click");
-                allCircles[index2].fire("click");
-              }, 3000 + coupleClickInterval * i);
-            }
-          };
-          //autoClick();
+        //storeUcData(allWells);
+        getHeatData(allWells).then((heatData: any) => {
+          console.log("heatData: ", heatData);
+          const heatLayer = (L as any)
+            .heatLayer(heatData, { radius: 10 })
+            .addTo(this.map);
         });
       });
     circlesLayer.addTo(this.map);
