@@ -28,9 +28,9 @@ function getDepthList() {
 }
 
 const [traceMinDepth, traceMaxDepth] = getTraceMinMaxDepth();
-const depthList = getDepthList();
-const wellMinDepth = depthList[0];
-const wellMaxDepth = depthList[depthList.length - 1 - 2];
+export const depthList = getDepthList();
+export const wellMinDepth = depthList[0];
+export const wellMaxDepth = depthList[depthList.length - 1 - 2];
 
 const initialWellMatchDepthScale = d3
   .scaleLinear()

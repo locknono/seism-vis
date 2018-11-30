@@ -12,7 +12,7 @@ import { changeSvgSize } from "../action/changeWellMatchSvg";
 import * as d3 from "d3";
 import Tracker from "../API/tracking";
 import Uncertainty from "../API/uncertainty";
-import { getSize, getWellMatchPath } from "../API/wellMatchAPI";
+import { getSize, getWellMatchPath, api_getTracePath } from "../API/wellMatchAPI";
 import { resolve } from "url";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const {
@@ -162,76 +162,14 @@ class WellMatch extends React.Component<Props, State> {
       getAllTrack,
       getTrackVertex
     } = this.props;
-    const trakcer = new Tracker();
-    const drawWidth = width * (1 - 2 * paddingRatio);
-    const pad = drawWidth / matrixData.length;
-    //set xOffsetScope a litter bigger than `pad/2`
-    //TODO: restrict the biggest xOffsetScope
-    const xOffsetScope = pad / 0.8;
-    const xScale = d3
-      .scaleLinear()
-      .domain([-13685.379, 13685.379])
-      .range([-xOffsetScope, xOffsetScope]);
-    const allPeaks = [];
-    const positivePaths: [number, number][][] = [];
-    const negativePaths: [number, number][][] = [];
-    const paths = [];
-    for (let i = 0; i < matrixData.length; i++) {
-      let positivePath: [number, number][] = [];
-      let negativePath: [number, number][] = [];
-      const x = pad * i + pad / 2;
-      for (let j = 0; j < matrixData[i].length; j++) {
-        const xOffset = matrixData[i][j] === 0 ? 0 : xScale(matrixData[i][j]);
-        const p1: [number, number] = [x, scale(depthList[j])];
-        const p2: [number, number] = [
-          x + xOffset,
-          (scale(depthList[j]) + scale(depthList[j + 1])) / 2
-        ];
-        const p3: [number, number] = [
-          x,
-          (scale(depthList[j]) + scale(depthList[j + 1])) / 2
-        ];
-        if (xOffset > 0) {
-          positivePath.push(p1, p2);
-          negativePath.push(p1, p3);
-        } else {
-          positivePath.push(p1, p3);
-          negativePath.push(p1, p2);
-        }
-      }
-
-      positivePath = trakcer.clearSawtooth(positivePath, x, true);
-      negativePath = trakcer.clearSawtooth(negativePath, x, false);
-
-      const peaks = [
-        ...trakcer.extractPeaks(positivePath, x),
-        ...trakcer.extractPeaks(negativePath, x)
-      ];
-      allPeaks.push(peaks);
-      //loop the positivePath to ensure it's closed so that css `fill` works
-      positivePath.push([x, scale(depthList[matrixData[0].length + 1])]);
-      positivePath.push([x, scale(depthList[0])]);
-      negativePath.push([x, scale(depthList[matrixData[0].length + 1])]);
-
-      positivePaths.push(positivePath);
-      negativePaths.push(negativePath);
-    }
-
-    const allTracks: any = [];
-    for (let i = 0; i < allPeaks.length / 2; i++) {
-      allTracks.push(...trakcer.tracking(allPeaks, i));
-    }
-
-    trakcer.cutOffAllTracks(allTracks, allPeaks.length);
-
-    const vertex: any = [];
-    allTracks.map((e: any) => {
-      vertex.push(trakcer.getFourVertex(e));
-    });
-
+    const { vertex, allTracks, paths } = api_getTracePath(
+      width,
+      matrixData,
+      scale,
+      paddingRatio,
+      depthList
+    );
     getTrackVertex(vertex);
-    paths.push(positivePaths, negativePaths);
-
     //draw tracking line
     getAllTrack(allTracks);
     //draw trace
@@ -274,7 +212,6 @@ class WellMatch extends React.Component<Props, State> {
       id2,
       value: ucSum
     };
-
     getUcPath(ucPath);
     fetch(`http://localhost:5000/storeUcSum/`, {
       body: JSON.stringify(coupleWellUc),

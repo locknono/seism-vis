@@ -19,7 +19,7 @@ import {
   getWellIDNearLineIndex,
   getMatrixData
 } from "../action/changeWell";
-
+import { getTwoWellUc, storeUcData } from "../API/heatMap";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const scaler = state.figReducer.scaler;
   const {
@@ -296,6 +296,7 @@ class Map extends React.Component<Props, object> {
           allCircles.push(circle);
         });
         getAllWells(allWells);
+        storeUcData(allWells);
         getNearIndexList(allWells).then(nearIndexList => {
           const coupleClickInterval = 2000;
           const autoClick = () => {
