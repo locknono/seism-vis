@@ -119,10 +119,11 @@ def storeUcSum():
 
 
 @app.route('/wellAttr/<twoID>')
-def sendWellData(twoID):
-    ID = twoID.split('_')[0]
-    ID2 = twoID.split('_')[1]
-    returnData=db.queryWellAttr(ID,ID2)
+def wellAttr(twoID):
+    print(twoID)
+    id1 = twoID.split('_')[0]
+    id2 = twoID.split('_')[1]
+    returnData = db.queryWellAttr(id1, id2)
     res = Response(json.dumps(returnData), mimetype='application/json')
     return res
 

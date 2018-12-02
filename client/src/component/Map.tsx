@@ -12,7 +12,8 @@ import {
   getNearIndexList,
   getPointsOnLine,
   mapapi_getWellIDNearLine,
-  fetchMatrixData
+  fetchMatrixData,
+  fetchWellAttrData
 } from "../API/mapAPI";
 import {
   getFigURI,
@@ -288,6 +289,13 @@ class Map extends React.Component<Props, object> {
                   allWells,
                   self.UNSAFE_IDStore
                 );
+                fetchWellAttrData(
+                  self.UNSAFE_IDStore[0],
+                  self.UNSAFE_IDStore[1]
+                ).then(data => {
+                  console.log(data);
+                });
+
                 self.UNSAFE_IDStore = [];
                 getWellIDNearLine(wellIDNearLine);
                 getWellIDNearLineIndex(wellIDNearLineIndexOnLine);
@@ -304,7 +312,6 @@ class Map extends React.Component<Props, object> {
         getAllWells(allWells);
         //storeUcData(allWells);
         getHeatData(allWells).then((heatData: any) => {
-          console.log("heatData: ", heatData);
           const heatLayer = (L as any).heatLayer(heatData, { radius: 8 });
           layerControl.addOverlay(heatLayer, "Heatmap");
         });

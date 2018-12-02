@@ -6,6 +6,7 @@ import multiprocessing as mp
 from multiprocessing import Pool
 import numpy as np
 from global_variable import *
+import json
 
 
 class SeismDb:
@@ -86,8 +87,11 @@ class SeismDb:
         return matrix
 
     def queryWellAttr(self, id1, id2):
-        attr1 = self.wellAttr.find_one({"id": id1})
-        attr2 = self.wellAttr.find_one({"id": id2})
+        print(id1)
+        attr1 = self.wellAttr.find_one({"id": id1}).pop('_id')
+        attr2 = self.wellAttr.find_one({"id": id2}).pop('_id')
+        # an object with objectid is not json serializable
+        print(json.dumps(attr1))
         return [attr1, attr2]
 
 

@@ -124,3 +124,15 @@ export function fetchMatrixData(pointsOnLine: any) {
     return [[]];
   });
 }
+
+export function fetchWellAttrData(id1: string, id2: string) {
+  const coupleWellId = `${id1}_${id2}`;
+  return fetch(`http://localhost:5000/wellAttr/${coupleWellId}`, {}).then(
+    res => {
+      if (res.ok) {
+        return res.json();
+      }
+      return [];
+    }
+  );
+}
