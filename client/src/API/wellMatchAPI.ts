@@ -97,7 +97,9 @@ export function api_getTracePath(
     let negativePath: [number, number][] = [];
     const x = paddingRatio * drawWidth + pad * i + pad / 2;
     for (let j = 0; j < matrixData[i].length; j++) {
-      const xOffset = matrixData[i][j] === 0 ? 0 : xScale(matrixData[i][j]);
+      const preXOffset =
+        xScale(matrixData[i][j]) > pad / 2 ? pad/2 : xScale(matrixData[i][j]);
+      const xOffset = matrixData[i][j] === 0 ? 0 : preXOffset;
       const p1: [number, number] = [x, scale(depthList[j])];
       const p2: [number, number] = [
         x + xOffset,
