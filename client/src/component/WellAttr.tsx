@@ -76,7 +76,7 @@ class WellAttr extends React.Component<Props, State> {
         //bad data structure of values[i]:[depth,value,value,value,value,value]
         //so `j-1`
 
-        //some dirty data,filter
+        //filter dirty data
         if (value <= -9999) continue;
 
         const xOffset = scales[j - 1](value);

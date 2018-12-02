@@ -260,7 +260,7 @@ class WellMatch extends React.Component<Props, State> {
     let curves = null;
     if (curvePaths) {
       curves = curvePaths.map((e: any, i: number) => {
-        return <MatchCurve key={i} pathList={e} />;
+        return <MatchCurve key={i} path={e} />;
       });
     }
 

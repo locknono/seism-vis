@@ -1,18 +1,17 @@
+export function extractMatchVertex(curvePaths: any): any {
+  const matchVertex: any = [];
+  curvePaths.map((e: any) => {
+    matchVertex.push([
+      e[0],
+      e[e.length - 2],
+      e[Math.floor(e.length / 2) - 1],
+      e[Math.floor(e.length / 2)]
+    ]);
+  });
+  return matchVertex;
+}
 export default class Uncertainty {
   constructor() {}
-
-  extractMatchVertex(curvePaths: any): any {
-    const matchVertex: any = [];
-    curvePaths.map((e: any) => {
-      matchVertex.push([
-        e[0],
-        e[e.length - 2],
-        e[Math.floor(e.length / 2) - 1],
-        e[Math.floor(e.length / 2)]
-      ]);
-    });
-    return matchVertex;
-  }
 
   cal(
     vertex: any,
@@ -21,7 +20,7 @@ export default class Uncertainty {
     paddingRatio: number,
     height: number
   ) {
-    const matchVertex = this.extractMatchVertex(curvePaths);
+    const matchVertex = extractMatchVertex(curvePaths);
     const [xStart, xEnd] = [matchVertex[0][0][0], matchVertex[0][2][0]];
     //Change the initial trackVertex structure
     const trackVertex: [number, number][][] = [];
