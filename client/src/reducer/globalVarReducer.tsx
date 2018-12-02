@@ -24,12 +24,12 @@ function getDepthList() {
     depthList.push(depth);
   }
   depthList = depthList.slice(500, 650 + 2);
-  console.log('depthList: ', depthList);
   return depthList;
 }
 
 const [traceMinDepth, traceMaxDepth] = getTraceMinMaxDepth();
 export const depthList = getDepthList();
+console.log("depthList: ", depthList);
 export const wellMinDepth = depthList[0];
 export const wellMaxDepth = depthList[depthList.length - 1 - 2];
 

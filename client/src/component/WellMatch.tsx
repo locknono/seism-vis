@@ -11,6 +11,7 @@ import {
 import { changeSvgSize } from "../action/changeWellMatchSvg";
 import * as d3 from "d3";
 import Tracker from "../API/tracking";
+import WellAttr from "./WellAttr";
 import Uncertainty from "../API/uncertainty";
 import {
   getSize,
@@ -40,7 +41,8 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     paths,
     allTrack,
     vertex,
-    ucPath
+    ucPath,
+    wellAttrData
   } = state.wellReducer;
 
   return {
@@ -61,7 +63,8 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     paths,
     allTrack,
     vertex,
-    ucPath
+    ucPath,
+    wellAttrData
   };
 };
 
@@ -101,6 +104,7 @@ interface Props {
   vertex: any[];
   ucPath: any[];
   getUcPath: any;
+  wellAttrData: any[];
 }
 
 interface State {
@@ -247,7 +251,9 @@ class WellMatch extends React.Component<Props, State> {
       vertex,
       matrixData,
       paddingRatio,
-      ucPath
+      ucPath,
+      wellAttrData,
+      scale
     } = this.props;
     const { colorScale, pathGen } = this.state;
 
@@ -312,7 +318,14 @@ class WellMatch extends React.Component<Props, State> {
         );
       });
     }
-
+    let wellAttrCurve = null;
+    if (wellAttrData) {
+      wellAttrCurve = wellAttrData.map((e, i) => {
+        return (
+          <WellAttr key={e.id} id={e.id} values={e.value} yScale={scale} />
+        );
+      });
+    }
     const svgStyle = { width, height: height + 15 };
     const divStyle = { width, height: height + 15 };
     return (
@@ -323,6 +336,7 @@ class WellMatch extends React.Component<Props, State> {
           {negativePaths}
           {trackPath}
           {ucPathOnSvg}
+          {wellAttrCurve}
         </svg>
       </div>
     );

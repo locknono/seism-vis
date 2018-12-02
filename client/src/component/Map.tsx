@@ -5,7 +5,8 @@ import { connect } from "react-redux";
 import {
   getAllWells,
   getCoupleWell,
-  getCoupleWellLayer
+  getCoupleWellLayer,
+  getWellAttrData
 } from "../action/changeWell";
 import {
   idIndexMap,
@@ -52,7 +53,8 @@ const mapDispathToProps = {
   getFigURI,
   getWellIDNearLine,
   getWellIDNearLineIndex,
-  getMatrixData
+  getMatrixData,
+  getWellAttrData
 };
 
 interface Well {
@@ -83,6 +85,7 @@ interface Props {
   getWellIDNearLine: any;
   getWellIDNearLineIndex: any;
   getMatrixData: any;
+  getWellAttrData: any;
 }
 
 interface Map {
@@ -252,7 +255,8 @@ class Map extends React.Component<Props, object> {
       getWellIDNearLine,
       getMatrixData,
       getWellIDNearLineIndex,
-      coupleWell
+      coupleWell,
+      getWellAttrData
     } = this.props;
     const circlesLayer = L.layerGroup();
     fetch("./data/wellFullLocation.json")
@@ -293,7 +297,7 @@ class Map extends React.Component<Props, object> {
                   self.UNSAFE_IDStore[0],
                   self.UNSAFE_IDStore[1]
                 ).then(data => {
-                  console.log(data);
+                  getWellAttrData(data);
                 });
 
                 self.UNSAFE_IDStore = [];
@@ -310,7 +314,6 @@ class Map extends React.Component<Props, object> {
           allCircles.push(circle);
         });
         getAllWells(allWells);
-        //storeUcData(allWells);
         getHeatData(allWells).then((heatData: any) => {
           const heatLayer = (L as any).heatLayer(heatData, { radius: 8 });
           layerControl.addOverlay(heatLayer, "Heatmap");

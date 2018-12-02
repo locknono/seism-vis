@@ -11,6 +11,7 @@ export const GET_TRACE_PATH = "GET_TRACE_PATH";
 export const GET_ALL_TRACK = "GET_ALL_TRACK";
 export const GET_TRACK_VERTEX = "GET_TRACK_VERTEX";
 export const GET_UC_PATH = "GET_UC_PATH";
+export const GET_WELL_ATTR_DATA = "GET_WELL_ATTR_DATA";
 
 export function getAllWells(allWells: any) {
   return {
@@ -100,5 +101,12 @@ export function getUcPath(path: any) {
   return {
     type: GET_UC_PATH,
     path
+  };
+}
+
+export function getWellAttrData(data: any) {
+  return {
+    type: GET_WELL_ATTR_DATA,
+    wellAttrData: data
   };
 }
