@@ -12,7 +12,11 @@ import { changeSvgSize } from "../action/changeWellMatchSvg";
 import * as d3 from "d3";
 import Tracker from "../API/tracking";
 import Uncertainty from "../API/uncertainty";
-import { getSize, getWellMatchPath, api_getTracePath } from "../API/wellMatchAPI";
+import {
+  getSize,
+  getWellMatchPath,
+  api_getTracePath
+} from "../API/wellMatchAPI";
 import { resolve } from "url";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const {
@@ -200,10 +204,19 @@ class WellMatch extends React.Component<Props, State> {
   }
 
   calUncertainty() {
-    const { vertex, curvePaths, getUcPath, coupleWell } = this.props;
+    const {
+      vertex,
+      curvePaths,
+      getUcPath,
+      coupleWell,
+      paddingRatio,
+      width,
+      height
+    } = this.props;
     const uc = new Uncertainty();
-    const ucPath = uc.cal(vertex, curvePaths).path;
-    const ucList = uc.cal(vertex, curvePaths).ucList;
+    const ucPath = uc.cal(vertex, curvePaths, width, paddingRatio, height).path;
+    const ucList = uc.cal(vertex, curvePaths, width, paddingRatio, height)
+      .ucList;
     const ucSum = uc.getUcSum(ucList);
     const id1 = coupleWell[0];
     const id2 = coupleWell[1];
@@ -281,30 +294,6 @@ class WellMatch extends React.Component<Props, State> {
       });
     }
 
-    let vertexPath = null;
-    if (vertex && vertex.length > 0) {
-      const drawWidth = width * (1 - 2 * paddingRatio);
-      const pad = drawWidth / matrixData.length;
-      const x1 = pad * 0 + pad / 2;
-      const x2 = pad * (matrixData.length - 1) + pad / 2;
-      vertexPath = vertex.map((fourVertex: number[], i: number) => {
-        return fourVertex.map((pointY: number, index: number) => {
-          const cx = index <= 1 ? x1 : x2;
-          const cy = pointY;
-          return (
-            <circle
-              key={i * fourVertex.length + index}
-              cx={cx}
-              cy={cy}
-              r={3}
-              fill="none"
-              stroke="blue"
-            />
-          );
-        });
-      });
-    }
-
     let ucPathOnSvg = null;
     if (ucPath) {
       let pathGene = d3
@@ -315,10 +304,16 @@ class WellMatch extends React.Component<Props, State> {
         .y((d: any) => {
           return d[1];
         });
-      ucPathOnSvg = ucPath.map((path: any, i: number) => {
-        let d: any = pathGene(path);
-        let style = { fill: "none", stroke: "black", strokeWidth: 2 };
-        return <path key={i} d={d} style={style} className="trace-path" />;
+      let style = { fill: "none", stroke: "black", strokeWidth: 2 };
+      ucPathOnSvg = ucPath.map((e, i) => {
+        return (
+          <path
+            key={i}
+            d={pathGene(e) as any}
+            style={style}
+            className="trace-path"
+          />
+        );
       });
     }
 
@@ -331,7 +326,6 @@ class WellMatch extends React.Component<Props, State> {
           {positivePaths}
           {negativePaths}
           {trackPath}
-          {vertexPath}
           {ucPathOnSvg}
         </svg>
       </div>

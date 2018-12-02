@@ -13,10 +13,10 @@ import * as d3 from "d3";
 import {
   wellMaxDepth,
   wellMinDepth,
-  depthList
+  depthList,
+  wellMatchSvgPaddingRatio as paddingRatio
 } from "../reducer/globalVarReducer";
 import Uncertainty from "../API/uncertainty";
-const paddingRatio = 0.1;
 
 export function getTwoWellUc(well1: any, well2: any, allWells: any) {
   const idStore = [well1.id, well2.id];
@@ -52,7 +52,8 @@ export function getTwoWellUc(well1: any, well2: any, allWells: any) {
         depthList
       );
       const uc = new Uncertainty();
-      const ucList = uc.cal(vertex, curvePaths).ucList;
+      const ucList = uc.cal(vertex, curvePaths, width, paddingRatio, height)
+        .ucList;
       const ucSum = uc.getUcSum(ucList);
       const id1 = coupleWell[0];
       const id2 = coupleWell[1];

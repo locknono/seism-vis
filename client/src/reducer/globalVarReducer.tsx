@@ -5,7 +5,7 @@ const wellMaxDepth = 1850; */
 
 const wellMatchSvgWidth = 300;
 const wellMatchSvgHeight = 700;
-const wellMatchSvgPaddingRatio = 0.1;
+export const wellMatchSvgPaddingRatio = 0.1;
 
 function getTraceMinMaxDepth() {
   let d0 = 3846;
@@ -93,8 +93,8 @@ export default function globalVarReducer(
         .scaleLinear()
         .domain([wellMinDepth, wellMaxDepth])
         .range([
-          action.height * wellMatchSvgPaddingRatio,
-          action.height * (1 - wellMatchSvgPaddingRatio)
+          (action.height * wellMatchSvgPaddingRatio) / 2,
+          action.height * (1 - wellMatchSvgPaddingRatio / 2)
         ]);
       return {
         ...state,

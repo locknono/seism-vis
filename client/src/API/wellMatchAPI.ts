@@ -1,7 +1,7 @@
 import Tracker from "../API/tracking";
 import * as d3 from "d3";
 export function getSize(matrixData: any) {
-  return [40 * matrixData.length, matrixData[0].length * 5];
+  return [70 * matrixData.length, matrixData[0].length * 5];
 }
 
 export function getWellMatchPath(
@@ -42,7 +42,9 @@ export function getWellMatchPath(
         const bottomPath = [];
         for (let j = 0; j < data.length; j++) {
           const x =
-            wellIDNearLineIndex[j] * (matrixData.length - 1) * pad + pad / 2;
+            drawWidth * paddingRatio +
+            wellIDNearLineIndex[j] * (matrixData.length - 1) * pad +
+            pad / 2;
           const value = data[j].value;
           if (value[index].topDepth) {
             const topY = scale(value[index].topDepth);
@@ -93,7 +95,7 @@ export function api_getTracePath(
   for (let i = 0; i < matrixData.length; i++) {
     let positivePath: [number, number][] = [];
     let negativePath: [number, number][] = [];
-    const x = pad * i + pad / 2;
+    const x = paddingRatio * drawWidth + pad * i + pad / 2;
     for (let j = 0; j < matrixData[i].length; j++) {
       const xOffset = matrixData[i][j] === 0 ? 0 : xScale(matrixData[i][j]);
       const p1: [number, number] = [x, scale(depthList[j])];
