@@ -321,8 +321,19 @@ class WellMatch extends React.Component<Props, State> {
     let wellAttrCurve = null;
     if (wellAttrData) {
       wellAttrCurve = wellAttrData.map((e, i) => {
+        const pad = (width * (paddingRatio - 0.1)) / 5;
+        const xStart =
+          i === 0 ? pad / 2 : width * (1 - paddingRatio + 0.1) + pad / 2;
         return (
-          <WellAttr key={e.id} id={e.id} values={e.value} yScale={scale} />
+          <WellAttr
+            key={e.id}
+            xStart={xStart}
+            id={e.id}
+            values={e.value}
+            yScale={scale}
+            svgWidth={width}
+            paddingRatio={paddingRatio}
+          />
         );
       });
     }

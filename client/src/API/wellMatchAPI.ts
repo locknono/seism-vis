@@ -42,7 +42,7 @@ export function getWellMatchPath(
         const bottomPath = [];
         for (let j = 0; j < data.length; j++) {
           const x =
-            drawWidth * paddingRatio +
+            width * paddingRatio +
             wellIDNearLineIndex[j] * (matrixData.length - 1) * pad +
             pad / 2;
           const value = data[j].value;
@@ -95,18 +95,18 @@ export function api_getTracePath(
   for (let i = 0; i < matrixData.length; i++) {
     let positivePath: [number, number][] = [];
     let negativePath: [number, number][] = [];
-    const x = paddingRatio * drawWidth + pad * i + pad / 2;
+    const xStart = paddingRatio * width + pad * i + pad / 2;
     for (let j = 0; j < matrixData[i].length; j++) {
       const preXOffset =
-        xScale(matrixData[i][j]) > pad / 2 ? pad/2 : xScale(matrixData[i][j]);
+        xScale(matrixData[i][j]) > pad / 2 ? pad / 2 : xScale(matrixData[i][j]);
       const xOffset = matrixData[i][j] === 0 ? 0 : preXOffset;
-      const p1: [number, number] = [x, scale(depthList[j])];
+      const p1: [number, number] = [xStart, scale(depthList[j])];
       const p2: [number, number] = [
-        x + xOffset,
+        xStart + xOffset,
         (scale(depthList[j]) + scale(depthList[j + 1])) / 2
       ];
       const p3: [number, number] = [
-        x,
+        xStart,
         (scale(depthList[j]) + scale(depthList[j + 1])) / 2
       ];
       if (xOffset > 0) {
@@ -118,18 +118,18 @@ export function api_getTracePath(
       }
     }
 
-    positivePath = trakcer.clearSawtooth(positivePath, x, true);
-    negativePath = trakcer.clearSawtooth(negativePath, x, false);
+    positivePath = trakcer.clearSawtooth(positivePath, xStart, true);
+    negativePath = trakcer.clearSawtooth(negativePath, xStart, false);
 
     const peaks = [
-      ...trakcer.extractPeaks(positivePath, x),
-      ...trakcer.extractPeaks(negativePath, x)
+      ...trakcer.extractPeaks(positivePath, xStart),
+      ...trakcer.extractPeaks(negativePath, xStart)
     ];
     allPeaks.push(peaks);
     //loop the positivePath to ensure it's closed so that css `fill` works
-    positivePath.push([x, scale(depthList[matrixData[0].length + 1])]);
-    positivePath.push([x, scale(depthList[0])]);
-    negativePath.push([x, scale(depthList[matrixData[0].length + 1])]);
+    positivePath.push([xStart, scale(depthList[matrixData[0].length + 1])]);
+    positivePath.push([xStart, scale(depthList[0])]);
+    negativePath.push([xStart, scale(depthList[matrixData[0].length + 1])]);
 
     positivePaths.push(positivePath);
     negativePaths.push(negativePath);

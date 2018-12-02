@@ -65,10 +65,9 @@ export default class Uncertainty {
     paddingRatio: number,
     height: number
   ) {
-    const pad = width * paddingRatio;
+    const pad = width / 20;
     const xStart = matchVertex[0][0][0];
     const xEnd = matchVertex[0][2][0];
-    const leftUcPath = [];
 
     const pathRightStartX = xEnd + pad;
     const padLeftStartX = xStart - pad;
@@ -129,13 +128,13 @@ export default class Uncertainty {
     ucPath.sort((a: any, b: any) => {
       return a[0][1] - b[0][1];
     });
-    const rightPath = [[startX, (height * paddingRatio) / 2]];
+    const drawPath = [[startX, height * 0.05]];
     for (let i = 0; i < ucPath.length; i++) {
-      rightPath.push(ucPath[i][0]);
-      rightPath.push(ucPath[i][1]);
-      rightPath.push(ucPath[i][2]);
+      drawPath.push(ucPath[i][0]);
+      drawPath.push(ucPath[i][1]);
+      drawPath.push(ucPath[i][2]);
     }
-    rightPath.push([startX, height * (1 - paddingRatio / 2)]);
-    return rightPath;
+    drawPath.push([startX, height * (1 - 0.05)]);
+    return drawPath;
   }
 }

@@ -3,35 +3,39 @@ import * as d3 from "d3";
 
 interface Props {}
 interface State {}
-const minList = [-1171.154, -999.25, -499.048, -999.25, -8533.336];
-const maxList = [662.546, 10000.0, 1591.528, 2094.277, 3490.68];
+const minList = [
+  -662.546 / 2,
+  -999.25 / 2,
+  -499.048 / 16,
+  -999.25 / 16,
+  -3490.68 / 8
+];
+const maxList = [
+  662.546 / 2,
+  999.25 / 2,
+  499.048 / 64,
+  999.25 / 64,
+  3490.68 / 8
+];
 const minDepth = 1067.18;
-const scales: any[] = [];
-const offSet = 10;
-for (let i = 0; i < minList.length; i++) {
-  const range = [minList[i], maxList[i]];
-  const scale = d3
-    .scaleLinear()
-    .domain(range)
-    .range([-offSet, offSet]);
-  scales.push(scale);
-}
 
+const colorScale = d3.scaleOrdinal(d3.schemeSet1);
 interface Props {
   id: string;
   values: any[];
   yScale: any;
+  xStart: number;
+  svgWidth: number;
+  paddingRatio: number;
 }
 
 interface State {
-  scales: any[];
   pathGen: any;
 }
 class WellAttr extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      scales: scales,
       pathGen: d3
         .line()
         .x(d => d[0])
@@ -42,11 +46,19 @@ class WellAttr extends React.Component<Props, State> {
   componentDidMount() {}
   render() {
     //TODO:handle error value
-    const { values, yScale } = this.props;
-    console.log("values: ", values);
-    const { scales, pathGen } = this.state;
-    const xStart = 0;
-    const pad = 20;
+    const { values, yScale, xStart, svgWidth, paddingRatio } = this.props;
+    const { pathGen } = this.state;
+    const scales: any[] = [];
+    const pad = (svgWidth * (paddingRatio - 0.1)) / 5;
+    for (let i = 0; i < minList.length; i++) {
+      const range = [minList[i], maxList[i]];
+      const scale = d3
+        .scaleLinear()
+        .domain(range)
+        .range([-pad / 2, pad / 2])
+        .clamp(true);
+      scales.push(scale);
+    }
     const xList = [];
     for (let i = 0; i < 5; i++) {
       xList.push(xStart + pad * i);
@@ -63,6 +75,10 @@ class WellAttr extends React.Component<Props, State> {
         //Attention!
         //bad data structure of values[i]:[depth,value,value,value,value,value]
         //so `j-1`
+
+        //some dirty data,filter
+        if (value <= -9999) continue;
+
         const xOffset = scales[j - 1](value);
         const point = [xList[j - 1] + xOffset, y];
         if (point && !Number.isNaN(point[0]) && !Number.isNaN(point[1])) {
@@ -70,20 +86,22 @@ class WellAttr extends React.Component<Props, State> {
         }
       }
     }
-    console.log("paths: ", paths);
+
     const style = {
       fill: "none",
-      stroke: "black",
-      strokeWidth: 0.1,
-      fillOpacity: 0.8
+      strokeWidth: 1
     };
     let drawPaths = null;
-    console.log("paths: ", paths);
     if (paths) {
-      console.log("paths: ", paths);
       drawPaths = paths.map((e: [number, number][], i: number) => {
+        const color = colorScale(i.toString());
         return (
-          <path d={pathGen(e)} style={style} className="well-match-axis" />
+          <path
+            d={pathGen(e)}
+            style={{ ...style, stroke: color }}
+            className="well-match-axis"
+            key={i}
+          />
         );
       });
     }
