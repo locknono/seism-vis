@@ -17,7 +17,7 @@ import {
   getWellMatchPath,
   api_getTracePath
 } from "../API/wellMatchAPI";
-import { resolve } from "url";
+import MatchCurve from "./MatchCurve";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const {
     wellMinDepth,
@@ -254,11 +254,7 @@ class WellMatch extends React.Component<Props, State> {
     let curves = null;
     if (curvePaths) {
       curves = curvePaths.map((e: any, i: number) => {
-        let pathD = pathGen(e);
-        let style = { fill: "grey", stroke: "none", fillOpacity: 0.8 };
-        return (
-          <path key={i} d={pathD} style={style} className="well-match-axis" />
-        );
+        return <MatchCurve key={i} pathList={e} />;
       });
     }
 

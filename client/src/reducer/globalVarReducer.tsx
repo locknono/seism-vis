@@ -24,6 +24,7 @@ function getDepthList() {
     depthList.push(depth);
   }
   depthList = depthList.slice(500, 650 + 2);
+  console.log('depthList: ', depthList);
   return depthList;
 }
 

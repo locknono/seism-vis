@@ -6,6 +6,8 @@ import multiprocessing as mp
 from multiprocessing import Pool
 import numpy as np
 from global_variable import *
+
+
 class SeismDb:
     def __init__(self):
         self.client = MongoClient('localhost', 27017)
@@ -13,6 +15,7 @@ class SeismDb:
 
         self.trace = self.db.trace
         self.zCollection = self.db.z
+        self.wellAttr = self.db.wellAttr
 
     def queryMatrix(self, plane_name, depth):
         matrix = []
@@ -81,6 +84,11 @@ class SeismDb:
             if len(matrix) > 500:
                 break
         return matrix
+
+    def queryWellAttr(self, id1, id2):
+        attr1 = self.wellAttr.find_one({"id": id1})
+        attr2 = self.wellAttr.find_one({"id": id2})
+        return [attr1, attr2]
 
 
 if __name__ == '__main__':

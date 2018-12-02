@@ -118,6 +118,15 @@ def storeUcSum():
     return 'store'
 
 
+@app.route('/wellAttr/<twoID>')
+def sendWellData(twoID):
+    ID = twoID.split('_')[0]
+    ID2 = twoID.split('_')[1]
+    returnData=db.queryWellAttr(ID,ID2)
+    res = Response(json.dumps(returnData), mimetype='application/json')
+    return res
+
+
 if __name__ == '__main__':
     plt.ioff()
     matplotlib.use('Agg')
