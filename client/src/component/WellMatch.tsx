@@ -16,7 +16,8 @@ import Uncertainty from "../API/uncertainty";
 import {
   getSize,
   getWellMatchPath,
-  api_getTracePath
+  api_getTracePath,
+  ifMatchCurveEqual
 } from "../API/wellMatchAPI";
 import MatchCurve from "./MatchCurve";
 import { v4 } from "uuid";
@@ -128,6 +129,7 @@ class WellMatch extends React.Component<Props, State> {
     this.drawMatch = this.drawMatch.bind(this);
     this.drawTrace = this.drawTrace.bind(this);
     this.calUncertainty = this.calUncertainty.bind(this);
+    this.changeCurvePath = this.changeCurvePath.bind(this);
   }
 
   componentDidUpdate(prevProps: any) {
@@ -150,11 +152,14 @@ class WellMatch extends React.Component<Props, State> {
       this.drawTrace();
     }
 
+    //Condition is too complex
+    //Maybe i should import `immutable.js` if scale grows
+    console.log(`update`);
     if (
       curvePaths &&
       vertex &&
       (!prevProps.curvePaths ||
-        curvePaths.length !== prevProps.curvePaths.length)
+        ifMatchCurveEqual(curvePaths, prevProps.curvePaths) === false)
     ) {
       this.calUncertainty();
     }
@@ -223,6 +228,7 @@ class WellMatch extends React.Component<Props, State> {
     const ucList = uc.cal(vertex, curvePaths, width, paddingRatio, height)
       .ucList;
     const ucSum = uc.getUcSum(ucList);
+
     const id1 = coupleWell[0];
     const id2 = coupleWell[1];
     const coupleWellUc = {
@@ -230,6 +236,7 @@ class WellMatch extends React.Component<Props, State> {
       id2,
       value: ucSum
     };
+    console.log("ucSum: ", ucSum);
     getUcPath(ucPath);
     fetch(`http://localhost:5000/storeUcSum/`, {
       body: JSON.stringify(coupleWellUc),
@@ -242,6 +249,12 @@ class WellMatch extends React.Component<Props, State> {
     });
   }
 
+  changeCurvePath(path: any, index: number) {
+    const { curvePaths, getWellCurve } = this.props;
+    const newCurvePath = JSON.parse(JSON.stringify(curvePaths));
+    newCurvePath[index] = path;
+    getWellCurve(newCurvePath);
+  }
   render() {
     const {
       width,
@@ -261,7 +274,15 @@ class WellMatch extends React.Component<Props, State> {
     let curves = null;
     if (curvePaths) {
       curves = curvePaths.map((e: any, i: number) => {
-        return <MatchCurve key={v4()} path={e} />;
+        return (
+          <MatchCurve
+            //use vertex to uniquely identify match curve
+            key={vertex[i]}
+            path={e}
+            index={i}
+            changeCurvePath={this.changeCurvePath}
+          />
+        );
       });
     }
 

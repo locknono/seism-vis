@@ -88,6 +88,7 @@ export default function wellReducer(
         wellIDNearLineIndex: action.index
       };
     case GET_WELL_CURVE:
+      console.log(`reducer`);
       return {
         ...state,
         curvePaths: action.wellCurve

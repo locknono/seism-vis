@@ -29,7 +29,7 @@ function getDepthList() {
 
 const [traceMinDepth, traceMaxDepth] = getTraceMinMaxDepth();
 export const depthList = getDepthList();
-console.log("depthList: ", depthList);
+
 export const wellMinDepth = depthList[0];
 export const wellMaxDepth = depthList[depthList.length - 1 - 2];
 

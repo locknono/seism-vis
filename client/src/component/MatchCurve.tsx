@@ -13,10 +13,12 @@ export function extractVertex(path: any): any {
 }
 interface Props {
   path: [number, number][];
+  index: number;
+  changeCurvePath: any;
 }
 interface State {
   pathGen: any;
-  vertex: [] | null;
+  vertex: [number, number][] | null;
 }
 
 class MatchCurve extends React.Component<Props, State> {
@@ -39,8 +41,15 @@ class MatchCurve extends React.Component<Props, State> {
     this.setState({ vertex });
   }
 
-  changeVertexPosition(vertex: []) {
+  changeVertexPosition(vertex: [number, number][]) {
+    const { changeCurvePath, index, path } = this.props;
     this.setState({ vertex });
+    const newPath = JSON.parse(JSON.stringify(path));
+    newPath[0] = vertex[0];
+    newPath[newPath.length - 2] = vertex[1];
+    newPath[Math.floor(newPath.length / 2) - 1] = vertex[2];
+    newPath[Math.floor(newPath.length / 2)] = vertex[3];
+    changeCurvePath(newPath, index);
   }
   render() {
     const { path } = this.props;

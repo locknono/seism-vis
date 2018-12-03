@@ -155,3 +155,22 @@ export function api_getTracePath(
     paths
   };
 }
+
+export function ifMatchCurveEqual(cur: any, prev: any) {
+  console.log("cur: ", cur[cur.length - 1][2]);
+  console.log("prev: ", prev[prev.length - 1][2]);
+  if (!prev && !!cur) {
+    return false;
+  } else if (prev.length !== cur.length) {
+    return false;
+  } else {
+    for (let i = 0; i < cur.length; i++) {
+      for (let s = 0; s < cur[i].length; s++) {
+        if (cur[i][s][1] !== prev[i][s][1]) {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}
