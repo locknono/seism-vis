@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as d3 from "d3";
+import Vertex from "./Vertex";
 export function extractVertex(path: any): any {
   const matchVertex: any = [];
   matchVertex.push(
@@ -40,14 +41,7 @@ class MatchCurve extends React.Component<Props, State> {
     const { path } = this.props;
     const { pathGen, vertex } = this.state;
     const style = { fill: "grey", stroke: "none", fillOpacity: 0.8 };
-    let vertexCircle = null;
-    if (vertex) {
-      const style = { stroke: "blue", fill: "blue" };
-      vertexCircle = vertex.map((e, i) => {
-        return <circle key={i} cx={e[0]} cy={e[1]} r={2} style={style} />;
-      });
-    }
-
+    const drawVertex = vertex !== null ? <Vertex vertex={vertex} /> : null;
     return (
       <React.Fragment>
         <path
@@ -56,7 +50,7 @@ class MatchCurve extends React.Component<Props, State> {
           className="well-match-axis"
           onClick={this.handleClick}
         />
-        {vertexCircle}
+        {drawVertex}
       </React.Fragment>
     );
   }

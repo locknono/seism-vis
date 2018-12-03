@@ -277,39 +277,36 @@ class Map extends React.Component<Props, object> {
             radius: 5,
             stroke: false,
             fillOpacity: 1
-          })
-            .on("click", function() {
-              console.log(`click${well.id}`);
-              self.UNSAFE_IDStore.push(well.id);
-              self.UNSAFE_XYStore.push([well.x, well.y]);
-              getCoupleWell(self.UNSAFE_IDStore);
-              if (self.UNSAFE_IDStore.length === 2) {
-                const pointsOnLine = getPointsOnLine(self.UNSAFE_XYStore);
-                const [
-                  wellIDNearLine,
-                  wellIDNearLineIndexOnLine
-                ] = mapapi_getWellIDNearLine(
-                  pointsOnLine,
-                  allWells,
-                  self.UNSAFE_IDStore
-                );
-                fetchWellAttrData(
-                  self.UNSAFE_IDStore[0],
-                  self.UNSAFE_IDStore[1]
-                ).then(data => {
-                  getWellAttrData(data);
-                });
+          }).on("click", function() {
+            self.UNSAFE_IDStore.push(well.id);
+            self.UNSAFE_XYStore.push([well.x, well.y]);
+            getCoupleWell(self.UNSAFE_IDStore);
+            if (self.UNSAFE_IDStore.length === 2) {
+              const pointsOnLine = getPointsOnLine(self.UNSAFE_XYStore);
+              const [
+                wellIDNearLine,
+                wellIDNearLineIndexOnLine
+              ] = mapapi_getWellIDNearLine(
+                pointsOnLine,
+                allWells,
+                self.UNSAFE_IDStore
+              );
+              fetchWellAttrData(
+                self.UNSAFE_IDStore[0],
+                self.UNSAFE_IDStore[1]
+              ).then(data => {
+                getWellAttrData(data);
+              });
 
-                self.UNSAFE_IDStore = [];
-                getWellIDNearLine(wellIDNearLine);
-                getWellIDNearLineIndex(wellIDNearLineIndexOnLine);
-                fetchMatrixData(pointsOnLine).then(matrixData => {
-                  getMatrixData(matrixData);
-                });
-                self.UNSAFE_XYStore = [];
-              }
-            })
-            .on("mouseover", () => console.log(well));
+              self.UNSAFE_IDStore = [];
+              getWellIDNearLine(wellIDNearLine);
+              getWellIDNearLineIndex(wellIDNearLineIndexOnLine);
+              fetchMatrixData(pointsOnLine).then(matrixData => {
+                getMatrixData(matrixData);
+              });
+              self.UNSAFE_XYStore = [];
+            }
+          });
           circlesLayer.addLayer(circle);
           allCircles.push(circle);
         });
