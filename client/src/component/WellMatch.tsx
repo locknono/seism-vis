@@ -154,7 +154,6 @@ class WellMatch extends React.Component<Props, State> {
 
     //Condition is too complex
     //Maybe i should import `immutable.js` if scale grows
-    console.log(`update`);
     if (
       curvePaths &&
       vertex &&
@@ -236,7 +235,7 @@ class WellMatch extends React.Component<Props, State> {
       id2,
       value: ucSum
     };
-    console.log("ucSum: ", ucSum);
+
     getUcPath(ucPath);
     fetch(`http://localhost:5000/storeUcSum/`, {
       body: JSON.stringify(coupleWellUc),
@@ -249,11 +248,11 @@ class WellMatch extends React.Component<Props, State> {
     });
   }
 
-  changeCurvePath(path: any, index: number) {
+  changeCurvePath(newPath: any, index: number) {
     const { curvePaths, getWellCurve } = this.props;
-    const newCurvePath = JSON.parse(JSON.stringify(curvePaths));
-    newCurvePath[index] = path;
-    getWellCurve(newCurvePath);
+    const newCurvePaths = JSON.parse(JSON.stringify(curvePaths));
+    newCurvePaths[index] = newPath;
+    getWellCurve(newCurvePaths);
   }
   render() {
     const {
@@ -276,8 +275,7 @@ class WellMatch extends React.Component<Props, State> {
       curves = curvePaths.map((e: any, i: number) => {
         return (
           <MatchCurve
-            //use vertex to uniquely identify match curve
-            key={vertex[i]}
+            key={e.toString()}
             path={e}
             index={i}
             changeCurvePath={this.changeCurvePath}

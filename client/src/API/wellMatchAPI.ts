@@ -157,8 +157,6 @@ export function api_getTracePath(
 }
 
 export function ifMatchCurveEqual(cur: any, prev: any) {
-  console.log("cur: ", cur[cur.length - 1][2]);
-  console.log("prev: ", prev[prev.length - 1][2]);
   if (!prev && !!cur) {
     return false;
   } else if (prev.length !== cur.length) {

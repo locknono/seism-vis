@@ -48,7 +48,7 @@ class Vertex extends React.Component<Props, State> {
     function dragged(this: SVGCircleElement) {
       d3.select(this).attr("cy", d3.event.y);
       const index = d3.select(this).attr("data-index");
-      const newVertex = JSON.parse(JSON.stringify(vertex));
+      const newVertex = [...vertex];
       newVertex[index][1] = d3.event.y;
       changeVertexPosition(newVertex);
     }
@@ -66,7 +66,7 @@ class Vertex extends React.Component<Props, State> {
             key={i}
             cx={e[0]}
             cy={e[1]}
-            r={4}
+            r={5}
             style={style}
             data-index={i}
             className="vertex"

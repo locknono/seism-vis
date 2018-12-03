@@ -35,22 +35,24 @@ class MatchCurve extends React.Component<Props, State> {
     this.changeVertexPosition = this.changeVertexPosition.bind(this);
   }
 
+  componentDidMount() {}
   handleClick() {
     const { path } = this.props;
     const vertex = extractVertex(path);
     this.setState({ vertex });
   }
 
-  changeVertexPosition(vertex: [number, number][]) {
+  changeVertexPosition(newVertex: [number, number][]) {
     const { changeCurvePath, index, path } = this.props;
-    this.setState({ vertex });
+    this.setState({ vertex: newVertex });
     const newPath = JSON.parse(JSON.stringify(path));
-    newPath[0] = vertex[0];
-    newPath[newPath.length - 2] = vertex[1];
-    newPath[Math.floor(newPath.length / 2) - 1] = vertex[2];
-    newPath[Math.floor(newPath.length / 2)] = vertex[3];
+    newPath[0] = [...newVertex[0]];
+    newPath[newPath.length - 2] = [...newVertex[1]];
+    newPath[Math.floor(newPath.length / 2) - 1] = [...newVertex[2]];
+    newPath[Math.floor(newPath.length / 2)] = [...newVertex[3]];
     changeCurvePath(newPath, index);
   }
+
   render() {
     const { path } = this.props;
     const { pathGen, vertex } = this.state;
