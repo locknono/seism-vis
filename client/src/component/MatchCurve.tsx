@@ -18,6 +18,7 @@ interface State {
   pathGen: any;
   vertex: [] | null;
 }
+
 class MatchCurve extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -29,6 +30,7 @@ class MatchCurve extends React.Component<Props, State> {
       vertex: null
     };
     this.handleClick = this.handleClick.bind(this);
+    this.changeVertexPosition = this.changeVertexPosition.bind(this);
   }
 
   handleClick() {
@@ -37,11 +39,20 @@ class MatchCurve extends React.Component<Props, State> {
     this.setState({ vertex });
   }
 
+  changeVertexPosition(vertex: []) {
+    this.setState({ vertex });
+  }
   render() {
     const { path } = this.props;
     const { pathGen, vertex } = this.state;
     const style = { fill: "grey", stroke: "none", fillOpacity: 0.8 };
-    const drawVertex = vertex !== null ? <Vertex vertex={vertex} /> : null;
+    const drawVertex =
+      vertex !== null ? (
+        <Vertex
+          vertex={vertex}
+          changeVertexPosition={this.changeVertexPosition}
+        />
+      ) : null;
     return (
       <React.Fragment>
         <path

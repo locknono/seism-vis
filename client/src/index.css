@@ -134,4 +134,5 @@ code {
 }
 
 .vertex {
+  pointer-events: visible;
 }
