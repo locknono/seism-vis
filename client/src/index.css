@@ -121,6 +121,7 @@ code {
 .well-match-div {
   position: relative;
   width: min-content;
+  margin-right: 100px;
 }
 
 .seism {

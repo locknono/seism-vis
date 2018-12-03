@@ -27,6 +27,7 @@ interface Props {
   xStart: number;
   svgWidth: number;
   paddingRatio: number;
+  leftFlag: boolean;
 }
 
 interface State {
@@ -46,7 +47,14 @@ class WellAttr extends React.Component<Props, State> {
   componentDidMount() {}
   render() {
     //TODO:handle error value
-    const { values, yScale, xStart, svgWidth, paddingRatio } = this.props;
+    const {
+      values,
+      yScale,
+      xStart,
+      svgWidth,
+      paddingRatio,
+      leftFlag
+    } = this.props;
     const { pathGen } = this.state;
     const scales: any[] = [];
     const pad = (svgWidth * (paddingRatio - 0.1)) / 5;
@@ -60,9 +68,16 @@ class WellAttr extends React.Component<Props, State> {
       scales.push(scale);
     }
     const xList = [];
-    for (let i = 0; i < 5; i++) {
-      xList.push(xStart + pad * i);
+    if (leftFlag) {
+      for (let i = 0; i < 5; i++) {
+        xList.push(xStart + pad * i);
+      }
+    } else {
+      for (let i = 0; i < 5; i++) {
+        xList.push(xStart - pad * i);
+      }
     }
+
     const paths: any = [[], [], [], [], []];
     for (let i = 0; i < values.length; i++) {
       const depth = values[i][0];
@@ -80,7 +95,10 @@ class WellAttr extends React.Component<Props, State> {
         if (value <= -9999) continue;
 
         const xOffset = scales[j - 1](value);
-        const point = [xList[j - 1] + xOffset, y];
+        const point =
+          leftFlag === true
+            ? [xList[j - 1] + xOffset, y]
+            : [xList[j - 1] - xOffset, y];
         if (point && !Number.isNaN(point[0]) && !Number.isNaN(point[1])) {
           paths[j - 1].push(point);
         }

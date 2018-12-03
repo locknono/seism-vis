@@ -105,7 +105,7 @@ export default class Uncertainty {
     left: boolean
   ) {
     const ucPath = [];
-
+    console.log("ucList: ", ucList);
     for (let i = 0; i < matchVertex.length; i++) {
       const value = ucList[i];
       const track = matchVertex[i];
