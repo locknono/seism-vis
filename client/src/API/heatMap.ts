@@ -66,7 +66,6 @@ export function getTwoWellUc(well1: Well, well2: Well, allWells: AllWells) {
         id2,
         value: ucSum
       };
-
       return coupleWellUc;
     });
   });

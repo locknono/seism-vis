@@ -29,11 +29,11 @@ export function getNearIndexList(allWells: AllWells) {
 }
 
 export function getPointsOnLine(line: Path): [number, number][] {
-  const x1 = (line[0][0] - xStart) / xySection;
-  const y1 = (line[0][1] - yStart) / xySection;
-  const x2 = (line[1][0] - xStart) / xySection;
-  const y2 = (line[1][1] - yStart) / xySection;
-  const matrixCoors = [[x1, y1], [x2, y2]].map(e => e.map(Math.floor));
+  const x1: number = (line[0][0] - xStart) / xySection;
+  const y1: number = (line[0][1] - yStart) / xySection;
+  const x2: number = (line[1][0] - xStart) / xySection;
+  const y2: number = (line[1][1] - yStart) / xySection;
+  const matrixCoors: any = [[x1, y1], [x2, y2]].map(e => e.map(Math.floor));
   const smallerX = matrixCoors[0][0] < matrixCoors[1][0] ? 0 : 1;
   const biggerX = matrixCoors[0][0] < matrixCoors[1][0] ? 1 : 0;
   let k;
@@ -67,6 +67,9 @@ export function getPointsOnLine(line: Path): [number, number][] {
     for (let i = matrixCoors[smallerX][1]; i <= matrixCoors[biggerX][1]; i++) {
       pointsOnLine.push([matrixCoors[0][0], i]);
     }
+  }
+  if (pointsOnLine.length === 0) {
+    return matrixCoors;
   }
   if (matrixCoors[0][0] === pointsOnLine[0][0]) {
     return pointsOnLine;

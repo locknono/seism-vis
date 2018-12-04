@@ -42,7 +42,13 @@ class Vertex extends React.Component<Props, State> {
         .on("drag", dragged)
         .on("end", dragended)
     );
-    function dragstarted() {}
+    d3Nodes.on("mouseover", function(this: SVGCircleElement) {
+      d3.select(this).style("cursor", "n-resize");
+    });
+
+    function dragstarted(this: SVGCircleElement) {
+      d3.select(this).style("cursor", "row-resize");
+    }
 
     //Set type annotation of `this` explicitly
     //to be compatible with typescript
@@ -57,7 +63,7 @@ class Vertex extends React.Component<Props, State> {
     function dragended() {}
   }
 
-  componentWillMount(){
+  componentWillMount() {
     //TODO:Fix bug:clear `setState`
     //I've tried prevent setState with a status flag,but it didn't work
   }
