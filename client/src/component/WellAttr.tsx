@@ -4,19 +4,13 @@ import * as d3 from "d3";
 interface Props {}
 interface State {}
 const minList = [
-  -662.546 / 2,
-  -999.25 / 2,
-  -499.048 / 16,
-  -999.25 / 16,
-  -3490.68 / 8
+  -662.546 / 4,
+  -999.25 / 4,
+  -499.048 / 256,
+  -999.25 / 256,
+  -3490.68
 ];
-const maxList = [
-  662.546 / 2,
-  999.25 / 2,
-  499.048 / 64,
-  999.25 / 64,
-  3490.68 / 8
-];
+const maxList = [662.546 / 4, 999.25 / 4, 499.048 / 256, 999.25 / 256, 3490.68];
 const minDepth = 1067.18;
 
 const colorScale = d3.scaleOrdinal(d3.schemeSet1);
@@ -44,7 +38,9 @@ class WellAttr extends React.Component<Props, State> {
     };
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    //TODO:ADD BASELINE
+  }
   render() {
     //TODO:handle error value
     const {

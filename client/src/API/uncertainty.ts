@@ -21,9 +21,11 @@ export default class Uncertainty {
     height: number
   ) {
     const matchVertex = extractMatchVertex(curvePaths);
+
     const [xStart, xEnd] = [matchVertex[0][0][0], matchVertex[0][2][0]];
     //Change the initial trackVertex structure
     const trackVertex: [number, number][][] = [];
+
     vertex.map((fourVertex: any, i: number) => {
       let vertex2: [number, number][] = [];
       fourVertex.map((e: any, index: number) => {
@@ -41,6 +43,17 @@ export default class Uncertainty {
       let curTrackUc: number = 0;
       for (let j = 0; j < trackVertex.length; j++) {
         if (
+          //match is totally inside the track
+          matchVertex[i][0][1] >= trackVertex[j][0][1] &&
+          matchVertex[i][1][1] <= trackVertex[j][1][1] &&
+          matchVertex[i][2][1] >= trackVertex[j][2][1] &&
+          matchVertex[i][3][1] <= trackVertex[j][3][1]
+        ) {
+          curTrackUc = 0;
+          break;
+        }
+        if (
+          //cross
           (matchVertex[i][1][1] > trackVertex[j][0][1] &&
             matchVertex[i][2][1] < trackVertex[j][3][1]) ||
           (matchVertex[i][0][1] < trackVertex[j][1][1] &&
@@ -105,7 +118,6 @@ export default class Uncertainty {
     left: boolean
   ) {
     const ucPath = [];
-    console.log("ucList: ", ucList);
     for (let i = 0; i < matchVertex.length; i++) {
       const value = ucList[i];
       const track = matchVertex[i];
