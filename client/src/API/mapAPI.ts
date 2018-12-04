@@ -34,7 +34,8 @@ export function getPointsOnLine(line: Path): [number, number][] {
   const x2 = (line[1][0] - xStart) / xySection;
   const y2 = (line[1][1] - yStart) / xySection;
   const matrixCoors = [[x1, y1], [x2, y2]].map(e => e.map(Math.floor));
-  console.log("matrixCoors: ", matrixCoors);
+  const smallerX = matrixCoors[0][0] < matrixCoors[1][0] ? 0 : 1;
+  const biggerX = matrixCoors[0][0] < matrixCoors[1][0] ? 1 : 0;
   let k;
   const pointsOnLine: [number, number][] = [];
   if (matrixCoors[0][0] - matrixCoors[1][0] !== 0) {
@@ -42,8 +43,6 @@ export function getPointsOnLine(line: Path): [number, number][] {
       (matrixCoors[0][1] - matrixCoors[1][1]) /
       (matrixCoors[0][0] - matrixCoors[1][0]);
     const b = matrixCoors[0][1] - matrixCoors[0][0] * k;
-    const smallerX = matrixCoors[0][0] < matrixCoors[1][0] ? 0 : 1;
-    const biggerX = matrixCoors[0][0] < matrixCoors[1][0] ? 1 : 0;
     for (
       let x = matrixCoors[smallerX][0];
       x <= matrixCoors[biggerX][0];
@@ -64,14 +63,16 @@ export function getPointsOnLine(line: Path): [number, number][] {
     ) {
       pointsOnLine.push([matrixCoors[biggerX][0], matrixCoors[biggerX][1]]);
     }
-    return pointsOnLine;
   } else {
-    for (let i = matrixCoors[0][1]; i <= matrixCoors[0][1]; i++) {
+    for (let i = matrixCoors[smallerX][1]; i <= matrixCoors[biggerX][1]; i++) {
       pointsOnLine.push([matrixCoors[0][0], i]);
     }
-    return pointsOnLine;
   }
-
+  if (matrixCoors[0][0] === pointsOnLine[0][0]) {
+    return pointsOnLine;
+  } else {
+    return pointsOnLine.reverse();
+  }
   //Ensure the last point is on line
 
   function equal(x1: number, y1: number, x2: number, y2: number): boolean {
