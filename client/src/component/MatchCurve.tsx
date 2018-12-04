@@ -1,16 +1,23 @@
 import * as React from "react";
 import * as d3 from "d3";
 import Vertex from "./Vertex";
+import { List } from "immutable";
+
+export function extractVertexIndex(path: any): any {
+  return [
+    0,
+    path.length - 2,
+    Math.floor(path.length / 2) - 1,
+    Math.floor(path.length / 2)
+  ];
+}
 export function extractVertex(path: any): any {
   const matchVertex: any = [];
-  matchVertex.push(
-    path[0],
-    path[path.length - 2],
-    path[Math.floor(path.length / 2) - 1],
-    path[Math.floor(path.length / 2)]
-  );
+  const vertexIndex = extractVertexIndex(path);
+  for (let index of vertexIndex) matchVertex.push(path[index]);
   return matchVertex;
 }
+
 interface Props {
   path: [number, number][];
   index: number;
@@ -45,12 +52,11 @@ class MatchCurve extends React.Component<Props, State> {
   changeVertexPosition(newVertex: [number, number][]) {
     const { changeCurvePath, index, path } = this.props;
     this.setState({ vertex: newVertex });
-    const newPath = JSON.parse(JSON.stringify(path));
-    newPath[0] = [...newVertex[0]];
-    newPath[newPath.length - 2] = [...newVertex[1]];
-    newPath[Math.floor(newPath.length / 2) - 1] = [...newVertex[2]];
-    newPath[Math.floor(newPath.length / 2)] = [...newVertex[3]];
-    changeCurvePath(newPath, index);
+    const newPath = List(path);
+    const vertexIndex = extractVertexIndex(path);
+    for (let i = 0; i < vertexIndex.length; i++)
+      newPath[vertexIndex[i]] = [...newVertex[i]];
+    changeCurvePath(newPath.toJS(), index);
   }
 
   render() {
