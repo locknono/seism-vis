@@ -76,7 +76,7 @@ export default class Tracker {
       const track = [allPeaks[startTrackNumber][i]];
       for (let j = startTrackNumber + 1; j < allPeaks.length; j++) {
         let nextPeak;
-        let MinOffset = 999;
+        let MinOffset = Number.MAX_SAFE_INTEGER;
         const lastPeakOnTrack = track[track.length - 1];
         for (let s = 0; s < allPeaks[j].length; s++) {
           if (allPeaks[j][s].positiveFlag !== lastPeakOnTrack.positiveFlag)

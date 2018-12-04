@@ -1,9 +1,9 @@
 import json
 import csv
 
-"""
+
 writeList = []
-with open('./data/rangeDept.json', 'r') as f:
+with open('./data/rangeDept_gzy.json', 'r') as f:
     for row in f.readlines():
         jsonRow = json.loads(row)
         jsonRow.pop('_id')
@@ -11,10 +11,12 @@ with open('./data/rangeDept.json', 'r') as f:
         jsonRow.pop('basic_attr')
         writeList.append(jsonRow)
 
-with open('./data/rangeDept2.json', 'w') as f:
+with open('./data/rangeDept_gzy2.json', 'w') as f:
     f.write(json.dumps(writeList))
-"""
 
+
+
+"""
 with open('./data/rangeDept2.json', 'r') as f:
     writeList = json.loads(f.read())
     minList = [99999, 99999, 99999, 99999, 99999, 99999]
@@ -34,3 +36,4 @@ with open('./data/rangeDept2.json', 'r') as f:
                         maxList[index] = value
                 except:
                     pass
+"""

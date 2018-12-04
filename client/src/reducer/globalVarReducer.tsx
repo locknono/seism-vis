@@ -24,14 +24,15 @@ function getDepthList() {
     depthList.push(depth);
   }
   depthList = depthList.slice(500, 650 + 2);
+  console.log("depthList: ", depthList);
   return depthList;
 }
 
 const [traceMinDepth, traceMaxDepth] = getTraceMinMaxDepth();
 export const depthList = getDepthList();
 
-export const wellMinDepth = depthList[0];
-export const wellMaxDepth = depthList[depthList.length - 1 - 2];
+export const wellMinDepth = depthList[0]; //1067.1851940144454
+export const wellMaxDepth = depthList[depthList.length - 1 - 2]; //1443.539796876678
 
 const initialWellMatchDepthScale = d3
   .scaleLinear()
