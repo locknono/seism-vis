@@ -1,8 +1,9 @@
 import Tracker from "../API/tracking";
 import * as d3 from "d3";
-import { MatrixData,AllTracks } from "../ts/Type";
+import { MatrixData, AllTracks } from "../ts/Type";
 export function getSize(matrixData: MatrixData) {
-  return [70 * matrixData.length, matrixData[0].length * 4.8];
+  /* return [70 * matrixData.length, matrixData[0].length * 4.8]; */
+  return [700, matrixData[0].length * 4.8];
 }
 
 export function getWellMatchPath(

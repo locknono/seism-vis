@@ -144,12 +144,13 @@ class WellMatch extends React.Component<Props, State> {
     } = this.props;
 
     if (matrixData && matrixData !== prevProps.matrixData) {
-      const [width, height] = getSize(matrixData);
-      changeSvgSize(width, height);
-    }
-    if (width !== prevProps.width) {
+      /*  const [width, height] = getSize(matrixData);
+      changeSvgSize(width, height); */
       this.drawMatch();
       this.drawTrace();
+    }
+
+    if (width !== prevProps.width) {
     }
 
     //Condition is too complex
@@ -357,10 +358,10 @@ class WellMatch extends React.Component<Props, State> {
         );
       });
     }
-    const svgStyle = { width, height: height + 15 };
-    const divStyle = { width, height: height + 15 };
+    const svgStyle = { width, height: height };
+    const divStyle = { width, height: height };
     return (
-      <div className=" well-match-div" style={divStyle}>
+      <div className=" well-match-div panel panel-default" style={divStyle}>
         <svg className="well-match-svg" style={svgStyle}>
           {curves}
           {positivePaths}

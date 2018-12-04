@@ -6,8 +6,8 @@ const wellMaxDepth = 1850; */
 //TODO:should redux store constraint?
 //or just a constraint moudule file?
 //`maybe` redux's supposed to merely store global variable,but not global constraint.
-const wellMatchSvgWidth = 300;
-const wellMatchSvgHeight = 700;
+const wellMatchSvgWidth = 700;
+const wellMatchSvgHeight = 600;
 export const wellMatchSvgPaddingRatio = 0.3;
 
 function getTraceMinMaxDepth() {
@@ -39,10 +39,7 @@ export const wellMaxDepth = depthList[depthList.length - 1 - 2]; //1443.53979687
 const initialWellMatchDepthScale = d3
   .scaleLinear()
   .domain([wellMinDepth, wellMaxDepth])
-  .range([
-    wellMatchSvgHeight * wellMatchSvgPaddingRatio,
-    wellMatchSvgHeight * (1 - wellMatchSvgPaddingRatio)
-  ]);
+  .range([wellMatchSvgHeight * 0.05, wellMatchSvgHeight * (1 - 0.05)]);
 
 interface GlobalVarState {
   readonly xStart: number;
