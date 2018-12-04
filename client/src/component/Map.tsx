@@ -23,6 +23,7 @@ import {
   getMatrixData
 } from "../action/changeWell";
 import { getTwoWellUc, storeUcData, getHeatData } from "../API/heatMap";
+import { MatrixData, AllWells } from "../ts/Type";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const scaler = state.figReducer.scaler;
   const {
@@ -268,7 +269,7 @@ class Map extends React.Component<Props, object> {
       })
       .then(wellLocationData => {
         const allCircles: any[] = [];
-        const allWells: object[] = [];
+        const allWells: AllWells = [];
         wellLocationData.map((well: Well) => {
           let xOnMatrix = Math.floor((well.x - xStart) / xySection);
           let yOnMatrix = Math.floor((well.y - yStart) / xySection);
@@ -289,7 +290,7 @@ class Map extends React.Component<Props, object> {
               ] = mapapi_getWellIDNearLine(
                 pointsOnLine,
                 allWells,
-                self.UNSAFE_IDStore
+                self.UNSAFE_IDStore as [string, string]
               );
               fetchWellAttrData(
                 self.UNSAFE_IDStore[0],
@@ -301,7 +302,7 @@ class Map extends React.Component<Props, object> {
               self.UNSAFE_IDStore = [];
               getWellIDNearLine(wellIDNearLine);
               getWellIDNearLineIndex(wellIDNearLineIndexOnLine);
-              fetchMatrixData(pointsOnLine).then(matrixData => {
+              fetchMatrixData(pointsOnLine).then((matrixData: MatrixData) => {
                 getMatrixData(matrixData);
               });
               self.UNSAFE_XYStore = [];

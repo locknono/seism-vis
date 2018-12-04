@@ -1,4 +1,11 @@
-export function extractMatchVertex(curvePaths: any): any {
+import {
+  Vertices,
+  MatchCurvePath,
+  AllMatchCurve,
+  AllVertices
+} from "../ts/Type";
+
+export function extractMatchVertex(curvePaths: AllMatchCurve): AllVertices {
   const matchVertex: any = [];
   curvePaths.map((e: any) => {
     matchVertex.push([
@@ -148,4 +155,6 @@ export default class Uncertainty {
     drawPath.push([startX, height * (1 - 0.05)]);
     return drawPath;
   }
+
+  autoAjustMatchCurve() {}
 }

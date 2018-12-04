@@ -17,10 +17,14 @@ import {
   wellMatchSvgPaddingRatio as paddingRatio
 } from "../reducer/globalVarReducer";
 import Uncertainty from "../API/uncertainty";
+import { AllWells, Well, CoupleWell } from "../ts/Type";
 
-export function getTwoWellUc(well1: any, well2: any, allWells: any) {
-  const idStore = [well1.id, well2.id];
-  const xyStore: any = [[well1.x, well1.y], [well2.x, well2.y]];
+export function getTwoWellUc(well1: Well, well2: Well, allWells: AllWells) {
+  const idStore: CoupleWell = [well1.id, well2.id];
+  const xyStore: [[number, number], [number, number]] = [
+    [well1.x, well1.y],
+    [well2.x, well2.y]
+  ];
   const coupleWell = idStore;
   const pointsOnLine = getPointsOnLine(xyStore);
   //const wellIDNearLine = getWellIDNearLine(pointsOnLine);
@@ -68,7 +72,7 @@ export function getTwoWellUc(well1: any, well2: any, allWells: any) {
   });
 }
 
-export function storeUcData(allWells: any) {
+export function storeUcData(allWells: AllWells) {
   getNearIndexList(allWells).then(nearIndexList => {
     for (let i = 0; i < nearIndexList.length; i++) {
       setTimeout(() => {
@@ -92,7 +96,7 @@ export function storeUcData(allWells: any) {
   });
 }
 
-export function getHeatData(allWells: any) {
+export function getHeatData(allWells: AllWells) {
   const heatData: [number, number, number][] = [];
   const idCoorsMap = new Map();
   allWells.map((e: any) => {

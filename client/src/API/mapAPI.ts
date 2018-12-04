@@ -1,3 +1,5 @@
+import { Well, AllWells, Path, CoupleWell } from "../ts/Type";
+
 const xStart = 20652500;
 const yStart = 4190300.16;
 const xySection = 25;
@@ -9,12 +11,12 @@ export function idIndexMap(allWells: any) {
   return map;
 }
 
-export function getNearIndexList(allWells: any) {
+export function getNearIndexList(allWells: AllWells) {
   const map = idIndexMap(allWells);
   return fetch("./data/nearList.json")
     .then(r => r.json())
     .then((data: any) => {
-      const indexList: any[] = [];
+      const indexList: [number, number][] = [];
       for (const w of data) {
         const index1 = map.get(w.id);
         for (const nearWellID of w.nearList) {
@@ -26,7 +28,7 @@ export function getNearIndexList(allWells: any) {
     });
 }
 
-export function getPointsOnLine(line: [number, number][]): [number, number][] {
+export function getPointsOnLine(line: Path): [number, number][] {
   const x1 = (line[0][0] - xStart) / xySection;
   const y1 = (line[0][1] - yStart) / xySection;
   const x2 = (line[1][0] - xStart) / xySection;
@@ -68,12 +70,12 @@ export function getPointsOnLine(line: [number, number][]): [number, number][] {
 
 export function mapapi_getWellIDNearLine(
   pointsOnLine: number[][],
-  allWells: any,
-  coupleWell: any
-): any {
+  allWells: AllWells,
+  coupleWell: CoupleWell
+): [string[], number[]] {
   /*this method can speed up by tranform the 
   structure of `allWells` from list to hashmap*/
-  const wellIDNearLine = new Set();
+  const wellIDNearLine: Set<string> = new Set();
   const wellIDNearLineIndexOnLine = [];
   for (let i = 0; i < pointsOnLine.length; i++) {
     for (let j = 0; j < allWells.length; j++) {
@@ -108,7 +110,7 @@ export function mapapi_getWellIDNearLine(
   }
 }
 
-export function fetchMatrixData(pointsOnLine: any) {
+export function fetchMatrixData(pointsOnLine: [number, number][]) {
   return fetch("http://localhost:5000/returnDrawLineData/", {
     body: JSON.stringify(pointsOnLine),
     credentials: "same-origin",

@@ -1,46 +1,9 @@
-interface Peak {
-  top: number;
-  bottom: number;
-  mid: number;
-  highestX: number;
-  highestY: number;
-  value: number;
-  positiveFlag: boolean;
-}
-
-type Track = Peak[];
-
-type AllTracks = Track[];
+import { Peak, Track, AllTracks, Path, AllPeaks } from "../ts/Type";
 
 export default class Tracker {
   constructor() {}
-  clearSawtooth(
-    path: [number, number][],
-    x: number,
-    ifPositive: boolean
-  ): [number, number][] {
-    const deleteIndicesSet = new Set();
-    if (ifPositive) {
-      for (let i = 1; i < path.length - 2; i += 2) {
-        if (path[i][0] > x && path[i + 2][0] > x) {
-          deleteIndicesSet.add(i + 1);
-        }
-      }
-    } else {
-      for (let i = 1; i < path.length - 2; i += 2) {
-        if (path[i][0] < x && path[i + 2][0] < x) {
-          deleteIndicesSet.add(i + 1);
-        }
-      }
-    }
-    const deleteIndicesList = Array.from(deleteIndicesSet).reverse();
-    for (let i = 0; i < deleteIndicesList.length; i++) {
-      path.splice(deleteIndicesList[i], 1);
-    }
-    return path;
-  }
 
-  extractPeaks(positivePath: [number, number][], x: number) {
+  extractPeaks(positivePath: Path, x: number) {
     const peaks = [];
     let peakPoints = [];
     let findFlag = false;
@@ -67,11 +30,13 @@ export default class Tracker {
             peakInfo.value = e[0] - x;
           }
         });
+        const { highestX, highestY, value } = peakInfo;
         let peak = {
-          highestX: peakInfo.highestX,
-          highestY: peakInfo.highestY,
-          value: Math.abs(peakInfo.value),
-          positiveFlag: peakInfo.value > 0 ? true : false,
+          highestX,
+          highestY,
+          value: Math.abs(value),
+          positiveFlag: value > 0 ? true : false,
+          x: value > 0 ? highestX - value : highestX + value,
           top: peakPoints[0][1],
           bottom: peakPoints[peakPoints.length - 1][1],
           mid: (peakPoints[0][1] + peakPoints[peakPoints.length - 1][1]) / 2
@@ -83,12 +48,34 @@ export default class Tracker {
     return peaks;
   }
 
-  tracking(allPeaks: any, startTrackNumber: number) {
+  clearSawtooth(path: Path, x: number, ifPositive: boolean): Path {
+    const deleteIndicesSet = new Set();
+    if (ifPositive) {
+      for (let i = 1; i < path.length - 2; i += 2) {
+        if (path[i][0] > x && path[i + 2][0] > x) {
+          deleteIndicesSet.add(i + 1);
+        }
+      }
+    } else {
+      for (let i = 1; i < path.length - 2; i += 2) {
+        if (path[i][0] < x && path[i + 2][0] < x) {
+          deleteIndicesSet.add(i + 1);
+        }
+      }
+    }
+    const deleteIndicesList = Array.from(deleteIndicesSet).reverse();
+    for (let i = 0; i < deleteIndicesList.length; i++) {
+      path.splice(deleteIndicesList[i], 1);
+    }
+    return path;
+  }
+
+  tracking(allPeaks: Peak[][], startTrackNumber: number) {
     const allTracks = [];
     for (let i = 0; i < allPeaks[startTrackNumber].length; i++) {
       const track = [allPeaks[startTrackNumber][i]];
       for (let j = startTrackNumber + 1; j < allPeaks.length; j++) {
-        let nextPeak = null;
+        let nextPeak;
         let MinOffset = 999;
         const lastPeakOnTrack = track[track.length - 1];
         for (let s = 0; s < allPeaks[j].length; s++) {
@@ -103,15 +90,20 @@ export default class Tracker {
           }
         }
         //if offsets too much,stop here
+        //TODO:a constriant maybe inaccurate
         if (MinOffset > 50) break;
-        track.push(nextPeak);
+        if (nextPeak) track.push(nextPeak);
       }
       allTracks.push(track);
     }
     cutoff(allTracks);
     return allTracks;
 
-    function cutoff(allTracks: any[]) {
+    /*TODO:
+      This is so silly
+      cut off is more complicated than my expectation
+    */
+    function cutoff(allTracks: AllTracks) {
       for (let i = 0; i < allTracks.length - 1; i++) {
         for (let j = 0; j < allTracks[i].length; j++) {
           if (!allTracks[i + 1][j]) continue;
@@ -150,7 +142,7 @@ export default class Tracker {
     }
   }
 
-  cutOffAllTracks(allTracks: any, traceCount: number) {
+  cutOffAllTracks(allTracks: AllTracks, traceCount: number) {
     this.RemoveOverlapTrackingPath(allTracks);
     for (let i = allTracks.length - 1; i >= 0; i--) {
       if (allTracks[i].length < traceCount / 2) {
@@ -296,6 +288,7 @@ export default class Tracker {
       allTracks.splice(spliceList[i], 1);
     }
   }
+
   ifTrackOverlap(track1: Track, track2: Track): boolean {
     if (track1.length === track2.length) return false;
     let overlap = false;

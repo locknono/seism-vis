@@ -2,9 +2,9 @@ import * as React from "react";
 import * as d3 from "d3";
 import { DraggedElementBaseType } from "d3";
 import { v4 } from "uuid";
-import { VertexType } from "../ts/MatchCurveTs";
+import { Vertices } from "../ts/Type";
 interface Props {
-  vertex: VertexType;
+  vertex: Vertices;
   changeVertexPosition: any;
 }
 interface State {
@@ -55,6 +55,11 @@ class Vertex extends React.Component<Props, State> {
     }
 
     function dragended() {}
+  }
+
+  componentWillMount(){
+    //TODO:Fix bug:clear `setState`
+    //I've tried prevent setState with a status flag,but it didn't work
   }
   render() {
     const { vertex } = this.props;

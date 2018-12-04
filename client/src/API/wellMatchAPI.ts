@@ -1,15 +1,16 @@
 import Tracker from "../API/tracking";
 import * as d3 from "d3";
-export function getSize(matrixData: any) {
-  return [70 * matrixData.length, matrixData[0].length * 5];
+import { MatrixData,AllTracks } from "../ts/Type";
+export function getSize(matrixData: MatrixData) {
+  return [70 * matrixData.length, matrixData[0].length * 4.8];
 }
 
 export function getWellMatchPath(
-  wellIDNearLine: any,
+  wellIDNearLine: string[],
   paddingRatio: number,
   width: number,
-  matrixData: any,
-  wellIDNearLineIndex: any,
+  matrixData: MatrixData,
+  wellIDNearLineIndex: number[],
   scale: any
 ) {
   return fetch(`./data/groupWellData.json`)
@@ -73,10 +74,10 @@ export function getWellMatchPath(
 
 export function api_getTracePath(
   width: number,
-  matrixData: any,
+  matrixData: MatrixData,
   scale: any,
   paddingRatio: number,
-  depthList: any
+  depthList: number[]
 ) {
   const trakcer = new Tracker();
   const drawWidth = width * (1 - 2 * paddingRatio);
@@ -135,7 +136,7 @@ export function api_getTracePath(
     negativePaths.push(negativePath);
   }
 
-  const allTracks: any = [];
+  const allTracks: AllTracks = [];
   for (let i = 0; i < allPeaks.length / 2; i++) {
     allTracks.push(...trakcer.tracking(allPeaks, i));
   }
