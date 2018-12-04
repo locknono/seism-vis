@@ -2,8 +2,9 @@ import * as React from "react";
 import * as d3 from "d3";
 import { DraggedElementBaseType } from "d3";
 import { v4 } from "uuid";
+import { VertexType } from "../ts/MatchCurveTs";
 interface Props {
-  vertex: [number, number][];
+  vertex: VertexType;
   changeVertexPosition: any;
 }
 interface State {
@@ -22,7 +23,7 @@ class Vertex extends React.Component<Props, State> {
         .x(d => d[0])
         .y(d => d[1])
     };
-    this.vertexRef = this.props.vertex.map(e => {
+    this.vertexRef = this.props.vertex.map(() => {
       return React.createRef();
     });
   }
