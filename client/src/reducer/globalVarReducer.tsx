@@ -3,6 +3,9 @@ import { CHANGE_SVG_SIZE } from "../action/changeWellMatchSvg";
 /* const wellMinDepth = 1082;
 const wellMaxDepth = 1850; */
 
+//TODO:should redux store constraint?
+//or just a constraint moudule file?
+//`maybe` redux's supposed to merely store global variable,but not global constraint.
 const wellMatchSvgWidth = 300;
 const wellMatchSvgHeight = 700;
 export const wellMatchSvgPaddingRatio = 0.3;
@@ -24,7 +27,6 @@ function getDepthList() {
     depthList.push(depth);
   }
   depthList = depthList.slice(500, 650 + 2);
-  console.log("depthList: ", depthList);
   return depthList;
 }
 

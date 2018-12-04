@@ -34,35 +34,46 @@ export function getPointsOnLine(line: Path): [number, number][] {
   const x2 = (line[1][0] - xStart) / xySection;
   const y2 = (line[1][1] - yStart) / xySection;
   const matrixCoors = [[x1, y1], [x2, y2]].map(e => e.map(Math.floor));
-  const k =
-    (matrixCoors[0][1] - matrixCoors[1][1]) /
-    (matrixCoors[0][0] - matrixCoors[1][0]);
-  const b = matrixCoors[0][1] - matrixCoors[0][0] * k;
-  const smallerX = matrixCoors[0][0] < matrixCoors[1][0] ? 0 : 1;
-  const biggerX = matrixCoors[0][0] < matrixCoors[1][0] ? 1 : 0;
+  console.log("matrixCoors: ", matrixCoors);
+  let k;
   const pointsOnLine: [number, number][] = [];
-  for (
-    let x = matrixCoors[smallerX][0];
-    x <= matrixCoors[biggerX][0];
-    x += 0.05
-  ) {
-    let y = Math.floor(k * x + b);
-    let exist = false;
-    for (let i = 0; i < pointsOnLine.length; i++) {
-      let p = pointsOnLine[i];
-      if (equal(p[0], p[1], Math.floor(x), y)) exist = true;
+  if (matrixCoors[0][0] - matrixCoors[1][0] !== 0) {
+    k =
+      (matrixCoors[0][1] - matrixCoors[1][1]) /
+      (matrixCoors[0][0] - matrixCoors[1][0]);
+    const b = matrixCoors[0][1] - matrixCoors[0][0] * k;
+    const smallerX = matrixCoors[0][0] < matrixCoors[1][0] ? 0 : 1;
+    const biggerX = matrixCoors[0][0] < matrixCoors[1][0] ? 1 : 0;
+    for (
+      let x = matrixCoors[smallerX][0];
+      x <= matrixCoors[biggerX][0];
+      x += 0.05
+    ) {
+      let y = Math.floor(k * x + b);
+      let exist = false;
+      for (let i = 0; i < pointsOnLine.length; i++) {
+        let p = pointsOnLine[i];
+        if (equal(p[0], p[1], Math.floor(x), y)) exist = true;
+      }
+      if (!exist) pointsOnLine.push([Math.floor(x), y]);
     }
-    if (!exist) pointsOnLine.push([Math.floor(x), y]);
+    let lastPoint = pointsOnLine[pointsOnLine.length - 1];
+    if (
+      lastPoint[0] !== matrixCoors[biggerX][0] ||
+      lastPoint[1] !== matrixCoors[biggerX][1]
+    ) {
+      pointsOnLine.push([matrixCoors[biggerX][0], matrixCoors[biggerX][1]]);
+    }
+    return pointsOnLine;
+  } else {
+    for (let i = matrixCoors[0][1]; i <= matrixCoors[0][1]; i++) {
+      pointsOnLine.push([matrixCoors[0][0], i]);
+    }
+    return pointsOnLine;
   }
+
   //Ensure the last point is on line
-  let lastPoint = pointsOnLine[pointsOnLine.length - 1];
-  if (
-    lastPoint[0] !== matrixCoors[biggerX][0] ||
-    lastPoint[1] !== matrixCoors[biggerX][1]
-  ) {
-    pointsOnLine.push([matrixCoors[biggerX][0], matrixCoors[biggerX][1]]);
-  }
-  return pointsOnLine;
+
   function equal(x1: number, y1: number, x2: number, y2: number): boolean {
     return x1 === x2 && y1 === y2;
   }
@@ -111,6 +122,7 @@ export function mapapi_getWellIDNearLine(
 }
 
 export function fetchMatrixData(pointsOnLine: [number, number][]) {
+  console.log("pointsOnLine: ", pointsOnLine);
   return fetch("http://localhost:5000/returnDrawLineData/", {
     body: JSON.stringify(pointsOnLine),
     credentials: "same-origin",
