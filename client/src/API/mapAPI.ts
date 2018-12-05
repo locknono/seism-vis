@@ -3,9 +3,9 @@ import { Well, AllWells, Path, CoupleWell } from "../ts/Type";
 const xStart = 20652500;
 const yStart = 4190300.16;
 const xySection = 25;
-export function idIndexMap(allWells: any) {
-  const map = new Map();
-  allWells.map((e: any, i: number) => {
+export function idIndexMap(allWells: AllWells) {
+  const map: Map<string, number> = new Map();
+  allWells.map((e, i: number) => {
     map.set(e.id, i);
   });
   return map;
@@ -21,7 +21,25 @@ export function getNearIndexList(allWells: AllWells) {
         const index1 = map.get(w.id);
         for (const nearWellID of w.nearList) {
           const index2 = map.get(nearWellID);
-          indexList.push([index1, index2]);
+          indexList.push([index1 as number, index2 as number]);
+        }
+      }
+      return indexList;
+    });
+}
+
+export function getNearWellIndex(id: string, allWells: AllWells) {
+  const map = idIndexMap(allWells);
+  return fetch("./data/nearList.json")
+    .then(r => r.json())
+    .then((data: any) => {
+      const indexList: number[] = [];
+      for (const w of data) {
+        if (w.id === id) {
+          for (const nearWellID of w.nearList) {
+            const index = map.get(nearWellID);
+            indexList.push(index as number);
+          }
         }
       }
       return indexList;
@@ -153,4 +171,16 @@ export function fetchWellAttrData(id1: string, id2: string) {
       return [];
     }
   );
+}
+
+export function resetCircleStyle(circle: L.Circle) {
+  circle.setRadius(5).setStyle({
+    color: "#3388ff"
+  });
+}
+
+export function setSelectedCircleStyle(circle: L.Circle) {
+  circle.setRadius(5).setStyle({
+    color: "#E80D0C"
+  });
 }

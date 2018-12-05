@@ -14,7 +14,10 @@ import {
   getPointsOnLine,
   mapapi_getWellIDNearLine,
   fetchMatrixData,
-  fetchWellAttrData
+  fetchWellAttrData,
+  getNearWellIndex,
+  resetCircleStyle,
+  setSelectedCircleStyle
 } from "../API/mapAPI";
 import {
   getFigURI,
@@ -95,7 +98,9 @@ interface Map {
   UNSAFE_IDStore: string[];
   UNSAFE_internalCoupleLayerStore: any[];
   UNSAFE_XYStore: [number, number][];
+  UNSAFE_IndexStore: number[];
   UNSAFE_circlesLayer: L.LayerGroup;
+  UNSAFE_AllCircles: L.Circle[];
 }
 
 class Map extends React.Component<Props, object> {
@@ -105,6 +110,8 @@ class Map extends React.Component<Props, object> {
     this.UNSAFE_IDStore = [];
     this.UNSAFE_internalCoupleLayerStore = [];
     this.UNSAFE_XYStore = [];
+    this.UNSAFE_IndexStore = [];
+    this.UNSAFE_AllCircles = [];
   }
   componentDidMount() {
     this.deployMap();
@@ -115,56 +122,29 @@ class Map extends React.Component<Props, object> {
 
   componentDidUpdate(prevProps: Props, prevState: Props, snapshot: any) {
     const self = this;
-    if (this.props.coupleWell.length !== prevProps.coupleWell.length) {
-      const {
-        coupleWell,
-        allWells,
-        coupleWellLayer,
-        getCoupleWellLayer
-      } = this.props;
-      if (coupleWellLayer.length === 2) {
-        coupleWellLayer[0].remove();
-        coupleWellLayer[1].remove();
-      }
-      for (let i = 0; i < allWells.length; i++) {
-        if (coupleWell[coupleWell.length - 1] === allWells[i].id) {
-          let circle = L.circle(allWells[i].latlng, {
-            radius: 5,
-            color: "red"
-          });
-          circle.addTo(this.map);
-          self.UNSAFE_internalCoupleLayerStore.push(circle);
-          getCoupleWellLayer(self.UNSAFE_internalCoupleLayerStore);
-          if (self.UNSAFE_internalCoupleLayerStore.length === 2) {
-            self.UNSAFE_internalCoupleLayerStore = [];
-          }
-          break;
-        }
-      }
-    }
+    const {
+      coupleWell,
+      allWells,
+      coupleWellLayer,
+      getCoupleWellLayer
+    } = this.props;
 
     if (this.props.wellIDNearLine !== prevProps.wellIDNearLine) {
-      if (this.UNSAFE_circlesLayer) {
-        this.UNSAFE_circlesLayer.remove();
-      }
       const { allWells, wellIDNearLine } = this.props;
-      const wellIDNearLineLayer = [];
+      for (let i = 0; i < allWells.length; i++) {
+        for (let j = 0; j < prevProps.wellIDNearLine.length; j++) {
+          if (prevProps.wellIDNearLine[j] === allWells[i].id) {
+            resetCircleStyle(this.UNSAFE_AllCircles[i]);
+          }
+        }
+      }
       for (let i = 0; i < allWells.length; i++) {
         for (let j = 0; j < wellIDNearLine.length; j++) {
           if (wellIDNearLine[j] === allWells[i].id) {
-            const circle = L.circle(allWells[i].latlng, {
-              radius: 5,
-              color: "green"
-            });
-            wellIDNearLineLayer.push(circle);
-            break;
+            setSelectedCircleStyle(this.UNSAFE_AllCircles[i]);
           }
-          if (wellIDNearLineLayer.length === wellIDNearLine.length) break;
         }
       }
-      const circlesLayer = L.layerGroup(wellIDNearLineLayer);
-      circlesLayer.addTo(this.map);
-      this.UNSAFE_circlesLayer = circlesLayer;
     }
   }
 
@@ -268,9 +248,9 @@ class Map extends React.Component<Props, object> {
         return undefined;
       })
       .then(wellLocationData => {
-        const allCircles: any[] = [];
+        const allCircles: L.Circle[] = [];
         const allWells: AllWells = [];
-        wellLocationData.map((well: Well) => {
+        wellLocationData.map((well: Well, index: number) => {
           let xOnMatrix = Math.floor((well.x - xStart) / xySection);
           let yOnMatrix = Math.floor((well.y - yStart) / xySection);
           allWells.push({ ...well, xOnMatrix, yOnMatrix });
@@ -281,8 +261,41 @@ class Map extends React.Component<Props, object> {
           }).on("click", function() {
             self.UNSAFE_IDStore.push(well.id);
             self.UNSAFE_XYStore.push([well.x, well.y]);
+            self.UNSAFE_IndexStore.push(index);
             getCoupleWell(self.UNSAFE_IDStore);
+
+            if (self.UNSAFE_IDStore.length === 1) {
+              getNearWellIndex(self.UNSAFE_IDStore[0], allWells).then(
+                indexList => {
+                  for (let index of indexList) {
+                    allCircles[index].setStyle({
+                      color: "green"
+                    });
+                  }
+                }
+              );
+
+              if (self.UNSAFE_IndexStore.length === 3) {
+                resetCircleStyle(allCircles[self.UNSAFE_IndexStore[0]]);
+                resetCircleStyle(allCircles[self.UNSAFE_IndexStore[1]]);
+                self.UNSAFE_IndexStore.splice(0, 2);
+              }
+              setSelectedCircleStyle(allCircles[self.UNSAFE_IndexStore[0]]);
+            }
             if (self.UNSAFE_IDStore.length === 2) {
+              getNearWellIndex(self.UNSAFE_IDStore[0], allWells).then(
+                indexList => {
+                  for (let index of indexList) {
+                    allCircles[index].setStyle({
+                      color: "#3388ff" //default
+                    });
+                  }
+                  self.UNSAFE_IndexStore.map(index => {
+                    setSelectedCircleStyle(allCircles[index]);
+                  });
+                }
+              );
+
               const pointsOnLine = getPointsOnLine(self.UNSAFE_XYStore);
               const [
                 wellIDNearLine,
@@ -311,6 +324,7 @@ class Map extends React.Component<Props, object> {
           circlesLayer.addLayer(circle);
           allCircles.push(circle);
         });
+        self.UNSAFE_AllCircles = allCircles;
         getAllWells(allWells);
         getHeatData(allWells).then((heatData: any) => {
           const heatLayer = (L as any).heatLayer(heatData, { radius: 8 });
