@@ -320,6 +320,7 @@ class WellMatch extends React.Component<Props, State> {
 
     let ucPathOnSvg = null;
     if (ucPath) {
+      ucPath.push(ucPath.length - 1); //loop
       let pathGene = d3
         .line()
         .x((d: any) => {
@@ -327,8 +328,14 @@ class WellMatch extends React.Component<Props, State> {
         })
         .y((d: any) => {
           return d[1];
-        });
-      let style = { fill: "none", stroke: "black", strokeWidth: 2 };
+        })
+        .curve(d3.curveBasis);
+      const color = "rgb(223,136,23)";
+      let style = {
+        fill: color,
+        stroke: color,
+        strokeWidth: 0.5
+      };
       ucPathOnSvg = ucPath.map((e, i) => {
         return (
           <path
