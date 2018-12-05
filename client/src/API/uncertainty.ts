@@ -21,29 +21,13 @@ export default class Uncertainty {
   constructor() {}
 
   cal(
-    vertex: any,
+    trackVertex: AllVertices,
     curvePaths: any,
     width: number,
     paddingRatio: number,
     height: number
   ) {
     const matchVertex = extractMatchVertex(curvePaths);
-
-    const [xStart, xEnd] = [matchVertex[0][0][0], matchVertex[0][2][0]];
-    //Change the initial trackVertex structure
-    const trackVertex: [number, number][][] = [];
-
-    vertex.map((fourVertex: any, i: number) => {
-      let vertex2: [number, number][] = [];
-      fourVertex.map((e: any, index: number) => {
-        if (index <= 1) {
-          vertex2.push([xStart, e]);
-        } else {
-          vertex2.push([xEnd, e]);
-        }
-      });
-      trackVertex.push(vertex2);
-    });
 
     let ucList: number[] = [];
     for (let i = 0; i < matchVertex.length; i++) {

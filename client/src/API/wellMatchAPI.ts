@@ -1,6 +1,6 @@
 import Tracker from "../API/tracking";
 import * as d3 from "d3";
-import { MatrixData, AllTracks } from "../ts/Type";
+import { MatrixData, AllTracks, AllVertices } from "../ts/Type";
 export function getSize(matrixData: MatrixData) {
   /* return [70 * matrixData.length, matrixData[0].length * 4.8]; */
   return [700, matrixData[0].length * 4.8];
@@ -94,10 +94,13 @@ export function api_getTracePath(
   const positivePaths: [number, number][][] = [];
   const negativePaths: [number, number][][] = [];
   const paths = [];
+  let trackXStart: number, trackXEnd: number;
   for (let i = 0; i < matrixData.length; i++) {
     let positivePath: [number, number][] = [];
     let negativePath: [number, number][] = [];
     const xStart = paddingRatio * width + pad * i + pad / 2;
+    if (i === 0) trackXStart = xStart;
+    if (i === matrixData.length - 1) trackXEnd = xStart;
     for (let j = 0; j < matrixData[i].length; j++) {
       const preXOffset =
         xScale(matrixData[i][j]) > pad / 2 ? pad / 2 : xScale(matrixData[i][j]);
@@ -144,15 +147,15 @@ export function api_getTracePath(
 
   trakcer.cutOffAllTracks(allTracks, allPeaks.length);
 
-  const vertex: any = [];
-  allTracks.map((e: any) => {
-    vertex.push(trakcer.getFourVertex(e));
+  const allTrackVertex: AllVertices = [];
+  allTracks.map((e: any, i: number) => {
+    allTrackVertex.push(trakcer.getFourVertex(trackXStart, trackXEnd, e));
   });
 
   paths.push(positivePaths, negativePaths);
 
   return {
-    vertex,
+    allTrackVertex,
     allTracks,
     paths
   };

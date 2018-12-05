@@ -1,4 +1,4 @@
-import { Peak, Track, AllTracks, Path, AllPeaks } from "../ts/Type";
+import { Peak, Track, AllTracks, Path, AllPeaks, VertexType } from "../ts/Type";
 
 export default class Tracker {
   constructor() {}
@@ -309,12 +309,12 @@ export default class Tracker {
     return overlap;
   }
 
-  getFourVertex(track: Track) {
+  getFourVertex(xStart: number, xEnd: number, track: Track): VertexType {
     return [
-      track[0].top,
-      track[0].bottom,
-      track[track.length - 1].top,
-      track[track.length - 1].bottom
+      [xStart, track[0].top],
+      [xStart, track[0].top],
+      [xStart, track[track.length - 1].top],
+      [xEnd, track[track.length - 1].bottom]
     ];
   }
 }

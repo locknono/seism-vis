@@ -22,7 +22,7 @@ import {
 import MatchCurve from "./MatchCurve";
 import { v4 } from "uuid";
 import { ViewHeading } from "./ViewHeading";
-import { AllTracks } from "src/ts/Type";
+import { AllTracks, AllVertices } from "src/ts/Type";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const {
     wellMinDepth,
@@ -66,7 +66,7 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     depthList,
     paths,
     allTrack,
-    vertex,
+    allTrackVertex: vertex,
     ucPath,
     wellAttrData
   };
@@ -105,7 +105,7 @@ interface Props {
   getAllTrack: any;
   allTrack: AllTracks;
   getTrackVertex: any;
-  vertex: any[];
+  allTrackVertex: AllVertices;
   ucPath: any[];
   getUcPath: any;
   wellAttrData: any[];
@@ -141,7 +141,7 @@ class WellMatch extends React.Component<Props, State> {
       matrixData,
       width,
       curvePaths,
-      vertex,
+      allTrackVertex,
       ucPath
     } = this.props;
 
@@ -159,7 +159,7 @@ class WellMatch extends React.Component<Props, State> {
     //Maybe i should import `immutable.js` if scale grows
     if (
       curvePaths &&
-      vertex &&
+      allTrackVertex &&
       (!prevProps.curvePaths ||
         ifMatchCurveEqual(curvePaths, prevProps.curvePaths) === false)
     ) {
@@ -178,14 +178,14 @@ class WellMatch extends React.Component<Props, State> {
       getAllTrack,
       getTrackVertex
     } = this.props;
-    const { vertex, allTracks, paths } = api_getTracePath(
+    const { allTrackVertex, allTracks, paths } = api_getTracePath(
       width,
       matrixData,
       scale,
       paddingRatio,
       depthList
     );
-    getTrackVertex(vertex);
+    getTrackVertex(allTrackVertex);
     //draw tracking line
     getAllTrack(allTracks);
     //draw trace
@@ -217,7 +217,7 @@ class WellMatch extends React.Component<Props, State> {
 
   calUncertainty() {
     const {
-      vertex,
+      allTrackVertex,
       curvePaths,
       getUcPath,
       coupleWell,
@@ -226,9 +226,20 @@ class WellMatch extends React.Component<Props, State> {
       height
     } = this.props;
     const uc = new Uncertainty();
-    const ucPath = uc.cal(vertex, curvePaths, width, paddingRatio, height).path;
-    const ucList = uc.cal(vertex, curvePaths, width, paddingRatio, height)
-      .ucList;
+    const ucPath = uc.cal(
+      allTrackVertex,
+      curvePaths,
+      width,
+      paddingRatio,
+      height
+    ).path;
+    const ucList = uc.cal(
+      allTrackVertex,
+      curvePaths,
+      width,
+      paddingRatio,
+      height
+    ).ucList;
     const ucSum = uc.getUcSum(ucList);
 
     const id1 = coupleWell[0];
@@ -264,8 +275,6 @@ class WellMatch extends React.Component<Props, State> {
       curvePaths,
       paths,
       allTrack,
-      vertex,
-      matrixData,
       paddingRatio,
       ucPath,
       wellAttrData,

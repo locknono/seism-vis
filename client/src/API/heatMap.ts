@@ -48,7 +48,7 @@ export function getTwoWellUc(well1: Well, well2: Well, allWells: AllWells) {
       scale
     ).then(curvePaths => {
       curvePaths;
-      const { vertex, allTracks, paths } = api_getTracePath(
+      const { allTrackVertex, allTracks, paths } = api_getTracePath(
         width,
         matrixData,
         scale,
@@ -56,7 +56,7 @@ export function getTwoWellUc(well1: Well, well2: Well, allWells: AllWells) {
         depthList
       );
       const uc = new Uncertainty();
-      const ucList = uc.cal(vertex, curvePaths, width, paddingRatio, height)
+      const ucList = uc.cal(allTrackVertex, curvePaths, width, paddingRatio, height)
         .ucList;
       const ucSum = uc.getUcSum(ucList);
       const id1 = coupleWell[0];
