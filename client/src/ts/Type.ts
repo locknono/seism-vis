@@ -1,8 +1,10 @@
 type Point = [number, number];
 
-export type Vertices = [Point, Point, Point, Point];
+/** An array contains Four point */
+export type VertexType = [Point, Point, Point, Point];
 
-export type AllVertices = Vertices[];
+/** Array of vertex */
+export type AllVertices = VertexType[];
 
 export type MatchCurvePath = Point[];
 

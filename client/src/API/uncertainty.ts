@@ -1,5 +1,5 @@
 import {
-  Vertices,
+  VertexType,
   MatchCurvePath,
   AllMatchCurve,
   AllVertices

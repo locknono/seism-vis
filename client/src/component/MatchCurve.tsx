@@ -2,7 +2,7 @@ import * as React from "react";
 import * as d3 from "d3";
 import Vertex from "./Vertex";
 import { List } from "immutable";
-import { MatchCurvePath, Vertices } from "../ts/Type";
+import { MatchCurvePath, VertexType } from "../ts/Type";
 export function extractVertexIndex(path: MatchCurvePath): number[] {
   return [
     0,
@@ -11,7 +11,7 @@ export function extractVertexIndex(path: MatchCurvePath): number[] {
     Math.floor(path.length / 2)
   ];
 }
-export function extractVertex(path: MatchCurvePath): Vertices {
+export function extractVertex(path: MatchCurvePath): VertexType {
   const matchVertex: any = [];
   const vertexIndex = extractVertexIndex(path);
   for (let index of vertexIndex) matchVertex.push(path[index]);
@@ -25,7 +25,7 @@ interface Props {
 }
 interface State {
   pathGen: any;
-  vertex: Vertices | null;
+  vertex: VertexType | null;
 }
 
 class MatchCurve extends React.Component<Props, State> {
@@ -49,7 +49,7 @@ class MatchCurve extends React.Component<Props, State> {
     this.setState({ vertex });
   }
 
-  changeVertexPosition(newVertex: Vertices) {
+  changeVertexPosition(newVertex: VertexType) {
     const { changeCurvePath, index, path } = this.props;
     this.setState({ vertex: newVertex });
     const newPath = List(path);

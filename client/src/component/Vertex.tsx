@@ -2,9 +2,9 @@ import * as React from "react";
 import * as d3 from "d3";
 import { DraggedElementBaseType } from "d3";
 import { v4 } from "uuid";
-import { Vertices } from "../ts/Type";
+import { VertexType } from "../ts/Type";
 interface Props {
-  vertex: Vertices;
+  vertex: VertexType;
   changeVertexPosition: any;
 }
 interface State {

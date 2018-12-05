@@ -22,6 +22,7 @@ import {
 import MatchCurve from "./MatchCurve";
 import { v4 } from "uuid";
 import { ViewHeading } from "./ViewHeading";
+import { AllTracks } from "src/ts/Type";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const {
     wellMinDepth,
@@ -102,7 +103,7 @@ interface Props {
   paths: any;
   getTracePath: any;
   getAllTrack: any;
-  allTrack: any;
+  allTrack: AllTracks;
   getTrackVertex: any;
   vertex: any[];
   ucPath: any[];
