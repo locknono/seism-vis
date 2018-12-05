@@ -21,6 +21,7 @@ import {
 } from "../API/wellMatchAPI";
 import MatchCurve from "./MatchCurve";
 import { v4 } from "uuid";
+import { ViewHeading } from "./ViewHeading";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const {
     wellMinDepth,
@@ -361,7 +362,8 @@ class WellMatch extends React.Component<Props, State> {
     const svgStyle = { width, height: height };
     const divStyle = { width, height: height };
     return (
-      <div className=" well-match-div panel panel-default" style={divStyle}>
+      <div className=" well-match-div panel panel-primary" style={divStyle}>
+        <ViewHeading height={height * 0.05 - 3} />
         <svg className="well-match-svg" style={svgStyle}>
           {curves}
           {positivePaths}

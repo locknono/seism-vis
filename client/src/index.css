@@ -122,6 +122,8 @@ code {
   position: relative;
   width: min-content;
   margin-right: 100px;
+  border-left: none;
+  border-color: rgb(221, 221, 221);
 }
 
 .seism {
