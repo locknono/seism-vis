@@ -62,6 +62,7 @@ class MatchCurve extends React.Component<Props, State> {
   render() {
     const { path } = this.props;
     const { pathGen, vertex } = this.state;
+    const VertexOnPath = extractVertex(path);
     const style = { fill: "grey", stroke: "none", fillOpacity: 0.8 };
     const drawVertex =
       vertex !== null ? (
@@ -70,6 +71,25 @@ class MatchCurve extends React.Component<Props, State> {
           changeVertexPosition={this.changeVertexPosition}
         />
       ) : null;
+
+
+    const baseLineStyle = {
+      stroke: "grey",
+      strokeOpacity: 0.8,
+      strokeWidth: 0.8
+    };
+    const baseLine = VertexOnPath.map((e, i: number) => {
+      if (i === 0 || i === 1) {
+        return (
+          <line x1={e[0]} y1={e[1]} x2={0} y2={e[1]} style={baseLineStyle} />
+        );
+      } else {
+        return (
+          <line x1={e[0]} y1={e[1]} x2={700} y2={e[1]} style={baseLineStyle} />
+        );
+      }
+    });
+
     return (
       <React.Fragment>
         <path
@@ -79,6 +99,7 @@ class MatchCurve extends React.Component<Props, State> {
           onClick={this.handleClick}
         />
         {drawVertex}
+        {baseLine}
       </React.Fragment>
     );
   }
