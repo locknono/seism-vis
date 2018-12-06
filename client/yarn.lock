@@ -75,6 +75,11 @@
     "@types/d3-array" "*"
     "@types/geojson" "*"
 
+"@types/d3-delaunay@^4.1.0":
+  version "4.1.0"
+  resolved "http://registry.npm.taobao.org/@types/d3-delaunay/download/@types/d3-delaunay-4.1.0.tgz#7b4ac0644d1fcf97c9335a59751ffc01a58a5c24"
+  integrity sha1-e0rAZE0fz5fJM1pZdR/8AaWKXCQ=
+
 "@types/d3-dispatch@*":
   version "1.0.6"
   resolved "http://registry.npm.taobao.org/@types/d3-dispatch/download/@types/d3-dispatch-1.0.6.tgz#19b173f669cd2ab7dd3d862e8037aae1a98c7508"

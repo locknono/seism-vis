@@ -1,5 +1,7 @@
 import { Well, AllWells, Path, CoupleWell } from "../ts/Type";
-
+import { voronoi } from "d3";
+import * as L from "leaflet";
+import { voronoiStrokeWidth, voronoiStrokeColor } from "../constraint";
 const xStart = 20652500;
 const yStart = 4190300.16;
 const xySection = 25;
@@ -183,4 +185,40 @@ export function setSelectedCircleStyle(circle: L.Circle) {
   circle.setRadius(5).setStyle({
     color: "#E80D0C"
   });
+}
+
+export function getWellLatLngBound() {}
+export function generateVoronoi(wells: AllWells, map: any) {
+  console.log("wells: ", wells);
+  const voronoiView = voronoi()
+    .x(function(d: any) {
+      return d.latlng[1];
+    })
+    .y(function(d: any) {
+      return d.latlng[0];
+    })
+    .extent([[-1, -1], [200, 200]]);
+
+  const withDataVoronoi = voronoiView(wells as any);
+  const links = withDataVoronoi.links();
+  const polygons = withDataVoronoi.polygons();
+  const triangles = withDataVoronoi.triangles();
+  const cells = withDataVoronoi.cells;
+  const edges = withDataVoronoi.edges;
+
+  const voronoiLayers = [];
+  //so annoying to use typescript with other lib!!
+  for (let triangle of triangles) {
+    const points = [];
+    for (let well of triangle) {
+      points.push((well as any).latlng);
+    }
+    const voronoiPath = L.polygon(points, {
+      color: voronoiStrokeColor,
+      weight: voronoiStrokeWidth //TODO:width should depend on uncertainty
+    });
+    voronoiLayers.push(voronoiPath);
+  }
+  const voronoiLayerGroup = L.layerGroup(voronoiLayers);
+  voronoiLayerGroup.addTo(map);
 }

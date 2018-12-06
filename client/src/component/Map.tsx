@@ -17,7 +17,8 @@ import {
   fetchWellAttrData,
   getNearWellIndex,
   resetCircleStyle,
-  setSelectedCircleStyle
+  setSelectedCircleStyle,
+  generateVoronoi
 } from "../API/mapAPI";
 import {
   getFigURI,
@@ -330,6 +331,8 @@ class Map extends React.Component<Props, object> {
           const heatLayer = (L as any).heatLayer(heatData, { radius: 8 });
           layerControl.addOverlay(heatLayer, "Heatmap");
         });
+
+        generateVoronoi(allWells, this.map);
       });
     circlesLayer.addTo(this.map);
   }
