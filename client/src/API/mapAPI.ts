@@ -213,12 +213,13 @@ export function generateVoronoi(wells: AllWells, map: any) {
     for (let well of triangle) {
       points.push((well as any).latlng);
     }
-    const voronoiPath = L.polygon(points, {
+    const voronoiPath = L.polyline(points, {
+      fill: false,
       color: voronoiStrokeColor,
       weight: voronoiStrokeWidth //TODO:width should depend on uncertainty
     });
     voronoiLayers.push(voronoiPath);
   }
-  const voronoiLayerGroup = L.layerGroup(voronoiLayers);
+  const voronoiLayerGroup = L.layerGroup(voronoiLayers).setZIndex(-200);
   voronoiLayerGroup.addTo(map);
 }
