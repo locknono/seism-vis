@@ -114,13 +114,13 @@ export default class Uncertainty {
       const track = matchVertex[i];
       if (left === false) {
         const topPoint = [startX, track[2][1]];
-        const midPoint = [startX + value * 3, (track[2][1] + track[3][1]) / 2];
+        const midPoint = [startX + value * 9, (track[2][1] + track[3][1]) / 2];
         const bottomPoint = [startX, track[3][1]];
         const path = [topPoint, midPoint, bottomPoint];
         ucPath.push(path);
       } else {
         const topPoint = [startX, track[0][1]];
-        const midPoint = [startX - value * 3, (track[0][1] + track[1][1]) / 2];
+        const midPoint = [startX - value * 9, (track[0][1] + track[1][1]) / 2];
         const bottomPoint = [startX, track[1][1]];
         const path = [topPoint, midPoint, bottomPoint];
         ucPath.push(path);

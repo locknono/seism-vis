@@ -22,11 +22,11 @@
   "exclude": [
     "node_modules",
     "build",
+    "public",
     "scripts",
     "acceptance-tests",
     "webpack",
     "jest",
-    "src/setupTests.ts",
-    "public"
+    "src/setupTests.ts"
   ]
 }
