@@ -250,8 +250,9 @@ class WellMatch extends React.Component<Props, State> {
       getAttrDiff
     } = this.props;
     const allDiff = diff(wellAttrData, curvePaths);
-
+    console.log("allDiff: ", allDiff);
     getAttrDiff(allDiff);
+
     const uc = new Uncertainty();
     const ucPath = uc.cal(
       allTrackVertex,
@@ -410,22 +411,17 @@ class WellMatch extends React.Component<Props, State> {
     const svgStyle = { width, height: height };
     const divStyle = { width, height: height };
     return (
-      <React.Fragment>
-        <div className="right-side">
-          <div className=" well-match-div panel panel-primary" style={divStyle}>
-            <ViewHeading height={height * 0.05 - 3} />
-            <svg className="well-match-svg" style={svgStyle}>
-              {curves}
-              {positivePaths}
-              {negativePaths}
-              {trackPath}
-              {ucPathOnSvg}
-              {wellAttrCurve}
-            </svg>
-          </div>
-          <AttrDiff allDiff={allDiff} />
-        </div>
-      </React.Fragment>
+      <div className=" well-match-div panel panel-primary" style={divStyle}>
+        <ViewHeading height={height * 0.05 - 3} />
+        <svg className="well-match-svg" style={svgStyle}>
+          {curves}
+          {positivePaths}
+          {negativePaths}
+          {trackPath}
+          {ucPathOnSvg}
+          {wellAttrCurve}
+        </svg>
+      </div>
     );
   }
 }

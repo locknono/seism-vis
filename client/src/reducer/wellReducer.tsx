@@ -53,7 +53,7 @@ const initialState: WellState = {
   vertex: [],
   ucPath: [],
   wellAttrData: [],
-  allDiff: [],
+  allDiff: undefined,
   curSelectedIndex: undefined
 };
 
