@@ -123,7 +123,7 @@ export function storeVoronoiUcData(allWells: AllWells) {
               });
             }
           );
-        }, 1000 * i);
+        }, 1500 * i);
       }
     });
 }

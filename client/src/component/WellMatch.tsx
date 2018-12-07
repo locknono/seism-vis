@@ -249,7 +249,6 @@ class WellMatch extends React.Component<Props, State> {
       getAttrDiff
     } = this.props;
     const allDiff = diff(wellAttrData, curvePaths);
-    console.log("allDiff: ", allDiff);
     getAttrDiff(allDiff);
 
     const uc = new Uncertainty();

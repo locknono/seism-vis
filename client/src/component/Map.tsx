@@ -18,7 +18,8 @@ import {
   getNearWellIndex,
   resetCircleStyle,
   setSelectedCircleStyle,
-  generateVoronoi
+  generateVoronoi,
+  withDataVoronoi
 } from "../API/mapAPI";
 import {
   getFigURI,
@@ -340,7 +341,7 @@ class Map extends React.Component<Props, object> {
           layerControl.addOverlay(heatLayer, "Heatmap");
         });
 
-        generateVoronoi(allWells, this.map);
+        withDataVoronoi(allWells, this.map);
       });
     circlesLayer.addTo(this.map);
   }

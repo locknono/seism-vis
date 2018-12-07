@@ -2,9 +2,11 @@ import { Well, AllWells, Path, CoupleWell } from "../ts/Type";
 import { voronoi } from "d3";
 import * as L from "leaflet";
 import { voronoiStrokeWidth, voronoiStrokeColor } from "../constraint";
+import * as d3 from "d3";
 const xStart = 20652500;
 const yStart = 4190300.16;
 const xySection = 25;
+
 export function idIndexMap(allWells: AllWells) {
   const map: Map<string, number> = new Map();
   allWells.map((e, i: number) => {
@@ -187,9 +189,8 @@ export function setSelectedCircleStyle(circle: L.Circle) {
 }
 
 export function getWellLatLngBound() {}
-export function generateVoronoi(wells: AllWells, map: any) {
+export function generateVoronoi(wells: AllWells, map: L.Map) {
   //TODO:result coule be memorized
-
   const voronoiView = voronoi()
     .x(function(d: any) {
       return d.latlng[1];
@@ -198,14 +199,13 @@ export function generateVoronoi(wells: AllWells, map: any) {
       return d.latlng[0];
     })
     .extent([[-1, -1], [200, 200]]);
-
   const withDataVoronoi = voronoiView(wells as any);
   const links = withDataVoronoi.links();
   const polygons = withDataVoronoi.polygons();
   const triangles = withDataVoronoi.triangles();
   const cells = withDataVoronoi.cells;
   const edges = withDataVoronoi.edges;
-  const voronoiLayers = [];
+  const voronoiLayers: L.Polyline[] = [];
   for (let link of links) {
     const points = [(link.source as any).latlng, (link.target as any).latlng];
     const voronoiPath = L.polyline(points, {
@@ -217,4 +217,40 @@ export function generateVoronoi(wells: AllWells, map: any) {
   }
   const voronoiLayerGroup = L.layerGroup(voronoiLayers).setZIndex(-200); //z-index does not work
   voronoiLayerGroup.addTo(map);
+}
+
+export function withDataVoronoi(wells: AllWells, map: L.Map) {
+  const mapCollection = idIndexMap(wells);
+  d3.csv("./data/voronoi_uc.csv").then(data => {
+    const voronoiLayers: L.Polyline[] = [];
+    const values = [];
+    for (let link of data) {
+      const { id1, id2, value } = link;
+      if (!id1 || !id2 || !value) return;
+      values.push(parseInt(value));
+      const well1 = wells[mapCollection.get(id1) as number];
+      const well2 = wells[mapCollection.get(id2) as number];
+      const points = [(well1 as any).latlng, (well2 as any).latlng];
+      const color = colorScale(parseInt(value));
+      const voronoiPath = L.polyline(points, {
+        fill: false,
+        color: color,
+        weight: voronoiStrokeWidth //TODO:width should depend on uncertainty);
+      });
+      voronoiLayers.push(voronoiPath);
+    }
+    const voronoiLayerGroup = L.layerGroup(voronoiLayers).setZIndex(-200); //z-index does not work
+    voronoiLayerGroup.addTo(map);
+  });
+}
+
+function colorScale(value: number) {
+  const min = 0;
+  const max = 40;
+  const scale = d3
+    .scaleLinear()
+    .domain([min, max])
+    .range([0, 1]);
+  const color = d3.interpolate("yellow", "red");
+  return color(scale(value));
 }
