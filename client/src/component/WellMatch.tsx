@@ -33,7 +33,6 @@ import {
   CurSelectedIndex
 } from "src/ts/Type";
 import { diff } from "../API/wellAttrDiff";
-import { AttrDiff } from "./AttrDiff";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const {
     wellMinDepth,
