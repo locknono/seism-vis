@@ -1,3 +1,5 @@
+import { AllDiff } from "src/ts/Type";
+
 export const GET_ALL_WELLS = "GET_ALL_WELLS";
 export const GET_COUPLEWELL_PATH = "GET_COUPLEWELL_PATHF";
 export const GET_COUPLE_WELL = "GET_COUPLE_WELL";
@@ -12,6 +14,7 @@ export const GET_ALL_TRACK = "GET_ALL_TRACK";
 export const GET_TRACK_VERTEX = "GET_TRACK_VERTEX";
 export const GET_UC_PATH = "GET_UC_PATH";
 export const GET_WELL_ATTR_DATA = "GET_WELL_ATTR_DATA";
+export const GET_ATTR_DIFF = "GET_ATTR_DIFF";
 
 export function getAllWells(allWells: any) {
   return {
@@ -108,5 +111,12 @@ export function getWellAttrData(data: any) {
   return {
     type: GET_WELL_ATTR_DATA,
     wellAttrData: data
+  };
+}
+
+export function getAttrDiff(allDiff: AllDiff) {
+  return {
+    type: GET_ATTR_DIFF,
+    allDiff
   };
 }

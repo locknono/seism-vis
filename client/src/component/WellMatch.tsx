@@ -6,7 +6,8 @@ import {
   getTracePath,
   getAllTrack,
   getTrackVertex,
-  getUcPath
+  getUcPath,
+  getAttrDiff
 } from "../action/changeWell";
 import { changeSvgSize } from "../action/changeWellMatchSvg";
 import * as d3 from "d3";
@@ -26,9 +27,11 @@ import {
   AllTracks,
   AllVertices,
   WellAttrData,
-  AllMatchCurve
+  AllMatchCurve,
+  AllDiff
 } from "src/ts/Type";
 import { diff } from "../API/wellAttrDiff";
+import { AttrDiff } from "./AttrDiff";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const {
     wellMinDepth,
@@ -52,7 +55,8 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     allTrack,
     vertex,
     ucPath,
-    wellAttrData
+    wellAttrData,
+    allDiff
   } = state.wellReducer;
 
   return {
@@ -74,7 +78,8 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     allTrack,
     allTrackVertex: vertex,
     ucPath,
-    wellAttrData
+    wellAttrData,
+    allDiff
   };
 };
 
@@ -85,7 +90,8 @@ const mapDispatchToProps = {
   getTracePath,
   getAllTrack,
   getTrackVertex,
-  getUcPath
+  getUcPath,
+  getAttrDiff
 };
 
 interface Props {
@@ -115,6 +121,8 @@ interface Props {
   ucPath: any[];
   getUcPath: any;
   wellAttrData: WellAttrData;
+  allDiff: AllDiff;
+  getAttrDiff: any;
 }
 
 interface State {
@@ -231,10 +239,12 @@ class WellMatch extends React.Component<Props, State> {
       width,
       height,
       wellAttrData,
-      scale
+      scale,
+      getAttrDiff
     } = this.props;
     const allDiff = diff(wellAttrData, curvePaths);
-    console.log('allDiff: ', allDiff);
+    console.log("allDiff: ", allDiff);
+    getAttrDiff(allDiff);
     const uc = new Uncertainty();
     const ucPath = uc.cal(
       allTrackVertex,
@@ -288,7 +298,8 @@ class WellMatch extends React.Component<Props, State> {
       paddingRatio,
       ucPath,
       wellAttrData,
-      scale
+      scale,
+      allDiff
     } = this.props;
     const { colorScale, pathGen } = this.state;
 
@@ -389,17 +400,22 @@ class WellMatch extends React.Component<Props, State> {
     const svgStyle = { width, height: height };
     const divStyle = { width, height: height };
     return (
-      <div className=" well-match-div panel panel-primary" style={divStyle}>
-        <ViewHeading height={height * 0.05 - 3} />
-        <svg className="well-match-svg" style={svgStyle}>
-          {curves}
-          {positivePaths}
-          {negativePaths}
-          {trackPath}
-          {ucPathOnSvg}
-          {wellAttrCurve}
-        </svg>
-      </div>
+      <React.Fragment>
+        <div className='right-side'>
+          <div className=" well-match-div panel panel-primary" style={divStyle}>
+            <ViewHeading height={height * 0.05 - 3} />
+            <svg className="well-match-svg" style={svgStyle}>
+              {curves}
+              {positivePaths}
+              {negativePaths}
+              {trackPath}
+              {ucPathOnSvg}
+              {wellAttrCurve}
+            </svg>
+          </div>
+          <AttrDiff allDiff={allDiff} />
+        </div>
+      </React.Fragment>
     );
   }
 }

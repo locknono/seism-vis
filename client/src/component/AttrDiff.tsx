@@ -1,6 +1,7 @@
 import * as React from "react";
 import { AllDiff } from "src/ts/Type";
 import * as d3 from "d3";
+import { v4 } from "uuid";
 interface Props {
   allDiff: AllDiff;
 }
@@ -18,19 +19,17 @@ export function AttrDiff(props: Props) {
   const verticalPad = drawSvgHeight / allDiff.length;
   const barHeight = verticalPad * 0.8;
   const scales = getScales(allDiff);
-  const rects = [];
-  for (let i = 0; i < allDiff.length; i++) {
-    const y = verticalPad * i;
-    for (let j = 0; j < allDiff[i].length; j++) {
+  const rects = allDiff.map((e, i) => {
+    const y = drawSvgHeight * topPaddingRatio + verticalPad * i;
+    return e.map((v, j) => {
       const width = scales[j](allDiff[i][j]);
-      const x = i * horizontalPad;
-      const rect = <rect x={x} y={y} width={width} height={barHeight} />;
-      rects.push(rect);
-    }
-  }
+      const x = svgWidth * leftPaddingRatio + j * horizontalPad;
+      return <rect key={v4()} x={x} y={y} width={width} height={barHeight} />;
+    });
+  });
   return (
-    <div className="panel panelDefault">
-      <svg>{rects}</svg>
+    <div>
+      <svg style={{ width: svgWidth, height: svgHeight }}>{rects}</svg>
     </div>
   );
 }

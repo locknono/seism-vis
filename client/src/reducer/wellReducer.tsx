@@ -12,8 +12,10 @@ import {
   GET_ALL_TRACK,
   GET_TRACK_VERTEX,
   GET_UC_PATH,
-  GET_WELL_ATTR_DATA
+  GET_WELL_ATTR_DATA,
+  GET_ATTR_DIFF
 } from "../action/changeWell";
+import { AllDiff } from "src/ts/Type";
 
 interface WellState {
   allWells: object[];
@@ -30,6 +32,7 @@ interface WellState {
   vertex: any[];
   ucPath: any[];
   wellAttrData: any[];
+  allDiff: AllDiff;
 }
 
 const initialState: WellState = {
@@ -46,7 +49,8 @@ const initialState: WellState = {
   allTrack: null,
   vertex: [],
   ucPath: [],
-  wellAttrData: []
+  wellAttrData: [],
+  allDiff: []
 };
 
 export default function wellReducer(
@@ -121,6 +125,11 @@ export default function wellReducer(
       return {
         ...state,
         wellAttrData: action.wellAttrData
+      };
+    case GET_ATTR_DIFF:
+      return {
+        ...state,
+        allDiff: action.allDiff
       };
     default:
       return state;
