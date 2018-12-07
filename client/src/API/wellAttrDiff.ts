@@ -14,7 +14,6 @@ export function diff(
 ): AllDiff {
   //TODO:is match curve sorted?
 
-  //!!!IMPORTATNT TODO:filter dirty data
   const [well1, well2] = wellAttrData;
   const allDepth = getLayerDepth(matchCurve);
   const allDiff: AllDiff = [];

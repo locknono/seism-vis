@@ -15,7 +15,8 @@ import {
   GET_WELL_ATTR_DATA,
   GET_ATTR_DIFF
 } from "../action/changeWell";
-import { AllDiff } from "src/ts/Type";
+import { AllDiff, AllMatchCurve } from "src/ts/Type";
+import { matchViewWidth } from "src/constraint";
 
 interface WellState {
   allWells: object[];
@@ -92,9 +93,11 @@ export default function wellReducer(
         wellIDNearLineIndex: action.index
       };
     case GET_WELL_CURVE:
+      const curvePaths = [...sortMatchCurve(action.wellCurve)];
+      console.log("curvePaths: ", curvePaths);
       return {
         ...state,
-        curvePaths: [...action.wellCurve]
+        curvePaths
       };
     case GET_MATRIX_DATA:
       return {
@@ -134,4 +137,11 @@ export default function wellReducer(
     default:
       return state;
   }
+}
+
+function sortMatchCurve(matchCurve: AllMatchCurve) {
+  matchCurve.sort((a, b) => {
+    return a[0][1] - b[0][1];
+  });
+  return matchCurve;
 }
