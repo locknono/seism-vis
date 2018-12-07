@@ -7,7 +7,8 @@ import {
   getAllTrack,
   getTrackVertex,
   getUcPath,
-  getAttrDiff
+  getAttrDiff,
+  getCurIndex
 } from "../action/changeWell";
 import { changeSvgSize } from "../action/changeWellMatchSvg";
 import * as d3 from "d3";
@@ -28,7 +29,8 @@ import {
   AllVertices,
   WellAttrData,
   AllMatchCurve,
-  AllDiff
+  AllDiff,
+  CurSelectedIndex
 } from "src/ts/Type";
 import { diff } from "../API/wellAttrDiff";
 import { AttrDiff } from "./AttrDiff";
@@ -56,7 +58,8 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     vertex,
     ucPath,
     wellAttrData,
-    allDiff
+    allDiff,
+    curSelectedIndex
   } = state.wellReducer;
 
   return {
@@ -79,7 +82,8 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     allTrackVertex: vertex,
     ucPath,
     wellAttrData,
-    allDiff
+    allDiff,
+    curSelectedIndex
   };
 };
 
@@ -91,7 +95,8 @@ const mapDispatchToProps = {
   getAllTrack,
   getTrackVertex,
   getUcPath,
-  getAttrDiff
+  getAttrDiff,
+  getCurIndex
 };
 
 interface Props {
@@ -122,7 +127,9 @@ interface Props {
   getUcPath: any;
   wellAttrData: WellAttrData;
   allDiff: AllDiff;
-  getAttrDiff: any;
+  getAttrDiff: typeof getAttrDiff;
+  curSelectedIndex: CurSelectedIndex;
+  getCurIndex: typeof getCurIndex;
 }
 
 interface State {
@@ -299,10 +306,11 @@ class WellMatch extends React.Component<Props, State> {
       ucPath,
       wellAttrData,
       scale,
-      allDiff
+      allDiff,
+      getCurIndex,
+      curSelectedIndex
     } = this.props;
     const { colorScale, pathGen } = this.state;
-
     let curves = null;
     if (curvePaths) {
       curves = curvePaths.map((e: any, i: number) => {
@@ -312,7 +320,8 @@ class WellMatch extends React.Component<Props, State> {
             path={e}
             index={i}
             changeCurvePath={this.changeCurvePath}
-            curSelectedIndex={0}
+            curSelectedIndex={curSelectedIndex}
+            getCurIndex={getCurIndex}
           />
         );
       });

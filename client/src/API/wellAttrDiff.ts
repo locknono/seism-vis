@@ -63,7 +63,7 @@ function compareInOneLayer(
   const v2 = w2.value;
   const leftIndices = getDivisionIndex(l1, l2, k);
   const rightIndices = getDivisionIndex(r1, r2, k);
-  let diffSum: OneLayerDiff = [0, 0, 0, 0, 0];
+  const diffSum: OneLayerDiff = [0, 0, 0, 0, 0];
   //j for attrIndex
   for (let i = 0; i < k; i++) {
     for (let j = 1; j <= 5; j = j + 1) {

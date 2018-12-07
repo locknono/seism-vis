@@ -3,6 +3,7 @@ import * as d3 from "d3";
 import Vertex from "./Vertex";
 import { List } from "immutable";
 import { MatchCurvePath, VertexType, CurSelectedIndex } from "../ts/Type";
+import { matchColor, darkerMatchColor } from "../constraint";
 export function extractVertexIndex(path: MatchCurvePath): number[] {
   return [
     0,
@@ -23,6 +24,7 @@ interface Props {
   index: number;
   changeCurvePath: any;
   curSelectedIndex: CurSelectedIndex;
+  getCurIndex: any;
 }
 interface State {
   pathGen: any;
@@ -53,11 +55,13 @@ class MatchCurve extends React.Component<Props, State> {
   }
 
   handleMouseEnter() {
-    const { index } = this.props;
+    const { index, getCurIndex } = this.props;
+    getCurIndex(index);
   }
 
   handleMouseLeave() {
-    const { index } = this.props;
+    const { index, getCurIndex } = this.props;
+    getCurIndex(undefined);
   }
   changeVertexPosition(newVertex: VertexType) {
     const { changeCurvePath, index, path } = this.props;
@@ -70,10 +74,13 @@ class MatchCurve extends React.Component<Props, State> {
   }
 
   render() {
-    const { path, curSelectedIndex } = this.props;
+    const { path, curSelectedIndex, index } = this.props;
     const { pathGen, vertex } = this.state;
     const VertexOnPath = extractVertex(path);
-    const style = { fill: "grey", stroke: "none", fillOpacity: 0.8 };
+    const style = { fill: matchColor, stroke: "none", fillOpacity: 0.8 };
+    if (index === curSelectedIndex) {
+      style.fill = darkerMatchColor;
+    }
     const drawVertex =
       vertex !== null ? (
         <Vertex
@@ -111,9 +118,6 @@ function getBaseLine(
     strokeWidth: 0.8
   };
   const baseLine = VertexOnPath.map((e, i: number) => {
-    if (i === curSelectedIndex) {
-      baseLineStyle = { ...baseLineStyle, stroke: "black" };
-    }
     if (i === 0 || i === 1) {
       return (
         <line

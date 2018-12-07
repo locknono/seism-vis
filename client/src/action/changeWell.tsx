@@ -1,4 +1,4 @@
-import { AllDiff } from "src/ts/Type";
+import { AllDiff, AllWells, CurSelectedIndex } from "src/ts/Type";
 
 export const GET_ALL_WELLS = "GET_ALL_WELLS";
 export const GET_COUPLEWELL_PATH = "GET_COUPLEWELL_PATHF";
@@ -15,8 +15,9 @@ export const GET_TRACK_VERTEX = "GET_TRACK_VERTEX";
 export const GET_UC_PATH = "GET_UC_PATH";
 export const GET_WELL_ATTR_DATA = "GET_WELL_ATTR_DATA";
 export const GET_ATTR_DIFF = "GET_ATTR_DIFF";
+export const GET_CUR_INDEX = "GET_CUR_INDEX";
 
-export function getAllWells(allWells: any) {
+export function getAllWells(allWells: AllWells) {
   return {
     type: GET_ALL_WELLS,
     allWells
@@ -118,5 +119,12 @@ export function getAttrDiff(allDiff: AllDiff) {
   return {
     type: GET_ATTR_DIFF,
     allDiff
+  };
+}
+
+export function getCurIndex(index: CurSelectedIndex) {
+  return {
+    type: GET_CUR_INDEX,
+    curSelectedIndex: index
   };
 }
