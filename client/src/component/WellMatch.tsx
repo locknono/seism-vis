@@ -331,13 +331,11 @@ class WellMatch extends React.Component<Props, State> {
     if (paths) {
       positivePaths = paths[0].map((e: any, i: number) => {
         let pathD = pathGen(e);
-        let style = { fill: "black", stroke: "black", strokeWidth: 0.3 };
-        return <path key={i} d={pathD} style={style} className="trace-path" />;
+        return <path key={i} d={pathD} className="trace-positive-path" />;
       });
       negativePaths = paths[1].map((e: any, i: number) => {
         let pathD = pathGen(e);
-        let style = { fill: "none", stroke: "black", strokeWidth: 0.3 };
-        return <path key={i} d={pathD} style={style} className="trace-path" />;
+        return <path key={i} d={pathD} className="trace-negative-path" />;
       });
     }
     let trackPath = null;
@@ -353,8 +351,7 @@ class WellMatch extends React.Component<Props, State> {
         });
       trackPath = allTrack.map((track: any, i: number) => {
         let d: any = pathGene(track);
-        let style = { fill: "none", stroke: "black", strokeWidth: 1 };
-        return <path key={i} d={d} style={style} className="trace-path" />;
+        return <path key={i} d={d} className="track-path" />;
       });
     }
 
@@ -377,14 +374,7 @@ class WellMatch extends React.Component<Props, State> {
         strokeWidth: 0.5
       };
       ucPathOnSvg = ucPath.map((e, i) => {
-        return (
-          <path
-            key={i}
-            d={pathGene(e) as any}
-            style={style}
-            className="trace-path"
-          />
-        );
+        return <path key={i} d={pathGene(e) as any} style={style} />;
       });
     }
     let wellAttrCurve = null;
@@ -412,10 +402,10 @@ class WellMatch extends React.Component<Props, State> {
       <div className=" well-match-div panel panel-primary" style={divStyle}>
         <ViewHeading height={height * 0.05 - 3} />
         <svg className="well-match-svg" style={svgStyle}>
-          {curves}
           {positivePaths}
           {negativePaths}
           {trackPath}
+          {curves}
           {ucPathOnSvg}
           {wellAttrCurve}
         </svg>

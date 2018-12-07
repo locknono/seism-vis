@@ -81,7 +81,11 @@ class MatchCurve extends React.Component<Props, State> {
     const { path, curSelectedIndex, index } = this.props;
     const { pathGen, vertex } = this.state;
     const VertexOnPath = extractVertex(path);
-    const style = { fill: matchColor, stroke: "none", fillOpacity: 0.8 };
+    const style = {
+      fill: matchColor,
+      fillOpacity: 0.8,
+      stroke: "none"
+    };
     if (index === curSelectedIndex) {
       style.fill = darkerMatchColor;
     }
@@ -98,7 +102,6 @@ class MatchCurve extends React.Component<Props, State> {
         <path
           d={pathGen(path)}
           style={style}
-          className="well-match-axis"
           onClick={this.handleClick}
           onMouseEnter={this.handleMouseEnter}
           onMouseLeave={this.handleMouseLeave}

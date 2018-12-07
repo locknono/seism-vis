@@ -78,10 +78,6 @@ code {
   cursor: crosshair;
 }
 
-.well-match-axis {
-  stroke: black;
-}
-
 .well-svg {
   width: 700px;
   height: 700px;
@@ -152,4 +148,23 @@ code {
   height: 15px;
   border-radius: 50%;
   background-color: blue;
+}
+
+.trace-positive-path {
+  fill: black;
+  stroke: black;
+  stroke-width: 0.3;
+}
+
+.trace-negative-path {
+  fill: none;
+  stroke: black;
+  stroke-width: 0.3;
+}
+
+.track-path {
+  stroke: black;
+  stroke-width: 3;
+  stroke-linecap: round;
+  fill: none;
 }
