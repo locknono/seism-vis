@@ -51,4 +51,6 @@ export interface SingleWellAttrData {
 
 export type WellAttrData = [SingleWellAttrData, SingleWellAttrData];
 
+export type OneLayerDiff = [number, number, number, number, number];
 
+export type AllDiff = OneLayerDiff[];

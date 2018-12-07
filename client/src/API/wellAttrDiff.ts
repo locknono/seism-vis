@@ -1,16 +1,23 @@
-import * as d3 from "d3";
 import {
   WellAttrData,
   MatchCurvePath,
   AllMatchCurve,
-  SingleWellAttrData
+  SingleWellAttrData,
+  AllDiff,
+  OneLayerDiff
 } from "../ts/Type";
 import { reverseScale } from "../reducer/globalVarReducer";
 import { extractMatchVertex } from "./uncertainty";
-export function diff(wellAttrData: WellAttrData, matchCurve: AllMatchCurve) {
+export function diff(
+  wellAttrData: WellAttrData,
+  matchCurve: AllMatchCurve
+): AllDiff {
+  //TODO:is match curve sorted?
+
+  //!!!IMPORTATNT TODO:filter dirty data
   const [well1, well2] = wellAttrData;
   const allDepth = getLayerDepth(matchCurve);
-  const allDiff = [];
+  const allDiff: AllDiff = [];
   for (let oneLayerDepthList of allDepth) {
     const diff = compareInOneLayer(oneLayerDepthList, well1, well2);
     allDiff.push(diff);
@@ -45,11 +52,12 @@ function getDivisionIndex(start: number, end: number, k: number) {
   }
   return indices;
 }
+
 function compareInOneLayer(
   depthList: [number, number, number, number],
   w1: SingleWellAttrData,
   w2: SingleWellAttrData
-) {
+): OneLayerDiff {
   const k = 20;
   const indexList = depthList.map(e => getIndexWithDepth(e));
   const [l1, l2, r1, r2] = indexList;
@@ -57,7 +65,7 @@ function compareInOneLayer(
   const v2 = w2.value;
   const leftIndices = getDivisionIndex(l1, l2, k);
   const rightIndices = getDivisionIndex(r1, r2, k);
-  let diffSum = [0, 0, 0, 0, 0];
+  let diffSum: OneLayerDiff = [0, 0, 0, 0, 0];
   //j for attrIndex
   for (let i = 0; i < k; i++) {
     for (let j = 1; j <= 5; j = j + 1) {
@@ -65,5 +73,5 @@ function compareInOneLayer(
       diffSum[j - 1] += diff;
     }
   }
-  return diffSum.map(e => e / k);
+  return diffSum.map(e => e / k) as OneLayerDiff;
 }

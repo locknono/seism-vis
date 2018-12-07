@@ -1,0 +1,58 @@
+import * as React from "react";
+import { AllDiff } from "src/ts/Type";
+import * as d3 from "d3";
+interface Props {
+  allDiff: AllDiff;
+}
+
+const svgWidth = 600,
+  svgHeight = 300,
+  leftPaddingRatio = 0.1,
+  topPaddingRatio = 0.1;
+const drawSvgWidth = svgWidth * (1 - 2 * leftPaddingRatio);
+const drawSvgHeight = svgHeight * (1 - 2 * topPaddingRatio);
+const horizontalPad = drawSvgWidth / 5;
+
+export function AttrDiff(props: Props) {
+  const { allDiff } = props;
+  const verticalPad = drawSvgHeight / allDiff.length;
+  const barHeight = verticalPad * 0.8;
+  const scales = getScales(allDiff);
+  const rects = [];
+  for (let i = 0; i < allDiff.length; i++) {
+    const y = verticalPad * i;
+    for (let j = 0; j < allDiff[i].length; j++) {
+      const width = scales[j](allDiff[i][j]);
+      const x = i * horizontalPad;
+      const rect = <rect x={x} y={y} width={width} height={barHeight} />;
+      rects.push(rect);
+    }
+  }
+  return (
+    <div className="panel panelDefault">
+      <svg>{rects}</svg>
+    </div>
+  );
+}
+
+function getScales(allDiff: AllDiff) {
+  const minList = Array(5).fill(Number.MAX_SAFE_INTEGER);
+  const maxList = Array(5).fill(Number.MIN_SAFE_INTEGER);
+  for (let i = 0; i < allDiff.length; i++) {
+    for (let j = 0; j < allDiff[i].length; j++) {
+      if (allDiff[i][j] > maxList[j]) {
+        maxList[j] = allDiff[i][j];
+      }
+      if (allDiff[i][j] < minList[j]) {
+        maxList[j] = allDiff[i][j];
+      }
+    }
+  }
+  const scales = minList.map((e, i: number) => {
+    return d3
+      .scaleLinear()
+      .domain([minList[i], maxList[i]])
+      .range([0, horizontalPad]);
+  });
+  return scales;
+}
