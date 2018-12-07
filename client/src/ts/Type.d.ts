@@ -55,3 +55,5 @@ export type WellAttrData = [SingleWellAttrData, SingleWellAttrData];
 export type OneLayerDiff = [number, number, number, number, number];
 
 export type AllDiff = OneLayerDiff[];
+
+export type CurSelectedIndex = null | undefined | number;

@@ -2,7 +2,7 @@ import * as React from "react";
 import * as d3 from "d3";
 import Vertex from "./Vertex";
 import { List } from "immutable";
-import { MatchCurvePath, VertexType } from "../ts/Type";
+import { MatchCurvePath, VertexType, CurSelectedIndex } from "../ts/Type";
 export function extractVertexIndex(path: MatchCurvePath): number[] {
   return [
     0,
@@ -22,6 +22,7 @@ interface Props {
   path: MatchCurvePath;
   index: number;
   changeCurvePath: any;
+  curSelectedIndex: CurSelectedIndex;
 }
 interface State {
   pathGen: any;
@@ -40,6 +41,8 @@ class MatchCurve extends React.Component<Props, State> {
     };
     this.handleClick = this.handleClick.bind(this);
     this.changeVertexPosition = this.changeVertexPosition.bind(this);
+    this.handleMouseEnter = this.handleMouseEnter.bind(this);
+    this.handleMouseLeave = this.handleMouseLeave.bind(this);
   }
 
   componentDidMount() {}
@@ -49,6 +52,13 @@ class MatchCurve extends React.Component<Props, State> {
     this.setState({ vertex });
   }
 
+  handleMouseEnter() {
+    const { index } = this.props;
+  }
+
+  handleMouseLeave() {
+    const { index } = this.props;
+  }
   changeVertexPosition(newVertex: VertexType) {
     const { changeCurvePath, index, path } = this.props;
     this.setState({ vertex: newVertex });
@@ -60,7 +70,7 @@ class MatchCurve extends React.Component<Props, State> {
   }
 
   render() {
-    const { path } = this.props;
+    const { path, curSelectedIndex } = this.props;
     const { pathGen, vertex } = this.state;
     const VertexOnPath = extractVertex(path);
     const style = { fill: "grey", stroke: "none", fillOpacity: 0.8 };
@@ -71,38 +81,7 @@ class MatchCurve extends React.Component<Props, State> {
           changeVertexPosition={this.changeVertexPosition}
         />
       ) : null;
-
-    const baseLineStyle = {
-      stroke: "grey",
-      strokeOpacity: 0.8,
-      strokeWidth: 0.8
-    };
-    const baseLine = VertexOnPath.map((e, i: number) => {
-      if (i === 0 || i === 1) {
-        return (
-          <line
-            key={e.toString()}
-            x1={e[0]}
-            y1={e[1]}
-            x2={0}
-            y2={e[1]}
-            style={baseLineStyle}
-          />
-        );
-      } else {
-        return (
-          <line
-            key={e.toString()}
-            x1={e[0]}
-            y1={e[1]}
-            x2={700}
-            y2={e[1]}
-            style={baseLineStyle}
-          />
-        );
-      }
-    });
-
+    const baseLine = getBaseLine(VertexOnPath, curSelectedIndex);
     return (
       <React.Fragment>
         <path
@@ -110,6 +89,8 @@ class MatchCurve extends React.Component<Props, State> {
           style={style}
           className="well-match-axis"
           onClick={this.handleClick}
+          onMouseEnter={this.handleMouseEnter}
+          onMouseLeave={this.handleMouseLeave}
         />
         {drawVertex}
         {baseLine}
@@ -119,3 +100,43 @@ class MatchCurve extends React.Component<Props, State> {
 }
 
 export default MatchCurve;
+
+function getBaseLine(
+  VertexOnPath: VertexType,
+  curSelectedIndex: CurSelectedIndex
+) {
+  let baseLineStyle = {
+    stroke: "grey",
+    strokeOpacity: 0.8,
+    strokeWidth: 0.8
+  };
+  const baseLine = VertexOnPath.map((e, i: number) => {
+    if (i === curSelectedIndex) {
+      baseLineStyle = { ...baseLineStyle, stroke: "black" };
+    }
+    if (i === 0 || i === 1) {
+      return (
+        <line
+          key={e.toString()}
+          x1={e[0]}
+          y1={e[1]}
+          x2={0}
+          y2={e[1]}
+          style={baseLineStyle}
+        />
+      );
+    } else {
+      return (
+        <line
+          key={e.toString()}
+          x1={e[0]}
+          y1={e[1]}
+          x2={700}
+          y2={e[1]}
+          style={baseLineStyle}
+        />
+      );
+    }
+  });
+  return baseLine;
+}
