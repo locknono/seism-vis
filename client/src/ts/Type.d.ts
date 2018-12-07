@@ -43,3 +43,12 @@ export interface Well {
 export type AllWells = Well[];
 
 export type CoupleWell = [string, string];
+
+export interface SingleWellAttrData {
+  id: string;
+  value: [number, number, number, number, number, number][];
+}
+
+export type WellAttrData = [SingleWellAttrData, SingleWellAttrData];
+
+

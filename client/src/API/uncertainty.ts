@@ -6,8 +6,8 @@ import {
 } from "../ts/Type";
 
 export function extractMatchVertex(curvePaths: AllMatchCurve): AllVertices {
-  const matchVertex: any = [];
-  curvePaths.map((e: any) => {
+  const matchVertex: AllVertices = [];
+  curvePaths.map(e => {
     matchVertex.push([
       e[0],
       e[e.length - 2],

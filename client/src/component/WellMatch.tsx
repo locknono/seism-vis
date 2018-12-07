@@ -22,7 +22,13 @@ import {
 import MatchCurve from "./MatchCurve";
 import { v4 } from "uuid";
 import { ViewHeading } from "./ViewHeading";
-import { AllTracks, AllVertices } from "src/ts/Type";
+import {
+  AllTracks,
+  AllVertices,
+  WellAttrData,
+  AllMatchCurve
+} from "src/ts/Type";
+import { diff } from "../API/wellAttrDiff";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const {
     wellMinDepth,
@@ -97,7 +103,7 @@ interface Props {
   changeSvgSize: any;
   wellIDNearLineIndex: any;
   getWellCurve: any;
-  curvePaths: any;
+  curvePaths: AllMatchCurve;
   matrixData: any;
   depthList: number[];
   paths: any;
@@ -108,7 +114,7 @@ interface Props {
   allTrackVertex: AllVertices;
   ucPath: any[];
   getUcPath: any;
-  wellAttrData: any[];
+  wellAttrData: WellAttrData;
 }
 
 interface State {
@@ -223,8 +229,12 @@ class WellMatch extends React.Component<Props, State> {
       coupleWell,
       paddingRatio,
       width,
-      height
+      height,
+      wellAttrData,
+      scale
     } = this.props;
+    const allDiff = diff(wellAttrData, curvePaths);
+    console.log('allDiff: ', allDiff);
     const uc = new Uncertainty();
     const ucPath = uc.cal(
       allTrackVertex,

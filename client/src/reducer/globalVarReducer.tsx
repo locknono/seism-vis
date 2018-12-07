@@ -41,6 +41,10 @@ const initialWellMatchDepthScale = d3
   .domain([wellMinDepth, wellMaxDepth])
   .range([wellMatchSvgHeight * 0.05, wellMatchSvgHeight * (1 - 0.05)]);
 
+export const reverseScale = d3
+  .scaleLinear()
+  .range([wellMinDepth, wellMaxDepth])
+  .domain([wellMatchSvgHeight * 0.05, wellMatchSvgHeight * (1 - 0.05)]);
 interface GlobalVarState {
   readonly xStart: number;
   readonly yStart: number;

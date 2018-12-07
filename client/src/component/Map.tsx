@@ -27,7 +27,8 @@ import {
   getMatrixData
 } from "../action/changeWell";
 import { getTwoWellUc, storeUcData, getHeatData } from "../API/heatMap";
-import { MatrixData, AllWells } from "../ts/Type";
+import { MatrixData, AllWells, WellAttrData } from "../ts/Type";
+import { diff } from "../API/wellAttrDiff";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const scaler = state.figReducer.scaler;
   const {
@@ -309,7 +310,7 @@ class Map extends React.Component<Props, object> {
               fetchWellAttrData(
                 self.UNSAFE_IDStore[0],
                 self.UNSAFE_IDStore[1]
-              ).then(data => {
+              ).then((data: WellAttrData) => {
                 getWellAttrData(data);
               });
 
