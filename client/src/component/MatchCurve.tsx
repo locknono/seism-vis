@@ -72,7 +72,6 @@ class MatchCurve extends React.Component<Props, State> {
         />
       ) : null;
 
-
     const baseLineStyle = {
       stroke: "grey",
       strokeOpacity: 0.8,
@@ -81,11 +80,25 @@ class MatchCurve extends React.Component<Props, State> {
     const baseLine = VertexOnPath.map((e, i: number) => {
       if (i === 0 || i === 1) {
         return (
-          <line x1={e[0]} y1={e[1]} x2={0} y2={e[1]} style={baseLineStyle} />
+          <line
+            key={e.toString()}
+            x1={e[0]}
+            y1={e[1]}
+            x2={0}
+            y2={e[1]}
+            style={baseLineStyle}
+          />
         );
       } else {
         return (
-          <line x1={e[0]} y1={e[1]} x2={700} y2={e[1]} style={baseLineStyle} />
+          <line
+            key={e.toString()}
+            x1={e[0]}
+            y1={e[1]}
+            x2={700}
+            y2={e[1]}
+            style={baseLineStyle}
+          />
         );
       }
     });

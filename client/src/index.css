@@ -123,7 +123,13 @@ code {
   width: min-content;
   margin-right: 100px;
   border-left: none;
+  margin-bottom: 0;
   border-color: rgb(221, 221, 221);
+}
+
+.attr-diff-div {
+  width: min-content;
+  height: min-content;
 }
 
 .seism {

@@ -1,11 +1,15 @@
 import * as React from "react";
+import { CoupleWell } from "src/ts/Type";
 
-export const WellCircle = (props: any) => {
+interface Props {
+  coupleWell: CoupleWell;
+}
+export const WellCircle = (props: Props) => {
   const { coupleWell } = props;
-  let circles = coupleWell.map((e: string) => {
+  let circles = coupleWell.map((e, i: number) => {
     //TODO:CHANGE FONT STYLE
     return (
-      <div style={{ verticalAlign: "middle" }}>
+      <div key={e} style={{ verticalAlign: "middle" }}>
         <div className="wellCircle" key={e} />
         {`  ${e}`}
       </div>

@@ -2,11 +2,12 @@ import * as React from "react";
 import { AllDiff } from "src/ts/Type";
 import * as d3 from "d3";
 import { v4 } from "uuid";
+import { matchViewWidth } from "../constraint";
 interface Props {
   allDiff: AllDiff;
 }
 
-const svgWidth = 600,
+const svgWidth = matchViewWidth,
   svgHeight = 300,
   leftPaddingRatio = 0.1,
   topPaddingRatio = 0.1;
@@ -28,7 +29,7 @@ export function AttrDiff(props: Props) {
     });
   });
   return (
-    <div>
+    <div className="attr-diff-div panel panel-default">
       <svg style={{ width: svgWidth, height: svgHeight }}>{rects}</svg>
     </div>
   );
@@ -43,7 +44,7 @@ function getScales(allDiff: AllDiff) {
         maxList[j] = allDiff[i][j];
       }
       if (allDiff[i][j] < minList[j]) {
-        maxList[j] = allDiff[i][j];
+        minList[j] = allDiff[i][j];
       }
     }
   }
@@ -51,7 +52,7 @@ function getScales(allDiff: AllDiff) {
     return d3
       .scaleLinear()
       .domain([minList[i], maxList[i]])
-      .range([0, horizontalPad]);
+      .range([0.1 * horizontalPad, horizontalPad * 0.9]);
   });
   return scales;
 }

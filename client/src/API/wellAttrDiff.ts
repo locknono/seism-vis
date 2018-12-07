@@ -16,6 +16,7 @@ export function diff(
 
   //!!!IMPORTATNT TODO:filter dirty data
   const [well1, well2] = wellAttrData;
+  console.log("wellAttrData: ", wellAttrData);
   const allDepth = getLayerDepth(matchCurve);
   const allDiff: AllDiff = [];
   for (let oneLayerDepthList of allDepth) {
@@ -58,7 +59,8 @@ function compareInOneLayer(
   w1: SingleWellAttrData,
   w2: SingleWellAttrData
 ): OneLayerDiff {
-  const k = 20;
+  const k = 100;
+  let realK = 100;
   const indexList = depthList.map(e => getIndexWithDepth(e));
   const [l1, l2, r1, r2] = indexList;
   const v1 = w1.value;
@@ -69,9 +71,22 @@ function compareInOneLayer(
   //j for attrIndex
   for (let i = 0; i < k; i++) {
     for (let j = 1; j <= 5; j = j + 1) {
-      const diff = Math.pow(v1[leftIndices[i]][j] - v2[rightIndices[i]][j], 2);
+      const value1 = v1[leftIndices[i]][j];
+      const value2 = v2[rightIndices[i]][j];
+      if (shouldFilterDirtyData(value1, value2)) {
+        realK = realK - 1;
+        break;
+      }
+      const diff = Math.pow(value1 - value2, 2);
       diffSum[j - 1] += diff;
     }
   }
-  return diffSum.map(e => e / k) as OneLayerDiff;
+
+  return diffSum.map(e => e / realK) as OneLayerDiff;
+}
+
+function shouldFilterDirtyData(v1: number, v2: number): boolean {
+  if (Number.isNaN(v1) || Number.isNaN(v2)) return true;
+  if (v1 <= -9999 || v2 <= -9999) return true;
+  return false;
 }

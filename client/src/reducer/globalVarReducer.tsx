@@ -1,12 +1,13 @@
 import * as d3 from "d3";
 import { CHANGE_SVG_SIZE } from "../action/changeWellMatchSvg";
+import { matchViewWidth } from "../constraint";
 /* const wellMinDepth = 1082;
 const wellMaxDepth = 1850; */
 
 //TODO:should redux store constraint?
 //or just a constraint moudule file?
 //`maybe` redux's supposed to merely store global variable,but not global constraint.
-const wellMatchSvgWidth = 700;
+const wellMatchSvgWidth = matchViewWidth;
 const wellMatchSvgHeight = 600;
 export const wellMatchSvgPaddingRatio = 0.3;
 
