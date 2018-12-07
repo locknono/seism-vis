@@ -189,6 +189,7 @@ export function setSelectedCircleStyle(circle: L.Circle) {
 
 export function getWellLatLngBound() {}
 export function generateVoronoi(wells: AllWells, map: any) {
+  //TODO:result coule be memorized
   console.log("wells: ", wells);
   const voronoiView = voronoi()
     .x(function(d: any) {
@@ -205,21 +206,16 @@ export function generateVoronoi(wells: AllWells, map: any) {
   const triangles = withDataVoronoi.triangles();
   const cells = withDataVoronoi.cells;
   const edges = withDataVoronoi.edges;
-
   const voronoiLayers = [];
-  //so annoying to use typescript with other lib!!
-  for (let triangle of triangles) {
-    const points = [];
-    for (let well of triangle) {
-      points.push((well as any).latlng);
-    }
+  for (let link of links) {
+    const points = [(link.source as any).latlng, (link.target as any).latlng];
     const voronoiPath = L.polyline(points, {
       fill: false,
       color: voronoiStrokeColor,
-      weight: voronoiStrokeWidth //TODO:width should depend on uncertainty
+      weight: voronoiStrokeWidth //TODO:width should depend on uncertainty);
     });
     voronoiLayers.push(voronoiPath);
   }
-  const voronoiLayerGroup = L.layerGroup(voronoiLayers).setZIndex(-200);
+  const voronoiLayerGroup = L.layerGroup(voronoiLayers).setZIndex(-200); //z-index does not work
   voronoiLayerGroup.addTo(map);
 }
