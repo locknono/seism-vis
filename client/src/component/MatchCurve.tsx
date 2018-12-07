@@ -3,7 +3,11 @@ import * as d3 from "d3";
 import Vertex from "./Vertex";
 import { List } from "immutable";
 import { MatchCurvePath, VertexType, CurSelectedIndex } from "../ts/Type";
-import { matchColor, darkerMatchColor } from "../constraint";
+import {
+  matchColor,
+  darkerMatchColor,
+  brighterMatchColor
+} from "../constraint";
 export function extractVertexIndex(path: MatchCurvePath): number[] {
   return [
     0,
@@ -88,7 +92,7 @@ class MatchCurve extends React.Component<Props, State> {
           changeVertexPosition={this.changeVertexPosition}
         />
       ) : null;
-    const baseLine = getBaseLine(VertexOnPath, curSelectedIndex);
+    const baseLine = getBaseLine(VertexOnPath, curSelectedIndex, index);
     return (
       <React.Fragment>
         <path
@@ -110,37 +114,38 @@ export default MatchCurve;
 
 function getBaseLine(
   VertexOnPath: VertexType,
-  curSelectedIndex: CurSelectedIndex
+  curSelectedIndex: CurSelectedIndex,
+  index: number
 ) {
   let baseLineStyle = {
-    stroke: "grey",
+    stroke: matchColor,
     strokeOpacity: 0.8,
-    strokeWidth: 0.8
+    strokeWidth: 0.8,
+    fill: "none"
   };
-  const baseLine = VertexOnPath.map((e, i: number) => {
-    if (i === 0 || i === 1) {
-      return (
-        <line
-          key={e.toString()}
-          x1={e[0]}
-          y1={e[1]}
-          x2={0}
-          y2={e[1]}
-          style={baseLineStyle}
-        />
-      );
-    } else {
-      return (
-        <line
-          key={e.toString()}
-          x1={e[0]}
-          y1={e[1]}
-          x2={700}
-          y2={e[1]}
-          style={baseLineStyle}
-        />
-      );
-    }
-  });
-  return baseLine;
+
+  if (index === curSelectedIndex) {
+    baseLineStyle.fill = brighterMatchColor;
+  }
+
+  const lPath = d3.path();
+  lPath.moveTo(VertexOnPath[0][0], VertexOnPath[0][1]);
+  lPath.lineTo(0, VertexOnPath[0][1]);
+  lPath.lineTo(0, VertexOnPath[1][1]);
+  lPath.lineTo(VertexOnPath[0][0], VertexOnPath[1][1]);
+
+  const rPath = d3.path();
+  rPath.moveTo(VertexOnPath[2][0], VertexOnPath[2][1]);
+  rPath.lineTo(700, VertexOnPath[2][1]);
+  rPath.lineTo(700, VertexOnPath[3][1]);
+  rPath.lineTo(VertexOnPath[3][0], VertexOnPath[3][1]);
+
+  const leftPath = (
+    <path d={lPath.toString()} key={lPath.toString()} style={baseLineStyle} />
+  );
+  const rightPath = (
+    <path d={rPath.toString()} key={rPath.toString()} style={baseLineStyle} />
+  );
+
+  return [leftPath, rightPath];
 }

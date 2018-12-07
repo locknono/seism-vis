@@ -67,6 +67,8 @@ function compareInOneLayer(
   //j for attrIndex
   for (let i = 0; i < k; i++) {
     for (let j = 1; j <= 5; j = j + 1) {
+      //TODO:should not just `break` if some data's missing
+      if (!v1[leftIndices[i]] || !v2[rightIndices[i]]) break;
       const value1 = v1[leftIndices[i]][j];
       const value2 = v2[rightIndices[i]][j];
       if (shouldFilterDirtyData(value1, value2)) {
