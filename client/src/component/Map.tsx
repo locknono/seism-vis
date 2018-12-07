@@ -170,13 +170,15 @@ class Map extends React.Component<Props, object> {
 
   deployMap() {
     const center: [number, number] = [37.867271959429445, 118.78092767561518];
-    const zoom: number = 14.5;
-    const preferCanvas: boolean = true;
-    const zoomControl: boolean = false;
-    const attributionControl: boolean = false;
+    const zoom = 14.5;
+    const preferCanvas = true;
+    const zoomControl = false;
+    const attributionControl = false;
+    const maxZoom = 20;
     const options: object = {
       center,
       zoom,
+      maxZoom,
       zoomControl,
       attributionControl,
       preferCanvas
@@ -344,8 +346,9 @@ class Map extends React.Component<Props, object> {
         withDataVoronoi(allWells, this.map).then(voronoiLayer => {
           layerControl.addOverlay(voronoiLayer, "Triangulation");
         });
+        circlesLayer.addTo(this.map);
+        L.control.scale().addTo(this.map);
       });
-    circlesLayer.addTo(this.map);
   }
 
   render() {

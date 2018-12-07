@@ -235,6 +235,7 @@ export function withDataVoronoi(wells: AllWells, map: L.Map) {
       const voronoiPath = L.polyline(points, {
         fill: false,
         color: color,
+        interactive: false,
         weight: voronoiStrokeWidth //TODO:width should depend on uncertainty);
       });
       voronoiLayers.push(voronoiPath);
