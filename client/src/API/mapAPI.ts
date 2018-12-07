@@ -146,7 +146,6 @@ export function mapapi_getWellIDNearLine(
 }
 
 export function fetchMatrixData(pointsOnLine: [number, number][]) {
-  console.log("pointsOnLine: ", pointsOnLine);
   return fetch("http://localhost:5000/returnDrawLineData/", {
     body: JSON.stringify(pointsOnLine),
     credentials: "same-origin",
@@ -190,7 +189,7 @@ export function setSelectedCircleStyle(circle: L.Circle) {
 export function getWellLatLngBound() {}
 export function generateVoronoi(wells: AllWells, map: any) {
   //TODO:result coule be memorized
-  console.log("wells: ", wells);
+
   const voronoiView = voronoi()
     .x(function(d: any) {
       return d.latlng[1];

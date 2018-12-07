@@ -16,7 +16,6 @@ export function diff(
 
   //!!!IMPORTATNT TODO:filter dirty data
   const [well1, well2] = wellAttrData;
-  console.log("wellAttrData: ", wellAttrData);
   const allDepth = getLayerDepth(matchCurve);
   const allDiff: AllDiff = [];
   for (let oneLayerDepthList of allDepth) {

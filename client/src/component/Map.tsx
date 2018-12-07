@@ -26,7 +26,12 @@ import {
   getWellIDNearLineIndex,
   getMatrixData
 } from "../action/changeWell";
-import { getTwoWellUc, storeUcData, getHeatData } from "../API/heatMap";
+import {
+  getTwoWellUc,
+  storeUcData,
+  getHeatData,
+  storeVoronoiUcData
+} from "../API/heatMap";
 import { MatrixData, AllWells, WellAttrData } from "../ts/Type";
 import { diff } from "../API/wellAttrDiff";
 const mapStateToProps = (state: any, ownProps?: any) => {
@@ -255,7 +260,7 @@ class Map extends React.Component<Props, object> {
         wellLocationData.map((well: Well, index: number) => {
           let xOnMatrix = Math.floor((well.x - xStart) / xySection);
           let yOnMatrix = Math.floor((well.y - yStart) / xySection);
-          allWells.push({ ...well, xOnMatrix, yOnMatrix });
+          allWells.push({ ...well, xOnMatrix, yOnMatrix, index: index });
           let circle = L.circle(well.latlng, {
             radius: 5,
             stroke: false,
@@ -328,6 +333,8 @@ class Map extends React.Component<Props, object> {
         });
         self.UNSAFE_AllCircles = allCircles;
         getAllWells(allWells);
+        //storeUcData(allWells);
+        //storeVoronoiUcData(allWells);
         getHeatData(allWells).then((heatData: any) => {
           const heatLayer = (L as any).heatLayer(heatData, { radius: 8 });
           layerControl.addOverlay(heatLayer, "Heatmap");

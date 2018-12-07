@@ -110,7 +110,7 @@ def storeUcSum():
         id1 = data['id1']
         id2 = data['id2']
         value = data['value']
-        with open('./data/ucSum.csv', 'a+', newline='') as f:
+        with open('./data/ucSum_1207.csv', 'a+', newline='') as f:
             csvF = csv.writer(f)
             csvF.writerow([str(id1), str(id2), str(value)])
     except:

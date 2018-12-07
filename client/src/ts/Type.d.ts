@@ -38,6 +38,7 @@ export interface Well {
   xOnMatrix: number;
   y: number;
   yOnMatrix: number;
+  index: number;
 }
 
 export type AllWells = Well[];

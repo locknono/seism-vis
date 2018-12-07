@@ -2,7 +2,8 @@ import {
   getPointsOnLine,
   mapapi_getWellIDNearLine,
   fetchMatrixData,
-  getNearIndexList
+  getNearIndexList,
+  idIndexMap
 } from "../API/mapAPI";
 import {
   getSize,
@@ -56,8 +57,13 @@ export function getTwoWellUc(well1: Well, well2: Well, allWells: AllWells) {
         depthList
       );
       const uc = new Uncertainty();
-      const ucList = uc.cal(allTrackVertex, curvePaths, width, paddingRatio, height)
-        .ucList;
+      const ucList = uc.cal(
+        allTrackVertex,
+        curvePaths,
+        width,
+        paddingRatio,
+        height
+      ).ucList;
       const ucSum = uc.getUcSum(ucList);
       const id1 = coupleWell[0];
       const id2 = coupleWell[1];
@@ -93,6 +99,33 @@ export function storeUcData(allWells: AllWells) {
       }, 500 * i);
     }
   });
+}
+
+export function storeVoronoiUcData(allWells: AllWells) {
+  const map = idIndexMap(allWells);
+  fetch("./data/links.json")
+    .then(r => r.json())
+    .then((links: [string, string][]) => {
+      for (let i = 0; i < links.length; i++) {
+        setTimeout(() => {
+          let index1 = map.get(links[i][0]) as number;
+          let index2 = map.get(links[i][1]) as number;
+          getTwoWellUc(allWells[index1], allWells[index2], allWells).then(
+            coupleWellUc => {
+              fetch(`http://localhost:5000/storeUcSum/`, {
+                body: JSON.stringify(coupleWellUc),
+                credentials: "same-origin",
+                headers: {
+                  "content-type": "application/json"
+                },
+                method: "POST",
+                mode: "cors"
+              });
+            }
+          );
+        }, 1000 * i);
+      }
+    });
 }
 
 export function getHeatData(allWells: AllWells) {
