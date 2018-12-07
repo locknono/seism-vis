@@ -221,7 +221,7 @@ export function generateVoronoi(wells: AllWells, map: L.Map) {
 
 export function withDataVoronoi(wells: AllWells, map: L.Map) {
   const mapCollection = idIndexMap(wells);
-  d3.csv("./data/voronoi_uc.csv").then(data => {
+  return d3.csv("./data/voronoi_uc.csv").then(data => {
     const voronoiLayers: L.Polyline[] = [];
     const values = [];
     for (let link of data) {
@@ -241,11 +241,12 @@ export function withDataVoronoi(wells: AllWells, map: L.Map) {
     }
     const voronoiLayerGroup = L.layerGroup(voronoiLayers).setZIndex(-200); //z-index does not work
     voronoiLayerGroup.addTo(map);
+    return voronoiLayerGroup;
   });
 }
 
 function colorScale(value: number) {
-  const min = 0;
+  const min = 5;
   const max = 40;
   const scale = d3
     .scaleLinear()

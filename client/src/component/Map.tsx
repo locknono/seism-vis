@@ -341,7 +341,9 @@ class Map extends React.Component<Props, object> {
           layerControl.addOverlay(heatLayer, "Heatmap");
         });
 
-        withDataVoronoi(allWells, this.map);
+        withDataVoronoi(allWells, this.map).then(voronoiLayer => {
+          layerControl.addOverlay(voronoiLayer, "Triangulation");
+        });
       });
     circlesLayer.addTo(this.map);
   }
