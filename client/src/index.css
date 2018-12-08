@@ -114,7 +114,6 @@ code {
   width: 700px;
   height: 500px;
   position: relative;
-  width: min-content;
   margin-right: 100px;
   border-left: none;
   margin-bottom: 0;
@@ -184,5 +183,5 @@ code {
 }
 .icon-style {
   position: absolute;
-  top: 3px;
+  top: 4px;
 }

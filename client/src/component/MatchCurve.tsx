@@ -11,7 +11,7 @@ import {
   vertexFillOpacity
 } from "../constraint";
 import { v4 } from "uuid";
-
+import RecommendedVertex from "./RecommendedVertex";
 export function extractVertexIndex(path: MatchCurvePath): number[] {
   return [
     0,
@@ -106,25 +106,6 @@ class MatchCurve extends React.Component<Props, State> {
         />
       ) : null;
     const baseLine = getBaseLine(VertexOnPath, curSelectedIndex, index);
-
-    let drawRecommendedVertex;
-    if (recommendedVertex && showRecommendedVertex) {
-      drawRecommendedVertex = recommendedVertex.map(e => {
-        return (
-          <circle
-            key={v4()}
-            cx={e[0]}
-            cy={e[1]}
-            r={vertexRadius}
-            style={{
-              fill: "red",
-              stroke: "red",
-              fillOpacity: vertexFillOpacity
-            }}
-          />
-        );
-      });
-    }
     return (
       <React.Fragment>
         <path
@@ -136,7 +117,7 @@ class MatchCurve extends React.Component<Props, State> {
         />
         {drawVertex}
         {baseLine}
-        {drawRecommendedVertex}
+        <RecommendedVertex vertex={recommendedVertex} />
       </React.Fragment>
     );
   }
