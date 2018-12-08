@@ -4,19 +4,25 @@ import {
   AllMatchCurve,
   AllVertices
 } from "../ts/Type";
+import MatchCurve from "src/component/MatchCurve";
+
+export function extractPathVertex(e: MatchCurvePath): VertexType {
+  return [
+    e[0],
+    e[e.length - 2],
+    e[Math.floor(e.length / 2) - 1],
+    e[Math.floor(e.length / 2)]
+  ];
+}
 
 export function extractMatchVertex(curvePaths: AllMatchCurve): AllVertices {
   const matchVertex: AllVertices = [];
   curvePaths.map(e => {
-    matchVertex.push([
-      e[0],
-      e[e.length - 2],
-      e[Math.floor(e.length / 2) - 1],
-      e[Math.floor(e.length / 2)]
-    ]);
+    matchVertex.push(extractPathVertex(e));
   });
   return matchVertex;
 }
+
 export default class Uncertainty {
   constructor() {}
 
@@ -243,4 +249,43 @@ export function findAllKey(m1: Map<number, number>, m2: Map<number, number>) {
     set.add(k);
   }
   return Array.from(set);
+}
+
+export function getRecommendedVertex(
+  trackVertex: AllVertices,
+  curvePaths: AllMatchCurve,
+  index: number
+) {
+  const matchVertex = extractMatchVertex(curvePaths);
+  const trackDepthList = getTrackDepthList(trackVertex);
+  let ucList: number[] = [];
+  const leftMaps = [];
+  const rightMaps = [];
+  for (let i = 0; i < matchVertex.length; i++) {
+    const curMatch = matchVertex[i];
+    leftMaps.push(getMatchVertexPosition(curMatch, trackVertex, 0, 1));
+    rightMaps.push(getMatchVertexPosition(curMatch, trackVertex, 2, 3));
+  }
+  console.log("leftMaps: ", leftMaps);
+  const curLeftMap = leftMaps[index];
+  const curRightMap = rightMaps[index];
+  const changedMap = new Map();
+  let path: MatchCurvePath = [];
+  if (curLeftMap.size === 1 && curRightMap.size !== 1) {
+    for (let [key, value] of curLeftMap) {
+      path.push(curvePaths[index][0]);
+      path.push(curvePaths[index][1]);
+      path.push(trackVertex[key][2]);
+      path.push([trackVertex[key][2][0], trackVertex[key][2][1] + value]);
+    }
+  } else if (curRightMap.size === 1 && curLeftMap.size !== 1) {
+    for (let [key, value] of curRightMap) {
+      path.push(trackVertex[key][0]);
+      path.push([trackVertex[key][1][0], trackVertex[key][1][1] + value]);
+      path.push(curvePaths[index][2]);
+      path.push(curvePaths[index][3]);
+    }
+  }
+  const vertex = extractPathVertex(path);
+  return vertex;
 }

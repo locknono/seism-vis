@@ -31,7 +31,6 @@ export default function AttrDiff(props: Props) {
     const verticalPad = drawSvgHeight / allDiff.length;
     const barHeight = verticalPad * 0.8;
     const normalizedAllDiff = normalize(allDiff);
-    console.log("normalizedAllDiff: ", normalizedAllDiff);
     const scales = getWidthScales(normalizedAllDiff) as d3.ScaleLinear<
       number,
       number
