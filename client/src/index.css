@@ -104,11 +104,15 @@ code {
 
 .well-match-svg {
   position: absolute;
-  top: 0px;
+  top: 22px;
   left: 0px;
+  height: 478px;
+  width: 700px;
 }
 
 .well-match-div {
+  width: 700px;
+  height: 500px;
   position: relative;
   width: min-content;
   margin-right: 100px;
@@ -172,4 +176,13 @@ code {
 .info-panel {
   width: 180px;
   border-color: rgb(221, 221, 221);
+}
+
+.button-div {
+  float: right;
+  width: 100%;
+}
+.icon-style {
+  position: absolute;
+  top: 3px;
 }

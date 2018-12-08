@@ -1,11 +1,12 @@
 import * as React from "react";
-import { Panel } from "react-bootstrap";
+import { Panel, Button } from "react-bootstrap";
+import { ViewHeading } from "./ViewHeading";
 
 interface Props {
   height: number;
   title: string;
 }
-export const ViewHeading = (props: Props) => {
+const WithButtonViewHeading = (props: Props) => {
   const { height, title } = props;
   return (
     <Panel.Heading
@@ -27,6 +28,11 @@ export const ViewHeading = (props: Props) => {
       >
         {title}
       </Panel.Title>
+      <div className="button-div">
+        <span className="oi oi-zoom-in icon-style" style={{ right: `1%` }} />
+      </div>
     </Panel.Heading>
   );
 };
+
+export default WithButtonViewHeading;

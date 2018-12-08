@@ -34,6 +34,7 @@ import {
   VertexType
 } from "src/ts/Type";
 import { diff } from "../API/wellAttrDiff";
+import WithButtonViewHeading from "./WithButtonViewHeading";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const {
     wellMinDepth,
@@ -430,12 +431,10 @@ class WellMatch extends React.Component<Props, State> {
         );
       });
     }
-    const svgStyle = { width, height: height };
-    const divStyle = { width, height: height };
     return (
-      <div className=" well-match-div panel panel-primary" style={divStyle}>
-        <ViewHeading height={height * 0.05 - 3} title={"Match"} />
-        <svg className="well-match-svg" style={svgStyle}>
+      <div className=" well-match-div panel panel-primary">
+        <WithButtonViewHeading height={22} title={"Match"} />
+        <svg className="well-match-svg">
           {positivePaths}
           {negativePaths}
           {trackPath}

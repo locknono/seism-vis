@@ -8,7 +8,7 @@ const wellMaxDepth = 1850; */
 //or just a constraint moudule file?
 //`maybe` redux's supposed to merely store global variable,but not global constraint.
 const wellMatchSvgWidth = matchViewWidth;
-const wellMatchSvgHeight = 500;
+const wellMatchSvgHeight = 478;
 export const wellMatchSvgPaddingRatio = 0.3;
 
 function getTraceMinMaxDepth() {

@@ -333,15 +333,6 @@ class Map extends React.Component<Props, object> {
           circlesLayer.addLayer(circle);
           allCircles.push(circle);
         });
-        const blob = new Blob([JSON.stringify(allWells)], {
-          type: "text/plain"
-        });
-        const fileName = `allWells.json`;
-        const link = document.createElement("a");
-        link.href = window.URL.createObjectURL(blob);
-        link.download = fileName;
-        link.click();
-        window.URL.revokeObjectURL(link.href);
 
         self.UNSAFE_AllCircles = allCircles;
         getAllWells(allWells);
