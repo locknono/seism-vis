@@ -174,11 +174,9 @@ class Map extends React.Component<Props, object> {
     const preferCanvas = true;
     const zoomControl = false;
     const attributionControl = false;
-    const maxZoom = 20;
     const options: object = {
       center,
       zoom,
-      maxZoom,
       zoomControl,
       attributionControl,
       preferCanvas
