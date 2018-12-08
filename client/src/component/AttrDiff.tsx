@@ -30,26 +30,32 @@ export default function AttrDiff(props: Props) {
   if (allDiff) {
     const verticalPad = drawSvgHeight / allDiff.length;
     const barHeight = verticalPad * 0.8;
-    const scales = getScales(allDiff) as d3.ScaleLinear<number, number>[];
+    const normalizedAllDiff = normalize(allDiff);
+    console.log("normalizedAllDiff: ", normalizedAllDiff);
+    const scales = getWidthScales(normalizedAllDiff) as d3.ScaleLinear<
+      number,
+      number
+    >[];
     baseLine = getBaseLine(verticalPad, allDiff.length, curSelectedIndex);
-    rects = allDiff.map((e, i) => {
-      const y = topPadding + verticalPad * 0.1 + verticalPad * i;
-      return e.map((v, j) => {
-        const width = scales[j](allDiff[i][j]);
-        const x = svgWidth * leftPaddingRatio + j * horizontalPad;
-        return (
-          <rect
-            key={v4()}
-            x={x}
-            y={y}
-            width={width}
-            height={barHeight}
-            fill={rectColor}
-            rx="2px"
-          />
-        );
+    if (normalizedAllDiff)
+      rects = normalizedAllDiff.map((e, i) => {
+        const y = topPadding + verticalPad * 0.1 + verticalPad * i;
+        return e.map((v, j) => {
+          const width = scales[j](v);
+          const x = svgWidth * leftPaddingRatio + j * horizontalPad;
+          return (
+            <rect
+              key={v4()}
+              x={x}
+              y={y}
+              width={width}
+              height={barHeight}
+              fill={rectColor}
+              rx="2px"
+            />
+          );
+        });
       });
-    });
   }
   return (
     <div className="attr-diff-div panel panel-primary">
@@ -65,10 +71,39 @@ export default function AttrDiff(props: Props) {
   );
 }
 
-function getScales(allDiff: AllDiff) {
+function getWidthScales(allDiff: AllDiff) {
+  if (!allDiff) return;
+  const [minList, maxList] = getMinMaxList(allDiff);
+  const scales = minList.map((e, i: number) => {
+    return d3
+      .scaleLinear()
+      .domain([minList[i], maxList[i]])
+      .range([0.1 * horizontalPad, horizontalPad * 0.9]);
+  });
+  return scales;
+}
+
+function normalize(allDiff: AllDiff): AllDiff {
+  if (!allDiff) return;
+  const [minList, maxList] = getMinMaxList(allDiff);
+  const scales = minList.map((e, i: number) => {
+    return d3
+      .scaleLinear()
+      .domain([minList[i], maxList[i]])
+      .range([0, 1]);
+  });
+  const normalizedAllDiff = allDiff.map((e, i) => {
+    return e.map((v, j) => {
+      return scales[j](v);
+    });
+  });
+  return normalizedAllDiff as AllDiff;
+}
+
+function getMinMaxList(allDiff: AllDiff) {
+  if (!allDiff) return;
   const minList = Array(5).fill(Number.MAX_SAFE_INTEGER);
   const maxList = Array(5).fill(Number.MIN_SAFE_INTEGER);
-  if (!allDiff) return;
   for (let i = 0; i < allDiff.length; i++) {
     for (let j = 0; j < allDiff[i].length; j++) {
       if (allDiff[i][j] > maxList[j]) {
@@ -79,15 +114,8 @@ function getScales(allDiff: AllDiff) {
       }
     }
   }
-  const scales = minList.map((e, i: number) => {
-    return d3
-      .scaleLinear()
-      .domain([minList[i], maxList[i]])
-      .range([0.1 * horizontalPad, horizontalPad * 0.9]);
-  });
-  return scales;
+  return [minList, maxList];
 }
-
 function getBaseLine(
   verticalPad: number,
   diffCount: number,
