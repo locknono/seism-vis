@@ -356,8 +356,10 @@ class WellMatch extends React.Component<Props, State> {
     }
 
     let ucPathOnSvg = null;
-    if (ucPath) {
-      ucPath.push(ucPath.length - 1); //loop
+    if (ucPath.length > 0) {
+      //TODO:FIX BUG:Do not loop every time render triggers
+      ucPath[0].push(ucPath[0][0]); //loop
+      ucPath[1].push(ucPath[1][0]); //loop
       let pathGene = d3
         .line()
         .x((d: any) => {
@@ -367,14 +369,29 @@ class WellMatch extends React.Component<Props, State> {
           return d[1];
         })
         .curve(d3.curveBasis);
-      const color = "rgb(223,136,23)";
-      let style = {
-        fill: color,
-        stroke: color,
-        strokeWidth: 0.5
-      };
       ucPathOnSvg = ucPath.map((e, i) => {
-        return <path key={i} d={pathGene(e) as any} style={style} />;
+        let style = {
+          fill: `url(#MyGradient-${i})`,
+          stroke: `url(#MyGradient-${i})`,
+          strokeWidth: 0.5
+        };
+        return (
+          <React.Fragment key={i}>
+            <defs key={v4()}>
+              <linearGradient
+                id={`MyGradient-${i}`}
+                x1={i === 0 ? `100%` : `0%`}
+                x2={i === 0 ? `0%` : `100%`}
+                y1={`100%`}
+                y2={`100%`}
+              >
+                <stop offset="0%" stopColor="yellow" />
+                <stop offset="100%" stopColor="red" />
+              </linearGradient>
+            </defs>
+            <path key={i} d={pathGene(e) as any} style={style} />
+          </React.Fragment>
+        );
       });
     }
     let wellAttrCurve = null;

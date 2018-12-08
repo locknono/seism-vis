@@ -124,7 +124,8 @@ function getBaseLine(
     stroke: matchColor,
     strokeOpacity: 0.8,
     strokeWidth: 0.8,
-    fill: "none"
+    fill: "none",
+    fillOpacity: 0.5
   };
 
   if (index === curSelectedIndex) {

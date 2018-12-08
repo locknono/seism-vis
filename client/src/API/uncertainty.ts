@@ -45,8 +45,7 @@ export default class Uncertainty {
       convertMapValueFromDepthToPortion(leftMap);
       convertMapValueFromDepthToPortion(rightMap);
       const allKey = findAllKey(leftMap, rightMap);
-      console.log("leftMap: ", leftMap);
-      console.log("rightMap: ", rightMap);
+
       for (let key of allKey) {
         let leftValue = leftMap.get(key);
         let rightValue = rightMap.get(key);
@@ -60,7 +59,6 @@ export default class Uncertainty {
       }
       ucList.push(curMatchUC);
     }
-    console.log("ucList: ", ucList);
 
     return {
       path: this.getUcPath(matchVertex, ucList, width, paddingRatio, height),
@@ -121,13 +119,19 @@ export default class Uncertainty {
       const track = matchVertex[i];
       if (left === false) {
         const topPoint = [startX, track[2][1]];
-        const midPoint = [startX + value * 9, (track[2][1] + track[3][1]) / 2];
+        const midPoint = [
+          startX + Math.pow(5, value),
+          (track[2][1] + track[3][1]) / 2
+        ];
         const bottomPoint = [startX, track[3][1]];
         const path = [topPoint, midPoint, bottomPoint];
         ucPath.push(path);
       } else {
         const topPoint = [startX, track[0][1]];
-        const midPoint = [startX - value * 9, (track[0][1] + track[1][1]) / 2];
+        const midPoint = [
+          startX - Math.pow(5, value),
+          (track[0][1] + track[1][1]) / 2
+        ];
         const bottomPoint = [startX, track[1][1]];
         const path = [topPoint, midPoint, bottomPoint];
         ucPath.push(path);

@@ -54,7 +54,10 @@ export default function AttrDiff(props: Props) {
   return (
     <div className="attr-diff-div panel panel-primary">
       <ViewHeading height={22} title="untitled" />
-      <svg style={{ width: svgWidth, height: svgHeight }} className='attr-diff-svg'>
+      <svg
+        style={{ width: svgWidth, height: svgHeight }}
+        className="attr-diff-svg"
+      >
         {baseLine}
         {rects}
       </svg>
@@ -95,7 +98,8 @@ function getBaseLine(
     const style = {
       stroke: brighterMatchColor,
       fill: "none",
-      strokeWidth: 0.5
+      strokeWidth: 0.5,
+      fillOpacity: 0.5
     };
     if (i === curSelectedIndex) style.fill = brighterMatchColor;
     const path = d3.path();
