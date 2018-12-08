@@ -400,7 +400,7 @@ class WellMatch extends React.Component<Props, State> {
     const divStyle = { width, height: height };
     return (
       <div className=" well-match-div panel panel-primary" style={divStyle}>
-        <ViewHeading height={height * 0.05 - 3} />
+        <ViewHeading height={height * 0.05 - 3} title={"Match"} />
         <svg className="well-match-svg" style={svgStyle}>
           {positivePaths}
           {negativePaths}

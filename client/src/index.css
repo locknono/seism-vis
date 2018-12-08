@@ -65,7 +65,7 @@ code {
 
 #map {
   width: 600px;
-  height: 600px;
+  height: 700px;
 }
 
 .col-group {
@@ -123,11 +123,6 @@ code {
   border-color: rgb(221, 221, 221);
 }
 
-.attr-diff-div {
-  width: min-content;
-  height: min-content;
-}
-
 .seism {
   display: flex;
   margin: 5px;
@@ -167,4 +162,20 @@ code {
   stroke-width: 3;
   stroke-linecap: round;
   fill: none;
+}
+
+.right-side {
+  display: flex;
+  flex-direction: column;
+}
+
+.attr-diff-div {
+  width: min-content;
+  height: 200px;
+  border-color: rgb(221, 221, 221);
+}
+
+.info-panel {
+  width: 180px;
+  border-color: rgb(221, 221, 221);
 }

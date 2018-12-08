@@ -22,6 +22,7 @@ const Seism = function(props: Props) {
   return (
     <React.Fragment>
       <div className="seism">
+        <InfoPanel />
         <Map />
         <div className="right-side">
           <WellMatch />
@@ -29,7 +30,6 @@ const Seism = function(props: Props) {
         </div>
       </div>
       <ControlPanel />
-      <InfoPanel />
     </React.Fragment>
   );
 };

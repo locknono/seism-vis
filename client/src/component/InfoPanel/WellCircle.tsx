@@ -9,9 +9,11 @@ export const WellCircle = (props: Props) => {
   let circles = coupleWell.map((e, i: number) => {
     //TODO:CHANGE FONT STYLE
     return (
-      <div key={e} style={{ verticalAlign: "middle" }}>
-        <div className="wellCircle" key={e} />
-        {`  ${e}`}
+      <div key={e} style={{ display: "flex" }}>
+        <div style={{ marginRight: 0, margin: `auto` }}>
+          <div className="wellCircle" key={e} />
+          {`  ${e}`}
+        </div>
       </div>
     );
   });

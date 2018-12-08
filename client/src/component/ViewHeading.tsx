@@ -2,9 +2,10 @@ import * as React from "react";
 import { Panel } from "react-bootstrap";
 interface Props {
   height: number;
+  title: string;
 }
 export const ViewHeading = (props: Props) => {
-  const { height } = props;
+  const { height, title } = props;
   return (
     <Panel.Heading
       style={{
@@ -23,7 +24,7 @@ export const ViewHeading = (props: Props) => {
           marginLeft: "3px"
         }}
       >
-        Match
+        {title}
       </Panel.Title>
     </Panel.Heading>
   );

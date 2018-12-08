@@ -1,4 +1,5 @@
 import * as React from "react";
+import { ViewHeading } from "./ViewHeading";
 import { AllDiff, CurSelectedIndex } from "src/ts/Type";
 import * as d3 from "d3";
 import { v4 } from "uuid";
@@ -14,7 +15,7 @@ interface Props {
 }
 
 const svgWidth = matchViewWidth,
-  svgHeight = 300,
+  svgHeight = 200,
   leftPaddingRatio = 0.1,
   topPaddingRatio = 0.1;
 const drawSvgWidth = svgWidth * (1 - 2 * leftPaddingRatio);
@@ -51,8 +52,9 @@ export default function AttrDiff(props: Props) {
     });
   }
   return (
-    <div className="attr-diff-div panel panel-default">
-      <svg style={{ width: svgWidth, height: svgHeight }}>
+    <div className="attr-diff-div panel panel-primary">
+      <ViewHeading height={22} title="untitled" />
+      <svg style={{ width: svgWidth, height: svgHeight }} className='attr-diff-svg'>
         {baseLine}
         {rects}
       </svg>

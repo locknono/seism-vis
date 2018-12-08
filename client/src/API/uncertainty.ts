@@ -188,6 +188,7 @@ export function getMatchVertexPosition(
     }
   }
   const map: Map<number, number> = new Map();
+
   if (endIndex === startIndex + 1) {
     map.set(startIndex, startDepth);
     map.set(endIndex, endDepth);
