@@ -276,12 +276,12 @@ export function getRecommendedVertex(
       path.push(matchVertex[index][0]);
       path.push(matchVertex[index][1]);
       path.push(trackVertex[key][2]);
-      path.push([trackVertex[key][2][0], trackVertex[key][2][1] + value]);
+      path.push(trackVertex[key][3]);
     }
   } else if (curRightMap.size === 1 && curLeftMap.size !== 1) {
     for (let [key, value] of curRightMap) {
       path.push(trackVertex[key][0]);
-      path.push([trackVertex[key][0][0], trackVertex[key][0][1] + value]);
+      path.push(trackVertex[key][1]);
       path.push(matchVertex[index][2]);
       path.push(matchVertex[index][3]);
     }
