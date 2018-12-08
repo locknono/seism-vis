@@ -256,6 +256,7 @@ export function getRecommendedVertex(
   curvePaths: AllMatchCurve,
   index: number
 ) {
+  console.log("trackVertex: ", trackVertex);
   const matchVertex = extractMatchVertex(curvePaths);
   const trackDepthList = getTrackDepthList(trackVertex);
   let ucList: number[] = [];
@@ -266,26 +267,27 @@ export function getRecommendedVertex(
     leftMaps.push(getMatchVertexPosition(curMatch, trackVertex, 0, 1));
     rightMaps.push(getMatchVertexPosition(curMatch, trackVertex, 2, 3));
   }
-  console.log("leftMaps: ", leftMaps);
   const curLeftMap = leftMaps[index];
   const curRightMap = rightMaps[index];
   const changedMap = new Map();
   let path: MatchCurvePath = [];
-  if (curLeftMap.size === 1 && curRightMap.size !== 1) {
+  if (curLeftMap.size === 1 && curRightMap.size > 1) {
     for (let [key, value] of curLeftMap) {
-      path.push(curvePaths[index][0]);
-      path.push(curvePaths[index][1]);
+      path.push(matchVertex[index][0]);
+      path.push(matchVertex[index][1]);
       path.push(trackVertex[key][2]);
       path.push([trackVertex[key][2][0], trackVertex[key][2][1] + value]);
     }
   } else if (curRightMap.size === 1 && curLeftMap.size !== 1) {
     for (let [key, value] of curRightMap) {
       path.push(trackVertex[key][0]);
-      path.push([trackVertex[key][1][0], trackVertex[key][1][1] + value]);
-      path.push(curvePaths[index][2]);
-      path.push(curvePaths[index][3]);
+      path.push([trackVertex[key][0][0], trackVertex[key][0][1] + value]);
+      path.push(matchVertex[index][2]);
+      path.push(matchVertex[index][3]);
     }
   }
-  const vertex = extractPathVertex(path);
-  return vertex;
+  if (path.length === 0) {
+    return undefined;
+  }
+  return path as VertexType;
 }

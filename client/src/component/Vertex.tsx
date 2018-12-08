@@ -3,6 +3,7 @@ import * as d3 from "d3";
 import { DraggedElementBaseType } from "d3";
 import { v4 } from "uuid";
 import { VertexType } from "../ts/Type";
+import { vertexRadius, vertexFillOpacity } from "../constraint";
 interface Props {
   vertex: VertexType;
   changeVertexPosition: any;
@@ -71,14 +72,18 @@ class Vertex extends React.Component<Props, State> {
     const { vertex } = this.props;
     let vertexCircle = null;
     if (vertex) {
-      const style = { stroke: "blue", fill: "none" };
+      const style = {
+        stroke: "blue",
+        fill: "blue",
+        fillOpacity: vertexFillOpacity
+      };
       vertexCircle = vertex.map((e, i) => {
         return (
           <circle
             key={i}
             cx={e[0]}
             cy={e[1]}
-            r={5}
+            r={vertexRadius}
             style={style}
             data-index={i}
             className="vertex"

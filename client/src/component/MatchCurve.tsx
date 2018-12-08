@@ -6,8 +6,13 @@ import { MatchCurvePath, VertexType, CurSelectedIndex } from "../ts/Type";
 import {
   matchColor,
   darkerMatchColor,
-  brighterMatchColor
+  brighterMatchColor,
+  vertexRadius,
+  vertexFillOpacity
 } from "../constraint";
+import { getRecommendedVertex } from "../API/uncertainty";
+import { v4 } from "uuid";
+
 export function extractVertexIndex(path: MatchCurvePath): number[] {
   return [
     0,
@@ -29,10 +34,13 @@ interface Props {
   changeCurvePath: any;
   curSelectedIndex: CurSelectedIndex;
   getCurIndex: any;
+  getRecommended: any;
+  recommendedVertex: VertexType | undefined;
 }
 interface State {
   pathGen: any;
   vertex: VertexType | null;
+  showRecommendedVertex: boolean;
 }
 
 class MatchCurve extends React.Component<Props, State> {
@@ -43,7 +51,8 @@ class MatchCurve extends React.Component<Props, State> {
         .line()
         .x(d => d[0])
         .y(d => d[1]),
-      vertex: null
+      vertex: null,
+      showRecommendedVertex: false
     };
     this.handleClick = this.handleClick.bind(this);
     this.changeVertexPosition = this.changeVertexPosition.bind(this);
@@ -53,9 +62,10 @@ class MatchCurve extends React.Component<Props, State> {
 
   componentDidMount() {}
   handleClick() {
-    const { path } = this.props;
+    const { path, getRecommended, index } = this.props;
     const vertex = extractVertex(path);
-    this.setState({ vertex });
+    this.setState({ vertex, showRecommendedVertex: true });
+    getRecommended(index);
   }
 
   handleMouseEnter() {
@@ -78,8 +88,8 @@ class MatchCurve extends React.Component<Props, State> {
   }
 
   render() {
-    const { path, curSelectedIndex, index } = this.props;
-    const { pathGen, vertex } = this.state;
+    const { path, curSelectedIndex, index, recommendedVertex } = this.props;
+    const { pathGen, vertex, showRecommendedVertex } = this.state;
     const VertexOnPath = extractVertex(path);
     const style = {
       fill: matchColor,
@@ -97,6 +107,25 @@ class MatchCurve extends React.Component<Props, State> {
         />
       ) : null;
     const baseLine = getBaseLine(VertexOnPath, curSelectedIndex, index);
+
+    let drawRecommendedVertex;
+    if (recommendedVertex && showRecommendedVertex) {
+      drawRecommendedVertex = recommendedVertex.map(e => {
+        return (
+          <circle
+            key={v4()}
+            cx={e[0]}
+            cy={e[1]}
+            r={vertexRadius}
+            style={{
+              fill: "red",
+              stroke: "red",
+              fillOpacity: vertexFillOpacity
+            }}
+          />
+        );
+      });
+    }
     return (
       <React.Fragment>
         <path
@@ -108,6 +137,7 @@ class MatchCurve extends React.Component<Props, State> {
         />
         {drawVertex}
         {baseLine}
+        {drawRecommendedVertex}
       </React.Fragment>
     );
   }

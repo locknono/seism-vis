@@ -14,7 +14,7 @@ import { changeSvgSize } from "../action/changeWellMatchSvg";
 import * as d3 from "d3";
 import Tracker from "../API/tracking";
 import WellAttr from "./WellAttr";
-import Uncertainty from "../API/uncertainty";
+import Uncertainty, { getRecommendedVertex } from "../API/uncertainty";
 import {
   getSize,
   getWellMatchPath,
@@ -30,7 +30,8 @@ import {
   WellAttrData,
   AllMatchCurve,
   AllDiff,
-  CurSelectedIndex
+  CurSelectedIndex,
+  VertexType
 } from "src/ts/Type";
 import { diff } from "../API/wellAttrDiff";
 const mapStateToProps = (state: any, ownProps?: any) => {
@@ -134,6 +135,7 @@ interface Props {
 interface State {
   colorScale: any;
   pathGen: any;
+  recommendedVertex: VertexType | undefined;
 }
 
 class WellMatch extends React.Component<Props, State> {
@@ -145,13 +147,15 @@ class WellMatch extends React.Component<Props, State> {
       pathGen: d3
         .line()
         .x(d => d[0])
-        .y(d => d[1])
+        .y(d => d[1]),
+      recommendedVertex: undefined
       //.curve(d3.curveCardinal)
     };
     this.drawMatch = this.drawMatch.bind(this);
     this.drawTrace = this.drawTrace.bind(this);
     this.calUncertainty = this.calUncertainty.bind(this);
     this.changeCurvePath = this.changeCurvePath.bind(this);
+    this.getRecommended = this.getRecommended.bind(this);
   }
 
   componentDidUpdate(prevProps: any) {
@@ -294,6 +298,17 @@ class WellMatch extends React.Component<Props, State> {
     newCurvePaths[index] = newPath;
     getWellCurve(newCurvePaths);
   }
+
+  getRecommended(index: number) {
+    const { curvePaths, allTrackVertex } = this.props;
+    const recommendedVertex = getRecommendedVertex(
+      allTrackVertex,
+      curvePaths,
+      index
+    );
+    console.log("recommendedVertex: ", recommendedVertex);
+    this.setState({ recommendedVertex });
+  }
   render() {
     const {
       width,
@@ -309,7 +324,7 @@ class WellMatch extends React.Component<Props, State> {
       getCurIndex,
       curSelectedIndex
     } = this.props;
-    const { colorScale, pathGen } = this.state;
+    const { colorScale, pathGen, recommendedVertex } = this.state;
     let curves = null;
     if (curvePaths) {
       curves = curvePaths.map((e: any, i: number) => {
@@ -321,6 +336,8 @@ class WellMatch extends React.Component<Props, State> {
             changeCurvePath={this.changeCurvePath}
             curSelectedIndex={curSelectedIndex}
             getCurIndex={getCurIndex}
+            getRecommended={this.getRecommended}
+            recommendedVertex={recommendedVertex}
           />
         );
       });
