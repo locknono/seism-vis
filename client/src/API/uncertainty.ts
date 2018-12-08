@@ -22,39 +22,46 @@ export default class Uncertainty {
 
   cal(
     trackVertex: AllVertices,
-    curvePaths: any,
+    curvePaths: AllMatchCurve,
     width: number,
     paddingRatio: number,
     height: number
   ) {
     const matchVertex = extractMatchVertex(curvePaths);
-
+    const trackDepthList = getTrackDepthList(trackVertex);
     let ucList: number[] = [];
+    const leftMaps = [];
+    const rightMaps = [];
     for (let i = 0; i < matchVertex.length; i++) {
-      let curTrackUc: number = 0;
-      for (let j = 0; j < trackVertex.length; j++) {
-        if (
-          //match is totally inside the track
-          matchVertex[i][0][1] >= trackVertex[j][0][1] &&
-          matchVertex[i][1][1] <= trackVertex[j][1][1] &&
-          matchVertex[i][2][1] >= trackVertex[j][2][1] &&
-          matchVertex[i][3][1] <= trackVertex[j][3][1]
-        ) {
-          curTrackUc = 0;
-          break;
-        }
-        if (
-          //cross
-          (matchVertex[i][1][1] > trackVertex[j][0][1] &&
-            matchVertex[i][2][1] < trackVertex[j][3][1]) ||
-          (matchVertex[i][0][1] < trackVertex[j][1][1] &&
-            matchVertex[i][3][1] > trackVertex[j][2][1])
-        ) {
-          curTrackUc += 1;
+      const curMatch = matchVertex[i];
+      leftMaps.push(getMatchVertexPosition(curMatch, trackVertex, 0, 1));
+      rightMaps.push(getMatchVertexPosition(curMatch, trackVertex, 2, 3));
+    }
+
+    for (let i = 0; i < leftMaps.length; i++) {
+      const leftMap = leftMaps[i];
+      const rightMap = rightMaps[i];
+      let curMatchUC = 0;
+      convertMapValueFromDepthToPortion(leftMap);
+      convertMapValueFromDepthToPortion(rightMap);
+      const allKey = findAllKey(leftMap, rightMap);
+      console.log("leftMap: ", leftMap);
+      console.log("rightMap: ", rightMap);
+      for (let key of allKey) {
+        let leftValue = leftMap.get(key);
+        let rightValue = rightMap.get(key);
+        if (leftValue && rightValue) {
+          curMatchUC += Math.abs(leftValue - rightValue);
+        } else if (leftValue && !rightValue) {
+          curMatchUC += leftValue;
+        } else if (rightValue && !leftValue) {
+          curMatchUC += rightValue;
         }
       }
-      ucList.push(curTrackUc);
+      ucList.push(curMatchUC);
     }
+    console.log("ucList: ", ucList);
+
     return {
       path: this.getUcPath(matchVertex, ucList, width, paddingRatio, height),
       ucList
@@ -141,4 +148,94 @@ export default class Uncertainty {
   }
 
   autoAjustMatchCurve() {}
+}
+
+export function getMatchVertexPosition(
+  matchVertex: VertexType,
+  trackVertex: AllVertices,
+  t1: number,
+  t2: number
+) {
+  let startIndex = 0;
+  let endIndex = 0;
+  let startDepth = 0;
+  let endDepth = 0;
+  for (let j = 0; j < trackVertex.length; j++) {
+    if (
+      matchVertex[t1][1] > trackVertex[j][t1][1] &&
+      matchVertex[t1][1] < trackVertex[j][t2][1]
+    ) {
+      startIndex = j;
+      startDepth = trackVertex[j][t2][1] - matchVertex[t1][1];
+    }
+    if (
+      matchVertex[t2][1] > trackVertex[j][t1][1] &&
+      matchVertex[t2][1] < trackVertex[j][t2][1]
+    ) {
+      endIndex = j;
+      endDepth = matchVertex[t2][1] - trackVertex[j][t1][1];
+    }
+    if (startIndex === 0 || endIndex === 0) {
+      if (
+        matchVertex[t1][1] > trackVertex[j][t2][1] &&
+        matchVertex[t1][1] < trackVertex[j + 1][t1][1]
+      ) {
+        startIndex = j;
+        endIndex = j;
+        startDepth = matchVertex[t1][1] - trackVertex[j][t2][1];
+        endDepth = matchVertex[t1][1] - trackVertex[j][t2][1];
+      }
+    }
+  }
+  const map: Map<number, number> = new Map();
+  if (endIndex === startIndex + 1) {
+    map.set(startIndex, startDepth);
+    map.set(endIndex, endDepth);
+  } else {
+    map.set(startIndex, startDepth);
+    for (let s = startIndex + 1; s <= endIndex - 1 - 1; s++) {
+      map.set(s, trackVertex[s][t2][1] - trackVertex[s][t1][1]);
+    }
+    map.set(endIndex, endDepth);
+  }
+  return map;
+}
+
+export function getTrackDepthList(trackVertex: AllVertices) {
+  const depthList = trackVertex.map(e => {
+    return [e[1][1] - e[0][1], e[2][1] - e[1][1]];
+  });
+  return depthList as [number, number][];
+}
+
+export function convertMapValueFromDepthToPortion(map: Map<number, number>) {
+  let valueSum = 0;
+  for (let [key, value] of map) {
+    valueSum += value;
+  }
+  for (let [key, value] of map) {
+    map.set(key, value / valueSum);
+  }
+}
+
+export function AddLayerKeyWithValueZero(
+  map: Map<number, number>,
+  trackCount: number
+) {
+  for (let i = 0; i < trackCount; i++) {
+    if (!map.get(i)) {
+      map.set(i, 0);
+    }
+  }
+}
+
+export function findAllKey(m1: Map<number, number>, m2: Map<number, number>) {
+  const set = new Set();
+  for (let [k, v] of m1) {
+    set.add(k);
+  }
+  for (let [k, v] of m2) {
+    set.add(k);
+  }
+  return Array.from(set);
 }

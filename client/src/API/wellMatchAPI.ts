@@ -147,6 +147,10 @@ export function api_getTracePath(
 
   trakcer.cutOffAllTracks(allTracks, allPeaks.length);
 
+  allTracks.sort((a, b) => {
+    return a[0].top - b[0].top;
+  });
+
   const allTrackVertex: AllVertices = [];
   allTracks.map((e: any, i: number) => {
     allTrackVertex.push(trakcer.getFourVertex(trackXStart, trackXEnd, e));

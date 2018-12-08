@@ -97,7 +97,7 @@ export default function wellReducer(
       };
     case GET_WELL_CURVE:
       const curvePaths = [...sortMatchCurve(action.wellCurve)];
-      console.log("curvePaths: ", curvePaths);
+
       return {
         ...state,
         curvePaths

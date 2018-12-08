@@ -312,8 +312,8 @@ export default class Tracker {
   getFourVertex(xStart: number, xEnd: number, track: Track): VertexType {
     return [
       [xStart, track[0].top],
-      [xStart, track[0].top],
-      [xStart, track[track.length - 1].top],
+      [xStart, track[0].bottom],
+      [xEnd, track[track.length - 1].top],
       [xEnd, track[track.length - 1].bottom]
     ];
   }

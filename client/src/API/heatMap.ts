@@ -18,7 +18,7 @@ import {
   wellMatchSvgPaddingRatio as paddingRatio
 } from "../reducer/globalVarReducer";
 import Uncertainty from "../API/uncertainty";
-import { AllWells, Well, CoupleWell } from "../ts/Type";
+import { AllWells, Well, CoupleWell, AllMatchCurve } from "../ts/Type";
 
 export function getTwoWellUc(well1: Well, well2: Well, allWells: AllWells) {
   const idStore: CoupleWell = [well1.id, well2.id];
@@ -47,7 +47,7 @@ export function getTwoWellUc(well1: Well, well2: Well, allWells: AllWells) {
       matrixData,
       wellIDNearLineIndex,
       scale
-    ).then(curvePaths => {
+    ).then((curvePaths: AllMatchCurve) => {
       curvePaths;
       const { allTrackVertex, allTracks, paths } = api_getTracePath(
         width,
