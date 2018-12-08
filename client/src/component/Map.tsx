@@ -35,6 +35,7 @@ import {
 } from "../API/heatMap";
 import { MatrixData, AllWells, WellAttrData } from "../ts/Type";
 import { diff } from "../API/wellAttrDiff";
+import { ViewHeading } from "./ViewHeading";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const scaler = state.figReducer.scaler;
   const {
@@ -332,6 +333,16 @@ class Map extends React.Component<Props, object> {
           circlesLayer.addLayer(circle);
           allCircles.push(circle);
         });
+        const blob = new Blob([JSON.stringify(allWells)], {
+          type: "text/plain"
+        });
+        const fileName = `allWells.json`;
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = fileName;
+        link.click();
+        window.URL.revokeObjectURL(link.href);
+
         self.UNSAFE_AllCircles = allCircles;
         getAllWells(allWells);
         //storeUcData(allWells);
@@ -352,11 +363,10 @@ class Map extends React.Component<Props, object> {
   render() {
     return (
       <React.Fragment>
-        <div
-          id="map"
-          ref={this.mapRef}
-          className="leaflet-map panel panel-default"
-        />
+        <div className="panel panel-primary map-container">
+          <ViewHeading height={22} title={`Map View`} />
+          <div id="map" ref={this.mapRef} className="panel panel-default" />
+        </div>
       </React.Fragment>
     );
   }

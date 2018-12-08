@@ -10,7 +10,6 @@ import {
   vertexRadius,
   vertexFillOpacity
 } from "../constraint";
-import { getRecommendedVertex } from "../API/uncertainty";
 import { v4 } from "uuid";
 
 export function extractVertexIndex(path: MatchCurvePath): number[] {

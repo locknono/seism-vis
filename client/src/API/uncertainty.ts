@@ -126,7 +126,7 @@ export default class Uncertainty {
       if (left === false) {
         const topPoint = [startX, track[2][1]];
         const midPoint = [
-          startX + Math.pow(5, value),
+          startX + Math.pow(7, value),
           (track[2][1] + track[3][1]) / 2
         ];
         const bottomPoint = [startX, track[3][1]];
@@ -273,18 +273,41 @@ export function getRecommendedVertex(
   let path: MatchCurvePath = [];
   if (curLeftMap.size === 1 && curRightMap.size > 1) {
     for (let [key, value] of curLeftMap) {
+      console.log(`第1种情况`);
       path.push(matchVertex[index][0]);
       path.push(matchVertex[index][1]);
       path.push(trackVertex[key][2]);
       path.push(trackVertex[key][3]);
     }
-  } else if (curRightMap.size === 1 && curLeftMap.size !== 1) {
+  } else if (curRightMap.size === 1 && curLeftMap.size > 1) {
     for (let [key, value] of curRightMap) {
+      console.log(`第2种情况`);
       path.push(trackVertex[key][0]);
       path.push(trackVertex[key][1]);
       path.push(matchVertex[index][2]);
       path.push(matchVertex[index][3]);
     }
+  } else if (curLeftMap.size === 1 && curRightMap.size === 1) {
+    console.log(`第3种情况`);
+    let [leftKey] = [...curLeftMap.keys()];
+    let [rightKey] = [...curRightMap.keys()];
+    if (leftKey !== rightKey) {
+      const leftValue = curLeftMap.get(leftKey);
+      const rightValue = curLeftMap.get(rightKey);
+      if ((leftValue as number) < (rightValue as number)) {
+        path.push(matchVertex[index][0]);
+        path.push(matchVertex[index][1]);
+        path.push(trackVertex[leftKey][2]);
+        path.push(trackVertex[leftKey][3]);
+      } else {
+        path.push(trackVertex[rightKey][0]);
+        path.push(trackVertex[rightKey][1]);
+        path.push(matchVertex[index][2]);
+        path.push(matchVertex[index][3]);
+      }
+    }
+  } else {
+    console.log(`第4种情况`);
   }
   if (path.length === 0) {
     return undefined;

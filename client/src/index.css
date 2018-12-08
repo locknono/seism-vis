@@ -46,26 +46,20 @@ code {
   display: flex;
 }
 
-.matrix-selected-line-img {
-}
-
 .matrix-polyline {
   padding: 0;
   height: 300px;
   width: 1012px;
 }
 
-.polyline-svg {
-}
-
-.leaflet-map {
-  width: 400px;
-  height: 370px;
+.map-container {
+  border-color: rgb(221, 221, 221);
+  height: 700px;
 }
 
 #map {
   width: 600px;
-  height: 700px;
+  height: 678px;
 }
 
 .col-group {

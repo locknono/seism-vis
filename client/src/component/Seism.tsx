@@ -29,7 +29,6 @@ const Seism = function(props: Props) {
           <AttrDiff allDiff={allDiff} curSelectedIndex={curSelectedIndex} />
         </div>
       </div>
-      <ControlPanel />
     </React.Fragment>
   );
 };
