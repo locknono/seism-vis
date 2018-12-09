@@ -51,7 +51,7 @@ function getDivisionIndex(start: number, end: number, k: number) {
   return indices;
 }
 
-function compareInOneLayer(
+export function compareInOneLayer(
   depthList: [number, number, number, number],
   w1: SingleWellAttrData,
   w2: SingleWellAttrData
@@ -95,8 +95,7 @@ function normalize(w1: SingleWellAttrData, w2: SingleWellAttrData) {
   const v1 = w1.value;
   const v2 = w2.value;
   const [minList, maxList] = getMinMaxList(v1, v2);
-  console.log("maxList: ", maxList);
-  console.log("minList: ", minList);
+
   const scales = minList.map((e, i: number) => {
     return d3
       .scaleLinear()

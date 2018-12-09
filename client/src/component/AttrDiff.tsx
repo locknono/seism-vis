@@ -148,11 +148,9 @@ function getBaseLine(
         d={path.toString()}
         style={style}
         onMouseEnter={function() {
-          console.log(i);
           getCurIndex(i);
         }}
         onMouseLeave={function() {
-          console.log(`leave`);
           getCurIndex(undefined);
         }}
       />

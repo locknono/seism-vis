@@ -2,10 +2,15 @@ import {
   VertexType,
   MatchCurvePath,
   AllMatchCurve,
-  AllVertices
+  AllVertices,
+  WellAttrData
 } from "../ts/Type";
 import MatchCurve from "src/component/MatchCurve";
-
+import { compareInOneLayer } from "../API/wellAttrDiff";
+import {
+  reverseScale,
+  initialWellMatchDepthScale
+} from "../reducer/globalVarReducer";
 export function extractPathVertex(e: MatchCurvePath): VertexType {
   return [
     e[0],
@@ -310,4 +315,81 @@ export function getRecommendedVertex(
   return path as VertexType;
 }
 
-export function getRecommendedVertexByAttrDiff() {}
+export function getRecommendedVertexByAttrDiff(
+  trackVertex: AllVertices,
+  curvePaths: AllMatchCurve,
+  index: number,
+  wellAttrData: WellAttrData
+): VertexType {
+  const matchVertex = extractMatchVertex(curvePaths);
+  const [well1, well2] = wellAttrData;
+  const depthList = getDepthListBwtweenTwoTrack(index, matchVertex) as [
+    number,
+    number,
+    number,
+    number
+  ];
+
+  const xStart = curvePaths[index][0][0];
+  const xEnd = curvePaths[index][2][0];
+  const step = (depthList[1] - depthList[0]) / 20;
+
+  const windowDepth = [];
+  let recordWindowDepth: number[] = [];
+  let minDiffSum = 999;
+  for (let i = depthList[0]; i < depthList[1] - step; i += step) {
+    for (let j = depthList[2]; j < depthList[3] - step; j += step) {
+      windowDepth.push(i, i + step, j, j + step);
+      const diff = compareInOneLayer(
+        windowDepth as [number, number, number, number],
+        well1,
+        well2
+      );
+      const diffSum = diff.reduce((prev, cur) => prev + cur);
+      if (diffSum < minDiffSum) {
+        minDiffSum = diffSum;
+        recordWindowDepth = [i, i + step, j, j + step];
+      }
+    }
+  }
+  const vertex: VertexType = [
+    [xStart, initialWellMatchDepthScale(recordWindowDepth[0])],
+    [xStart, initialWellMatchDepthScale(recordWindowDepth[1])],
+    [xEnd, initialWellMatchDepthScale(recordWindowDepth[2])],
+    [xEnd, initialWellMatchDepthScale(recordWindowDepth[3])]
+  ];
+  console.log("vertex: ", vertex);
+  console.log("minDiffSum: ", minDiffSum);
+  console.log("recordWindowDepth: ", recordWindowDepth);
+  return vertex;
+}
+
+export function getDepthListBwtweenTwoTrack(
+  index: number,
+  matchVertex: AllVertices
+) {
+  const leftDepthScope = [
+    matchVertex[index - 1] !== undefined
+      ? matchVertex[index - 1][1][1]
+      : matchVertex[index][0][1] - 20,
+    matchVertex[index + 1] !== undefined
+      ? matchVertex[index + 1][0][1]
+      : matchVertex[index][1][1] + 20
+  ];
+  const rightDepthScope = [
+    matchVertex[index - 1] !== undefined
+      ? matchVertex[index - 1][3][1]
+      : matchVertex[index][2][1] - 20,
+    matchVertex[index + 1] !== undefined
+      ? matchVertex[index + 1][2][1]
+      : matchVertex[index][3][1] + 20
+  ];
+  const depthList = [];
+  for (let depth of leftDepthScope) {
+    depthList.push(reverseScale(depth));
+  }
+  for (let depth of rightDepthScope) {
+    depthList.push(reverseScale(depth));
+  }
+  return depthList;
+}

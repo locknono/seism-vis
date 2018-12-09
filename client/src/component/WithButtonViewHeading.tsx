@@ -29,7 +29,11 @@ const WithButtonViewHeading = (props: Props) => {
         {title}
       </Panel.Title>
       <div className="button-div">
-        <span className="oi oi-zoom-in icon-style" style={{ right: `1%` }} />
+        <span
+          className=" oi oi-fullscreen-enter icon-style"
+          style={{ right: `1%` }}
+        />
+        {/*  <span className="oi oi-zoom-in icon-style" style={{ right: `1%` }} /> */}
       </div>
     </Panel.Heading>
   );

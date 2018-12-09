@@ -14,7 +14,10 @@ import { changeSvgSize } from "../action/changeWellMatchSvg";
 import * as d3 from "d3";
 import Tracker from "../API/tracking";
 import WellAttr from "./WellAttr";
-import Uncertainty, { getRecommendedVertex } from "../API/uncertainty";
+import Uncertainty, {
+  getRecommendedVertex,
+  getRecommendedVertexByAttrDiff
+} from "../API/uncertainty";
 import {
   getSize,
   getWellMatchPath,
@@ -301,14 +304,20 @@ class WellMatch extends React.Component<Props, State> {
   }
 
   getRecommended(index: number) {
-    const { curvePaths, allTrackVertex } = this.props;
+    const { curvePaths, allTrackVertex, wellAttrData } = this.props;
     const recommendedVertex = getRecommendedVertex(
       allTrackVertex,
       curvePaths,
       index
     );
+    const recVertexByDiff = getRecommendedVertexByAttrDiff(
+      allTrackVertex,
+      curvePaths,
+      index,
+      wellAttrData
+    );
 
-    this.setState({ recommendedVertex });
+    this.setState({ recommendedVertex: recVertexByDiff });
   }
   render() {
     const {

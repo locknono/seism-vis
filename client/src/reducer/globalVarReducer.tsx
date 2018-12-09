@@ -37,7 +37,7 @@ export const depthList = getDepthList();
 export const wellMinDepth = depthList[0]; //1067.1851940144454
 export const wellMaxDepth = depthList[depthList.length - 1 - 2]; //1443.539796876678
 
-const initialWellMatchDepthScale = d3
+export const initialWellMatchDepthScale = d3
   .scaleLinear()
   .domain([wellMinDepth, wellMaxDepth])
   .range([wellMatchSvgHeight * 0.05, wellMatchSvgHeight * (1 - 0.05)]);
