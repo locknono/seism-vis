@@ -309,3 +309,5 @@ export function getRecommendedVertex(
   }
   return path as VertexType;
 }
+
+export function getRecommendedVertexByAttrDiff() {}
