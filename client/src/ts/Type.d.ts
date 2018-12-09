@@ -64,6 +64,10 @@ export interface Record {
   diff: OneLayerDiff;
   diffSum: number;
   vertex: VertexType;
+  matchVertex: VertexType;
 }
 
 export type AllRecords = Record[];
+
+/**0 for left*/
+export type Direction = 0 | 1;

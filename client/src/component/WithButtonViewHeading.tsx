@@ -2,6 +2,7 @@ import * as React from "react";
 import { Panel, Button } from "react-bootstrap";
 import { ViewHeading } from "./ViewHeading";
 import { colorScale } from "../constraint";
+import { v4 } from "uuid";
 interface Props {
   height: number;
   title: string;
@@ -41,11 +42,17 @@ class WithButtonViewHeading extends React.Component<Props> {
             style={{ right: `1%` }}
           />
           {["SP", "COND", "ML1", "ML2", "AC"].map((e, i) => {
-            const margin = i === 4 ? `100px` : `10px`;
+            const margin = i === 0 ? `100px` : `10px`;
             return (
-              <React.Fragment>
-                <span style={{ float: "right", marginRight: margin }}>{e}</span>
+              <React.Fragment key={v4()}>
+                <span
+                  key={v4()}
+                  style={{ float: "right", marginRight: margin }}
+                >
+                  {e}
+                </span>
                 <div
+                  key={v4()}
                   className="attr-legend"
                   style={{ backgroundColor: colorScale(i.toString()) }}
                 />

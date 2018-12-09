@@ -1,6 +1,12 @@
 import * as React from "react";
 import { ViewHeading } from "./ViewHeading";
-import { AllDiff, CurSelectedIndex, AllRecords } from "src/ts/Type";
+import {
+  AllDiff,
+  CurSelectedIndex,
+  AllRecords,
+  VertexType,
+  Direction
+} from "src/ts/Type";
 import * as d3 from "d3";
 import { v4 } from "uuid";
 import {
@@ -22,11 +28,13 @@ interface Props {
 const svgWidth = matchViewWidth,
   svgHeight = 178,
   leftPaddingRatio = 0.05,
-  topPaddingRatio = 0.1;
+  topPaddingRatio = 0.05;
 const drawSvgWidth = (svgWidth * (1 - 2 * leftPaddingRatio)) / 2;
 const drawSvgHeight = svgHeight * (1 - 2 * topPaddingRatio);
 const horizontalPad = drawSvgWidth / 5;
 const topPadding = topPaddingRatio * svgHeight;
+const padBetweenTwoGraph = 20;
+const directionRectLength = 10;
 
 export default function AttrDiff(props: Props) {
   const {
@@ -40,6 +48,7 @@ export default function AttrDiff(props: Props) {
   let baseLine;
   let topRecordsDOM;
   let linkLine;
+  let directionDOM;
   if (allDiff) {
     const verticalPad = drawSvgHeight / allDiff.length;
     const barHeight = verticalPad * 0.8;
@@ -57,13 +66,17 @@ export default function AttrDiff(props: Props) {
     );
     if (normalizedAllDiff) {
       if (topRecords && curSelectedIndex) {
-        const { rects, yList } = getTopRecordsDom(
+        const { rects, yList } = getTopRecordsDOM(
           topRecords,
-          svgWidth / 2 + 20,
+          svgWidth / 2 + 30,
           getRecVertex,
           allDiff
         );
         topRecordsDOM = rects;
+
+        const directions = getLeftRightLegend(topRecords);
+        directionDOM = getDerectionDOM(svgWidth / 2 + 20, yList, directions);
+
         linkLine = getLinkLine(
           curSelectedIndex,
           [
@@ -79,7 +92,10 @@ export default function AttrDiff(props: Props) {
         const y = topPadding + verticalPad * 0.1 + verticalPad * i;
         return e.map((v, j) => {
           const width = scales[j](v);
-          const x = svgWidth * leftPaddingRatio + j * horizontalPad;
+          const x =
+            svgWidth * leftPaddingRatio +
+            j * horizontalPad -
+            padBetweenTwoGraph;
           return (
             <rect
               key={v4()}
@@ -106,6 +122,7 @@ export default function AttrDiff(props: Props) {
         {rects}
         {topRecordsDOM}
         {linkLine}
+        {directionDOM}
       </svg>
     </div>
   );
@@ -175,11 +192,20 @@ function getBaseLine(
     };
     if (i === curSelectedIndex) style.fill = brighterMatchColor;
     const path = d3.path();
-    path.moveTo(xStart, topPadding + verticalPad * i);
-    path.lineTo(svgWidth / 2, topPadding + verticalPad * i);
-    path.lineTo(svgWidth / 2, topPadding + verticalPad * (i + 1));
-    path.lineTo(xStart, topPadding + verticalPad * (i + 1));
-    path.lineTo(xStart, topPadding + verticalPad * i);
+    path.moveTo(xStart - padBetweenTwoGraph, topPadding + verticalPad * i);
+    path.lineTo(
+      svgWidth / 2 - padBetweenTwoGraph,
+      topPadding + verticalPad * i
+    );
+    path.lineTo(
+      svgWidth / 2 - padBetweenTwoGraph,
+      topPadding + verticalPad * (i + 1)
+    );
+    path.lineTo(
+      xStart - padBetweenTwoGraph,
+      topPadding + verticalPad * (i + 1)
+    );
+    path.lineTo(xStart - padBetweenTwoGraph, topPadding + verticalPad * i);
     lines.push(
       <path
         className="diff-baseline"
@@ -198,13 +224,13 @@ function getBaseLine(
   return lines;
 }
 
-function getTopRecordsDom(
+function getTopRecordsDOM(
   topRecords: AllRecords,
   xStart: number,
   getRecVertex: any,
   allDiff: AllDiff
 ) {
-  const horizontalPad = drawSvgWidth / 5;
+  const horizontalPad = (drawSvgWidth - 20) / 5;
   const topPadding = topPaddingRatio * svgHeight;
   const verticalPad = drawSvgHeight / topRecords.length;
   const barHeight = verticalPad * 0.8;
@@ -214,7 +240,7 @@ function getTopRecordsDom(
   const rects = [];
   const yList = [];
   for (let i = 0; i < 5; i++) {
-    let x = xStart + i * horizontalPad;
+    let x = xStart + i * horizontalPad + padBetweenTwoGraph;
     for (let j = 0; j < topRecords.length; j++) {
       if (!leftScales) break;
       const width = leftScales[i](topRecords[j].diff[i]);
@@ -270,7 +296,6 @@ function getLinkLine(
   x: number,
   yList: number[]
 ) {
-  console.log("index: ", index);
   const paths = [];
   const style = {
     stroke: "B2B5FF",
@@ -281,10 +306,50 @@ function getLinkLine(
     const path = d3.path();
     let p2 = [x, yList[i]];
     let [ox, oy] = original;
+    ox = ox - padBetweenTwoGraph;
     let c = [(ox + x) / 2, oy];
     path.moveTo(ox, oy);
     path.quadraticCurveTo(c[0], c[1], p2[0], p2[1]);
     paths.push(<path d={path.toString()} key={i} style={style} />);
   }
   return paths;
+}
+
+function getLeftRightLegend(topRecords: AllRecords): Direction[] {
+  const directions = []
+  for (let i = 0; i < topRecords.length; i++) {
+    const mv = topRecords[i].matchVertex;
+    const tv = topRecords[i].vertex;
+    if (mv[0][1] === tv[0][1] && mv[1][1] === tv[1][1]) {
+      directions.push(0);
+    } else {
+      directions.push(1);
+    }
+  }
+  return directions as Direction[];
+}
+
+function getDerectionDOM(
+  xStart: number,
+  yList: number[],
+  directions: Direction[]
+) {
+  const rects = [];
+  const rectHeight = yList[1] - yList[0];
+  const verticalPad = drawSvgHeight / directions.length;
+
+  for (let i = 0; i < directions.length; i++) {
+    rects.push(
+      <rect
+        key={i}
+        x={directions[i] === 0 ? xStart : xStart + directionRectLength}
+        y={yList[i] - (verticalPad * 0.8) / 2}
+        width={directionRectLength}
+        height={rectHeight}
+        fill={directions[i] === 0 ? "grey" : "black"}
+        rx="2px"
+      />
+    );
+  }
+  return rects;
 }

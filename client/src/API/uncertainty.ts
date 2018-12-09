@@ -342,7 +342,7 @@ export function getRecommendedVertexByAttrDiffRecords(
     );
     const diffSum = diff.reduce((prev, cur) => prev + cur);
     const vertex = getVertexWithWindowDepthList(xStart, xEnd, window);
-    const record = { diffSum, diff, vertex };
+    const record = { diffSum, diff, vertex, matchVertex: matchVertex[index] };
     records.push(record);
   }
   records.sort((a, b) => a.diffSum - b.diffSum);

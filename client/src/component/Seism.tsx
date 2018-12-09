@@ -9,7 +9,7 @@ import { connect } from "react-redux";
 import { AllDiff, CurSelectedIndex, AllRecords } from "src/ts/Type";
 import { getCurIndex, getRecVertex } from "../action/changeWell";
 const mapStateToProps = (state: any, ownProps?: any) => {
-  const { allDiff, curSelectedIndex, topRecords } = state.wellReducer;
+  const { allDiff, curSelectedIndex, topRecords, } = state.wellReducer;
   return { allDiff, curSelectedIndex, topRecords };
 };
 

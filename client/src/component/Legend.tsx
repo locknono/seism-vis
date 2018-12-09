@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as d3 from "d3";
+import { v4 } from "uuid";
 const Legend = () => {
   const xStart = 20;
   const yStart = 8;
@@ -16,7 +17,9 @@ const Legend = () => {
       yStart + yPad
     );
     path.lineTo(xStart + i * pad, yStart);
-    peaks.push(<path d={path.toString()} style={{ fill: `black` }} />);
+    peaks.push(
+      <path key={v4()} d={path.toString()} style={{ fill: `black` }} />
+    );
   }
   const track = (
     <line
