@@ -12,6 +12,7 @@ import {
 interface Props {
   allDiff: AllDiff;
   curSelectedIndex: CurSelectedIndex;
+  getCurIndex: any;
 }
 
 const svgWidth = matchViewWidth,
@@ -24,7 +25,7 @@ const horizontalPad = drawSvgWidth / 5;
 const topPadding = topPaddingRatio * svgHeight;
 
 export default function AttrDiff(props: Props) {
-  const { allDiff, curSelectedIndex } = props;
+  const { allDiff, curSelectedIndex, getCurIndex } = props;
   let rects;
   let baseLine;
   if (allDiff) {
@@ -35,7 +36,12 @@ export default function AttrDiff(props: Props) {
       number,
       number
     >[];
-    baseLine = getBaseLine(verticalPad, allDiff.length, curSelectedIndex);
+    baseLine = getBaseLine(
+      verticalPad,
+      allDiff.length,
+      curSelectedIndex,
+      getCurIndex
+    );
     if (normalizedAllDiff)
       rects = normalizedAllDiff.map((e, i) => {
         const y = topPadding + verticalPad * 0.1 + verticalPad * i;
@@ -118,7 +124,8 @@ function getMinMaxList(allDiff: AllDiff) {
 function getBaseLine(
   verticalPad: number,
   diffCount: number,
-  curSelectedIndex: CurSelectedIndex
+  curSelectedIndex: CurSelectedIndex,
+  getCurIndex: any
 ) {
   const lines = [];
   for (let i = 0; i < diffCount; i++) {
@@ -134,7 +141,22 @@ function getBaseLine(
     path.lineTo(svgWidth, topPadding + verticalPad * i);
     path.lineTo(svgWidth, topPadding + verticalPad * (i + 1));
     path.lineTo(0, topPadding + verticalPad * (i + 1));
-    lines.push(<path key={i} d={path.toString()} style={style} />);
+    lines.push(
+      <path
+        className="diff-baseline"
+        key={i}
+        d={path.toString()}
+        style={style}
+        onMouseEnter={function() {
+          console.log(i);
+          getCurIndex(i);
+        }}
+        onMouseLeave={function() {
+          console.log(`leave`);
+          getCurIndex(undefined);
+        }}
+      />
+    );
   }
   return lines;
 }

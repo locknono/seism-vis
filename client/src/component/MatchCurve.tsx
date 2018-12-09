@@ -69,7 +69,6 @@ class MatchCurve extends React.Component<Props, State> {
 
   handleMouseEnter() {
     const { index, getCurIndex } = this.props;
-    console.log("index: ", index);
     getCurIndex(index);
   }
 

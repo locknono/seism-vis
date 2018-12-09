@@ -185,3 +185,7 @@ code {
   position: absolute;
   top: 4px;
 }
+
+.diff-baseline {
+  pointer-events: visible;
+}
