@@ -17,7 +17,7 @@ interface Props {
 }
 
 const svgWidth = matchViewWidth,
-  svgHeight = 200,
+  svgHeight = 178,
   leftPaddingRatio = 0.1,
   topPaddingRatio = 0.1;
 const drawSvgWidth = (svgWidth * (1 - 2 * leftPaddingRatio)) / 2;
@@ -56,10 +56,7 @@ export default function AttrDiff(props: Props) {
           [
             svgWidth * leftPaddingRatio +
               normalizedAllDiff[0].length * horizontalPad,
-            topPadding +
-              verticalPad * 0.1 +
-              verticalPad * curSelectedIndex +
-              (verticalPad * 0.8) / 2
+            topPadding + verticalPad * curSelectedIndex + verticalPad / 2
           ],
           svgWidth / 2 + 20,
           yList
@@ -164,8 +161,8 @@ function getBaseLine(
     if (i === curSelectedIndex) style.fill = brighterMatchColor;
     const path = d3.path();
     path.moveTo(0, topPadding + verticalPad * i);
-    path.lineTo(svgWidth, topPadding + verticalPad * i);
-    path.lineTo(svgWidth, topPadding + verticalPad * (i + 1));
+    path.lineTo(svgWidth / 2, topPadding + verticalPad * i);
+    path.lineTo(svgWidth / 2, topPadding + verticalPad * (i + 1));
     path.lineTo(0, topPadding + verticalPad * (i + 1));
     lines.push(
       <path
@@ -232,8 +229,8 @@ function getTopScales(topRecords: AllRecords) {
 function getLinkLine(original: [number, number], x: number, yList: number[]) {
   const paths = [];
   const style = {
-    stroke: "black",
-    strokeWidth: 1
+    stroke: "B2B5FF",
+    strokeWidth: 1.4
   };
   for (let i = 0; i < yList.length; i++) {
     const path = d3.path();
