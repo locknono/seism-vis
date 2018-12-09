@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as d3 from "d3";
-
+import { colorScale } from "../constraint";
 interface Props {}
 interface State {}
 const minList = [
@@ -13,7 +13,6 @@ const minList = [
 const maxList = [662.546 / 4, 999.25 / 4, 499.048 / 256, 999.25 / 256, 3490.68];
 const minDepth = 1067.18;
 
-const colorScale = d3.scaleOrdinal(d3.schemeSet1);
 interface Props {
   id: string;
   values: any[];

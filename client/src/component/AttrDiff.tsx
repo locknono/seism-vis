@@ -7,7 +7,8 @@ import {
   matchViewWidth,
   rectColor,
   brighterMatchColor,
-  matchColor
+  matchColor,
+  colorScale
 } from "../constraint";
 import { getRecVertex } from "../action/changeWell";
 interface Props {
@@ -86,7 +87,7 @@ export default function AttrDiff(props: Props) {
               y={y}
               width={width}
               height={barHeight}
-              fill={rectColor}
+              fill={colorScale(j.toString())}
               rx="2px"
             />
           );
@@ -225,7 +226,7 @@ function getTopRecordsDom(
           y={y}
           width={width}
           height={barHeight}
-          fill={rectColor}
+          fill={colorScale(i.toString())}
           rx="2px"
           onMouseEnter={function() {
             getRecVertex(topRecords[j].vertex);
