@@ -37,7 +37,7 @@ function getLayerDepth(matchCurve: AllMatchCurve) {
   return allDepth;
 }
 
-function getIndexWithDepth(depth: number) {
+function getIndexWithMeterDepth(depth: number) {
   const initDepth = 1000,
     pad = 0.125;
   return Math.floor((depth - initDepth) / pad);
@@ -57,9 +57,9 @@ export function compareInOneLayer(
   w2: SingleWellAttrData
 ): OneLayerDiff {
   const [normalizedV1, normalizedV2] = normalize(w1, w2);
-  const k = 100;
-  let realK = 100;
-  const indexList = depthList.map(e => getIndexWithDepth(e));
+  const k = 20;
+  let realK = 20;
+  const indexList = depthList.map(e => getIndexWithMeterDepth(e));
   const [l1, l2, r1, r2] = indexList;
   const v1 = normalizedV1;
   const v2 = normalizedV2;

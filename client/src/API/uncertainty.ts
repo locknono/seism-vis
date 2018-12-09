@@ -315,12 +315,14 @@ export function getRecommendedVertex(
   return path as VertexType;
 }
 
-export function getRecommendedVertexByAttrDiff(
+export function getRecommendedVertexByAttrDiffRecords(
   trackVertex: AllVertices,
   curvePaths: AllMatchCurve,
   index: number,
   wellAttrData: WellAttrData
-): VertexType {
+) {
+  const xStart = curvePaths[index][0][0];
+  const xEnd = curvePaths[index][2][0];
   const matchVertex = extractMatchVertex(curvePaths);
   const [well1, well2] = wellAttrData;
   const depthList = getDepthListBwtweenTwoTrack(index, matchVertex) as [
@@ -329,39 +331,36 @@ export function getRecommendedVertexByAttrDiff(
     number,
     number
   ];
-
-  const xStart = curvePaths[index][0][0];
-  const xEnd = curvePaths[index][2][0];
-  const step = (depthList[1] - depthList[0]) / 20;
-
-  const windowDepth = [];
-  let recordWindowDepth: number[] = [];
-  let minDiffSum = 999;
-  for (let i = depthList[0]; i < depthList[1] - step; i += step) {
-    for (let j = depthList[2]; j < depthList[3] - step; j += step) {
-      windowDepth.push(i, i + step, j, j + step);
-      const diff = compareInOneLayer(
-        windowDepth as [number, number, number, number],
-        well1,
-        well2
-      );
-      const diffSum = diff.reduce((prev, cur) => prev + cur);
-      if (diffSum < minDiffSum) {
-        minDiffSum = diffSum;
-        recordWindowDepth = [i, i + step, j, j + step];
-      }
-    }
+  const records = [];
+  const windowDepth = generateWindow(depthList, matchVertex, index);
+  for (let window of windowDepth) {
+    const diff = compareInOneLayer(
+      window as [number, number, number, number],
+      well1,
+      well2
+    );
+    const diffSum = diff.reduce((prev, cur) => prev + cur);
+    const vertex = getVertexWithWindowDepthList(xStart, xEnd, window);
+    const record = { diffSum, diff, vertex };
+    records.push(record);
   }
-  const vertex: VertexType = [
-    [xStart, initialWellMatchDepthScale(recordWindowDepth[0])],
-    [xStart, initialWellMatchDepthScale(recordWindowDepth[1])],
-    [xEnd, initialWellMatchDepthScale(recordWindowDepth[2])],
-    [xEnd, initialWellMatchDepthScale(recordWindowDepth[3])]
-  ];
-  console.log("vertex: ", vertex);
-  console.log("minDiffSum: ", minDiffSum);
-  console.log("recordWindowDepth: ", recordWindowDepth);
-  return vertex;
+  records.sort((a, b) => a.diffSum - b.diffSum);
+  return records;
+}
+
+export function getRecommendedVertexByAttrDiff(
+  trackVertex: AllVertices,
+  curvePaths: AllMatchCurve,
+  index: number,
+  wellAttrData: WellAttrData
+): VertexType {
+  const records = getRecommendedVertexByAttrDiffRecords(
+    trackVertex,
+    curvePaths,
+    index,
+    wellAttrData
+  );
+  return records[0].vertex;
 }
 
 export function getDepthListBwtweenTwoTrack(
@@ -392,4 +391,50 @@ export function getDepthListBwtweenTwoTrack(
     depthList.push(reverseScale(depth));
   }
   return depthList;
+}
+
+export function generateWindow(
+  depthList: [number, number, number, number],
+  matchVertex: AllVertices,
+  index: number
+) {
+  const leftDepth = depthList[1] - depthList[0];
+  const rightDepth = depthList[3] - depthList[2];
+  const windowDepth = [];
+  for (let stepCount = 30; stepCount >= 5; stepCount -= 5) {
+    const leftStep = leftDepth / stepCount;
+    const rightStep = rightDepth / stepCount;
+    for (let i = 0; i < stepCount; i++) {
+      windowDepth.push([
+        reverseScale(matchVertex[index][0][1]),
+        reverseScale(matchVertex[index][1][1]),
+        depthList[2] + rightStep * i,
+        depthList[2] + rightStep * (i + 1)
+      ]);
+    }
+    for (let i = 0; i < stepCount; i++) {
+      windowDepth.push([
+        depthList[0] + leftStep * i,
+        depthList[1] + leftStep * (i + 1),
+        reverseScale(matchVertex[index][2][1]),
+        reverseScale(matchVertex[index][3][1])
+      ]);
+    }
+  }
+
+  return windowDepth;
+}
+
+export function getVertexWithWindowDepthList(
+  xStart: number,
+  xEnd: number,
+  windowDepth: number[]
+) {
+  const vertex: VertexType = [
+    [xStart, initialWellMatchDepthScale(windowDepth[0])],
+    [xStart, initialWellMatchDepthScale(windowDepth[1])],
+    [xEnd, initialWellMatchDepthScale(windowDepth[2])],
+    [xEnd, initialWellMatchDepthScale(windowDepth[3])]
+  ];
+  return vertex;
 }
