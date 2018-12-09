@@ -7,14 +7,15 @@ import ControlPanel from "./ControlPanel";
 import InfoPanel from "./InfoPanel/InfoPanel";
 import { connect } from "react-redux";
 import { AllDiff, CurSelectedIndex, AllRecords } from "src/ts/Type";
-import { getCurIndex } from "../action/changeWell";
+import { getCurIndex, getRecVertex } from "../action/changeWell";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const { allDiff, curSelectedIndex, topRecords } = state.wellReducer;
   return { allDiff, curSelectedIndex, topRecords };
 };
 
 const mapDispatchToProps = {
-  getCurIndex
+  getCurIndex,
+  getRecVertex
 };
 
 interface Props {
@@ -22,10 +23,17 @@ interface Props {
   curSelectedIndex: CurSelectedIndex;
   getCurIndex: typeof getCurIndex;
   topRecords: AllRecords;
+  getRecVertex: typeof getRecVertex;
 }
 
 const Seism = function(props: Props) {
-  const { allDiff, curSelectedIndex, getCurIndex, topRecords } = props;
+  const {
+    allDiff,
+    curSelectedIndex,
+    getCurIndex,
+    topRecords,
+    getRecVertex
+  } = props;
   return (
     <React.Fragment>
       <div className="seism">
@@ -38,6 +46,7 @@ const Seism = function(props: Props) {
             curSelectedIndex={curSelectedIndex}
             getCurIndex={getCurIndex}
             topRecords={topRecords}
+            getRecVertex={getRecVertex}
           />
         </div>
       </div>

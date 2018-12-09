@@ -9,11 +9,13 @@ import {
   brighterMatchColor,
   matchColor
 } from "../constraint";
+import { getRecVertex } from "../action/changeWell";
 interface Props {
   allDiff: AllDiff;
   curSelectedIndex: CurSelectedIndex;
   getCurIndex: any;
   topRecords: AllRecords;
+  getRecVertex: typeof getRecVertex;
 }
 
 const svgWidth = matchViewWidth,
@@ -26,7 +28,13 @@ const horizontalPad = drawSvgWidth / 5;
 const topPadding = topPaddingRatio * svgHeight;
 
 export default function AttrDiff(props: Props) {
-  const { allDiff, curSelectedIndex, getCurIndex, topRecords } = props;
+  const {
+    allDiff,
+    curSelectedIndex,
+    getCurIndex,
+    topRecords,
+    getRecVertex
+  } = props;
   let rects;
   let baseLine;
   let topRecordsDOM;
@@ -43,16 +51,20 @@ export default function AttrDiff(props: Props) {
       verticalPad,
       allDiff.length,
       curSelectedIndex,
-      getCurIndex
+      getCurIndex,
+      svgWidth * leftPaddingRatio
     );
     if (normalizedAllDiff) {
       if (topRecords && curSelectedIndex) {
         const { rects, yList } = getTopRecordsDom(
           topRecords,
-          svgWidth / 2 + 20
+          svgWidth / 2 + 20,
+          getRecVertex,
+          allDiff
         );
         topRecordsDOM = rects;
         linkLine = getLinkLine(
+          curSelectedIndex,
           [
             svgWidth * leftPaddingRatio +
               normalizedAllDiff[0].length * horizontalPad,
@@ -148,7 +160,8 @@ function getBaseLine(
   verticalPad: number,
   diffCount: number,
   curSelectedIndex: CurSelectedIndex,
-  getCurIndex: any
+  getCurIndex: any,
+  xStart: number
 ) {
   const lines = [];
   for (let i = 0; i < diffCount; i++) {
@@ -160,10 +173,11 @@ function getBaseLine(
     };
     if (i === curSelectedIndex) style.fill = brighterMatchColor;
     const path = d3.path();
-    path.moveTo(0, topPadding + verticalPad * i);
+    path.moveTo(xStart, topPadding + verticalPad * i);
     path.lineTo(svgWidth / 2, topPadding + verticalPad * i);
     path.lineTo(svgWidth / 2, topPadding + verticalPad * (i + 1));
-    path.lineTo(0, topPadding + verticalPad * (i + 1));
+    path.lineTo(xStart, topPadding + verticalPad * (i + 1));
+    path.lineTo(xStart, topPadding + verticalPad * i);
     lines.push(
       <path
         className="diff-baseline"
@@ -174,7 +188,7 @@ function getBaseLine(
           getCurIndex(i);
         }}
         onMouseLeave={function() {
-          getCurIndex(undefined);
+          /* getCurIndex(undefined); */
         }}
       />
     );
@@ -182,18 +196,26 @@ function getBaseLine(
   return lines;
 }
 
-function getTopRecordsDom(topRecords: AllRecords, xStart: number) {
+function getTopRecordsDom(
+  topRecords: AllRecords,
+  xStart: number,
+  getRecVertex: any,
+  allDiff: AllDiff
+) {
   const horizontalPad = drawSvgWidth / 5;
   const topPadding = topPaddingRatio * svgHeight;
   const verticalPad = drawSvgHeight / topRecords.length;
   const barHeight = verticalPad * 0.8;
   const scales = getTopScales(topRecords);
+  const singleScale = getTopScale(topRecords);
+  const leftScales = getWidthScales(allDiff);
   const rects = [];
   const yList = [];
   for (let i = 0; i < 5; i++) {
     let x = xStart + i * horizontalPad;
     for (let j = 0; j < topRecords.length; j++) {
-      const width = scales[i](topRecords[j].diff[i]);
+      if (!leftScales) break;
+      const width = leftScales[i](topRecords[j].diff[i]);
       const y = topPadding + verticalPad * 0.1 + verticalPad * j;
       yList.push(y + (verticalPad * 0.8) / 2);
       rects.push(
@@ -205,12 +227,17 @@ function getTopRecordsDom(topRecords: AllRecords, xStart: number) {
           height={barHeight}
           fill={rectColor}
           rx="2px"
+          onMouseEnter={function() {
+            getRecVertex(topRecords[j].vertex);
+          }}
         />
       );
     }
   }
   return { rects, yList };
 }
+
+function getTopBaseLine(topRecords: AllRecords, xStart: number) {}
 
 function getTopScales(topRecords: AllRecords) {
   const scales = [];
@@ -226,21 +253,35 @@ function getTopScales(topRecords: AllRecords) {
   return scales;
 }
 
-function getLinkLine(original: [number, number], x: number, yList: number[]) {
+function getTopScale(topRecords: AllRecords) {
+  let min = d3.min(topRecords, e => d3.min(e.diff));
+  let max = d3.max(topRecords, e => d3.max(e.diff));
+  return d3
+    .scaleLinear()
+    .domain([min as number, max as number])
+    .range([0.1 * horizontalPad, horizontalPad * 0.9]);
+}
+
+function getLinkLine(
+  index: number,
+  original: [number, number],
+  x: number,
+  yList: number[]
+) {
+  console.log("index: ", index);
   const paths = [];
   const style = {
     stroke: "B2B5FF",
-    strokeWidth: 1.4
+    strokeWidth: 1.4,
+    fill: "none"
   };
   for (let i = 0; i < yList.length; i++) {
     const path = d3.path();
     let p2 = [x, yList[i]];
     let [ox, oy] = original;
-    let c1 = [ox + (x - ox) / 2, oy + (yList[i] - oy) / 4];
-    let c2 = [ox + (x - ox) / 2, oy + ((yList[i] - oy) / 4) * 3];
+    let c = [(ox + x) / 2, oy];
     path.moveTo(ox, oy);
-    path.bezierCurveTo(c1[0], c1[1], c2[0], c2[1], p2[0], p2[1]);
-
+    path.quadraticCurveTo(c[0], c[1], p2[0], p2[1]);
     paths.push(<path d={path.toString()} key={i} style={style} />);
   }
   return paths;

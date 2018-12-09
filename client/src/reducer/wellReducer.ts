@@ -15,13 +15,15 @@ import {
   GET_WELL_ATTR_DATA,
   GET_ATTR_DIFF,
   GET_CUR_INDEX,
-  GET_TOP_RECORDS
+  GET_TOP_RECORDS,
+  GET_REC_VERTEX
 } from "../action/changeWell";
 import {
   AllDiff,
   AllMatchCurve,
   CurSelectedIndex,
-  AllRecords
+  AllRecords,
+  VertexType
 } from "src/ts/Type";
 import { matchViewWidth } from "src/constraint";
 
@@ -43,6 +45,7 @@ interface WellState {
   allDiff: AllDiff;
   curSelectedIndex: CurSelectedIndex;
   topRecords: AllRecords | undefined;
+  recVertex: VertexType | undefined;
 }
 
 const initialState: WellState = {
@@ -62,7 +65,8 @@ const initialState: WellState = {
   wellAttrData: [],
   allDiff: undefined,
   curSelectedIndex: undefined,
-  topRecords: undefined
+  topRecords: undefined,
+  recVertex: undefined
 };
 
 export default function wellReducer(
@@ -154,6 +158,11 @@ export default function wellReducer(
       return {
         ...state,
         topRecords: action.topRecords
+      };
+    case GET_REC_VERTEX:
+      return {
+        ...state,
+        recVertex: action.recVertex
       };
     default:
       return state;

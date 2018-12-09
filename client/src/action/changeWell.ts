@@ -1,4 +1,10 @@
-import { AllDiff, AllWells, CurSelectedIndex, AllRecords } from "src/ts/Type";
+import {
+  AllDiff,
+  AllWells,
+  CurSelectedIndex,
+  AllRecords,
+  VertexType
+} from "src/ts/Type";
 
 export const GET_ALL_WELLS = "GET_ALL_WELLS";
 export const GET_COUPLEWELL_PATH = "GET_COUPLEWELL_PATHF";
@@ -17,6 +23,7 @@ export const GET_WELL_ATTR_DATA = "GET_WELL_ATTR_DATA";
 export const GET_ATTR_DIFF = "GET_ATTR_DIFF";
 export const GET_CUR_INDEX = "GET_CUR_INDEX";
 export const GET_TOP_RECORDS = "GET_TOP_RECORDS";
+export const GET_REC_VERTEX = "GET_REC_VERTEX";
 
 export function getAllWells(allWells: AllWells) {
   return {
@@ -134,5 +141,12 @@ export function getTopRecords(topRecords: AllRecords) {
   return {
     type: GET_TOP_RECORDS,
     topRecords
+  };
+}
+
+export function getRecVertex(recVertex: VertexType) {
+  return {
+    type: GET_REC_VERTEX,
+    recVertex
   };
 }

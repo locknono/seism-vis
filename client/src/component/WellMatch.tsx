@@ -9,7 +9,8 @@ import {
   getUcPath,
   getAttrDiff,
   getCurIndex,
-  getTopRecords
+  getTopRecords,
+  getRecVertex
 } from "../action/changeWell";
 import { changeSvgSize } from "../action/changeWellMatchSvg";
 import * as d3 from "d3";
@@ -41,6 +42,7 @@ import {
 } from "src/ts/Type";
 import { diff, getTop10RecomendedVertex } from "../API/wellAttrDiff";
 import WithButtonViewHeading from "./WithButtonViewHeading";
+import Vertex from "./Vertex";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const {
     wellMinDepth,
@@ -66,7 +68,8 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     ucPath,
     wellAttrData,
     allDiff,
-    curSelectedIndex
+    curSelectedIndex,
+    recVertex
   } = state.wellReducer;
 
   return {
@@ -90,7 +93,8 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     ucPath,
     wellAttrData,
     allDiff,
-    curSelectedIndex
+    curSelectedIndex,
+    recVertex
   };
 };
 
@@ -104,7 +108,8 @@ const mapDispatchToProps = {
   getUcPath,
   getAttrDiff,
   getCurIndex,
-  getTopRecords
+  getTopRecords,
+  getRecVertex
 };
 
 interface Props {
@@ -139,12 +144,13 @@ interface Props {
   curSelectedIndex: CurSelectedIndex;
   getCurIndex: typeof getCurIndex;
   getTopRecords: typeof getTopRecords;
+  getRecVertex: typeof getRecVertex;
+  recVertex: VertexType | undefined;
 }
 
 interface State {
   colorScale: any;
   pathGen: any;
-  recommendedVertex: VertexType | undefined;
 }
 
 class WellMatch extends React.Component<Props, State> {
@@ -156,8 +162,7 @@ class WellMatch extends React.Component<Props, State> {
       pathGen: d3
         .line()
         .x(d => d[0])
-        .y(d => d[1]),
-      recommendedVertex: undefined
+        .y(d => d[1])
       //.curve(d3.curveCardinal)
     };
     this.drawMatch = this.drawMatch.bind(this);
@@ -314,7 +319,8 @@ class WellMatch extends React.Component<Props, State> {
       curvePaths,
       allTrackVertex,
       wellAttrData,
-      getTopRecords
+      getTopRecords,
+      getRecVertex
     } = this.props;
     const recommendedVertex = getRecommendedVertex(
       allTrackVertex,
@@ -329,7 +335,7 @@ class WellMatch extends React.Component<Props, State> {
     );
     const topRecords = getTop10RecomendedVertex(allRecords);
     getTopRecords(topRecords);
-    this.setState({ recommendedVertex: allRecords[0].vertex });
+    getRecVertex(allRecords[0].vertex);
   }
   render() {
     const {
@@ -344,9 +350,10 @@ class WellMatch extends React.Component<Props, State> {
       scale,
       allDiff,
       getCurIndex,
-      curSelectedIndex
+      curSelectedIndex,
+      recVertex
     } = this.props;
-    const { colorScale, pathGen, recommendedVertex } = this.state;
+    const { colorScale, pathGen } = this.state;
     let curves = null;
     if (curvePaths) {
       curves = curvePaths.map((e: any, i: number) => {
@@ -359,7 +366,7 @@ class WellMatch extends React.Component<Props, State> {
             curSelectedIndex={curSelectedIndex}
             getCurIndex={getCurIndex}
             getRecommended={this.getRecommended}
-            recommendedVertex={recommendedVertex}
+            recommendedVertex={recVertex}
           />
         );
       });
