@@ -69,6 +69,7 @@ class MatchCurve extends React.Component<Props, State> {
 
   handleMouseEnter() {
     const { index, getCurIndex } = this.props;
+    console.log("index: ", index);
     getCurIndex(index);
   }
 
@@ -76,14 +77,17 @@ class MatchCurve extends React.Component<Props, State> {
     const { index, getCurIndex } = this.props;
     getCurIndex(undefined);
   }
+
   changeVertexPosition(newVertex: VertexType) {
+    const { vertex } = this.state;
     const { changeCurvePath, index, path } = this.props;
+    console.log("prop-index: ", index);
     this.setState({ vertex: newVertex });
-    const newPath = List(path);
+    const newPath = JSON.parse(JSON.stringify(path));
     const vertexIndex = extractVertexIndex(path);
     for (let i = 0; i < vertexIndex.length; i++)
-      newPath[vertexIndex[i]] = [...newVertex[i]];
-    changeCurvePath(newPath.toJS(), index);
+      newPath[vertexIndex[i]] = JSON.parse(JSON.stringify(newVertex[i]));
+    changeCurvePath(newPath, index);
   }
 
   render() {
@@ -117,7 +121,12 @@ class MatchCurve extends React.Component<Props, State> {
         />
         {drawVertex}
         {baseLine}
-        <RecommendedVertex vertex={recommendedVertex} />
+        {showRecommendedVertex ? (
+          <RecommendedVertex
+            vertex={recommendedVertex}
+            changeVertexPosition={this.changeVertexPosition}
+          />
+        ) : null}
       </React.Fragment>
     );
   }

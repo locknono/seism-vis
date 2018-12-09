@@ -307,7 +307,7 @@ class WellMatch extends React.Component<Props, State> {
       curvePaths,
       index
     );
-    console.log("recommendedVertex: ", recommendedVertex);
+
     this.setState({ recommendedVertex });
   }
   render() {

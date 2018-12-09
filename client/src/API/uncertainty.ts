@@ -256,7 +256,6 @@ export function getRecommendedVertex(
   curvePaths: AllMatchCurve,
   index: number
 ) {
-  console.log("trackVertex: ", trackVertex);
   const matchVertex = extractMatchVertex(curvePaths);
   const trackDepthList = getTrackDepthList(trackVertex);
   let ucList: number[] = [];
@@ -273,7 +272,6 @@ export function getRecommendedVertex(
   let path: MatchCurvePath = [];
   if (curLeftMap.size === 1 && curRightMap.size > 1) {
     for (let [key, value] of curLeftMap) {
-      console.log(`第1种情况`);
       path.push(matchVertex[index][0]);
       path.push(matchVertex[index][1]);
       path.push(trackVertex[key][2]);
@@ -281,14 +279,12 @@ export function getRecommendedVertex(
     }
   } else if (curRightMap.size === 1 && curLeftMap.size > 1) {
     for (let [key, value] of curRightMap) {
-      console.log(`第2种情况`);
       path.push(trackVertex[key][0]);
       path.push(trackVertex[key][1]);
       path.push(matchVertex[index][2]);
       path.push(matchVertex[index][3]);
     }
   } else if (curLeftMap.size === 1 && curRightMap.size === 1) {
-    console.log(`第3种情况`);
     let [leftKey] = [...curLeftMap.keys()];
     let [rightKey] = [...curRightMap.keys()];
     if (leftKey !== rightKey) {
@@ -307,7 +303,6 @@ export function getRecommendedVertex(
       }
     }
   } else {
-    console.log(`第4种情况`);
   }
   if (path.length === 0) {
     return undefined;
