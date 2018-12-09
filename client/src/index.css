@@ -182,10 +182,20 @@ code {
   width: 100%;
 }
 .icon-style {
-  position: absolute;
+  float: right;
   top: 4px;
 }
 
 .diff-baseline {
   pointer-events: visible;
+}
+
+.heading-button {
+  height: 22px;
+}
+
+.heading-checkbox {
+  margin-top: 0;
+  float: right;
+  margin-right: 15px;
 }

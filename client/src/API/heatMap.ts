@@ -49,7 +49,7 @@ export function getTwoWellUc(well1: Well, well2: Well, allWells: AllWells) {
       scale
     ).then((curvePaths: AllMatchCurve) => {
       curvePaths;
-      const { allTrackVertex, allTracks, paths } = api_getTracePath(
+      const { allTrackVertex, allTrack, paths } = api_getTracePath(
         width,
         matrixData,
         scale,

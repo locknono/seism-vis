@@ -206,7 +206,7 @@ class WellMatch extends React.Component<Props, State> {
       getAllTrack,
       getTrackVertex
     } = this.props;
-    const { allTrackVertex, allTracks, paths } = api_getTracePath(
+    const { allTrackVertex, allTrack, paths } = api_getTracePath(
       width,
       matrixData,
       scale,
@@ -214,8 +214,9 @@ class WellMatch extends React.Component<Props, State> {
       depthList
     );
     getTrackVertex(allTrackVertex);
+
     //draw tracking line
-    getAllTrack(allTracks);
+    getAllTrack(allTrack);
     //draw trace
     getTracePath(paths);
   }

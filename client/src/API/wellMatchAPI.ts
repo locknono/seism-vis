@@ -140,19 +140,19 @@ export function api_getTracePath(
     negativePaths.push(negativePath);
   }
 
-  const allTracks: AllTracks = [];
+  const allTrack: AllTracks = [];
   for (let i = 0; i < allPeaks.length / 2; i++) {
-    allTracks.push(...trakcer.tracking(allPeaks, i));
+    allTrack.push(...trakcer.tracking(allPeaks, i));
   }
 
-  trakcer.cutOffAllTracks(allTracks, allPeaks.length);
+  trakcer.cutOffAllTracks(allTrack, allPeaks.length);
 
-  allTracks.sort((a, b) => {
+  allTrack.sort((a, b) => {
     return a[0].top - b[0].top;
   });
 
   const allTrackVertex: AllVertices = [];
-  allTracks.map((e: any, i: number) => {
+  allTrack.map((e: any, i: number) => {
     allTrackVertex.push(trakcer.getFourVertex(trackXStart, trackXEnd, e));
   });
 
@@ -160,7 +160,7 @@ export function api_getTracePath(
 
   return {
     allTrackVertex,
-    allTracks,
+    allTrack,
     paths
   };
 }
