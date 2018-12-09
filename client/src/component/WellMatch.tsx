@@ -43,6 +43,7 @@ import {
 import { diff, getTop10RecomendedVertex } from "../API/wellAttrDiff";
 import WithButtonViewHeading from "./WithButtonViewHeading";
 import Vertex from "./Vertex";
+import Legend from "./Legend";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const {
     wellMinDepth,
@@ -470,6 +471,7 @@ class WellMatch extends React.Component<Props, State> {
           {ucPathOnSvg}
           {wellAttrCurve}
         </svg>
+        <Legend />
       </div>
     );
   }

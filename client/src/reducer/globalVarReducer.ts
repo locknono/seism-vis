@@ -1,3 +1,9 @@
+/*SUCH A MISTAKE
+TODO:should redux store constraint?
+or just a constraint moudule file?
+`maybe` redux's supposed to just store global variable,but not global constraint.
+*/
+
 import * as d3 from "d3";
 import { CHANGE_SVG_SIZE } from "../action/changeWellMatchSvg";
 import { matchViewWidth } from "../constraint";
@@ -40,12 +46,12 @@ export const wellMaxDepth = depthList[depthList.length - 1 - 2]; //1443.53979687
 export const initialWellMatchDepthScale = d3
   .scaleLinear()
   .domain([wellMinDepth, wellMaxDepth])
-  .range([wellMatchSvgHeight * 0.05, wellMatchSvgHeight * (1 - 0.05)]);
+  .range([wellMatchSvgHeight * 0.02, wellMatchSvgHeight * (1 - 0.05)]);
 
 export const reverseScale = d3
   .scaleLinear()
   .range([wellMinDepth, wellMaxDepth])
-  .domain([wellMatchSvgHeight * 0.05, wellMatchSvgHeight * (1 - 0.05)]);
+  .domain([wellMatchSvgHeight * 0.02, wellMatchSvgHeight * (1 - 0.05)]);
 interface GlobalVarState {
   readonly xStart: number;
   readonly yStart: number;
@@ -98,7 +104,7 @@ export default function globalVarReducer(
       let wellMatchDepthScale = d3
         .scaleLinear()
         .domain([wellMinDepth, wellMaxDepth])
-        .range([action.height * 0.05, action.height * (1 - 0.05)]);
+        .range([action.height * 0.02, action.height * (1 - 0.05)]);
       return {
         ...state,
         wellMatchSvgWidth: action.width,

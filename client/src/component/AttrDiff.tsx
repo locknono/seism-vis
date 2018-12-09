@@ -21,7 +21,7 @@ interface Props {
 
 const svgWidth = matchViewWidth,
   svgHeight = 178,
-  leftPaddingRatio = 0.1,
+  leftPaddingRatio = 0.05,
   topPaddingRatio = 0.1;
 const drawSvgWidth = (svgWidth * (1 - 2 * leftPaddingRatio)) / 2;
 const drawSvgHeight = svgHeight * (1 - 2 * topPaddingRatio);
@@ -118,7 +118,8 @@ function getWidthScales(allDiff: AllDiff) {
     return d3
       .scaleLinear()
       .domain([minList[i], maxList[i]])
-      .range([0.1 * horizontalPad, horizontalPad * 0.9]);
+      .range([0.1 * horizontalPad, horizontalPad * 0.9])
+      .clamp(true);
   });
   return scales;
 }

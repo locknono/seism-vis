@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Panel, Button } from "react-bootstrap";
 import { ViewHeading } from "./ViewHeading";
-
+import { colorScale } from "../constraint";
 interface Props {
   height: number;
   title: string;
@@ -40,7 +40,19 @@ class WithButtonViewHeading extends React.Component<Props> {
             className=" oi oi-fullscreen-enter icon-style"
             style={{ right: `1%` }}
           />
-          <form role="form">
+          {["SP", "COND", "ML1", "ML2", "AC"].map((e, i) => {
+            const margin = i === 4 ? `100px` : `10px`;
+            return (
+              <React.Fragment>
+                <span style={{ float: "right", marginRight: margin }}>{e}</span>
+                <div
+                  className="attr-legend"
+                  style={{ backgroundColor: colorScale(i.toString()) }}
+                />
+              </React.Fragment>
+            );
+          })}
+          {/* <form role="form">
             <div
               className="checkbox checkbox-success heading-checkbox"
               style={{ marginRight: `50px` }}
@@ -54,7 +66,7 @@ class WithButtonViewHeading extends React.Component<Props> {
               <input id="checkbox2" type="checkbox" />
               <label htmlFor="checkbox2">{`推荐算法2     `}</label>
             </div>
-          </form>
+          </form> */}
           {/*  <span className="oi oi-zoom-in icon-style" style={{ right: `1%` }} /> */}
         </div>
       </Panel.Heading>

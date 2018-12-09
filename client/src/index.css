@@ -199,3 +199,23 @@ code {
   float: right;
   margin-right: 15px;
 }
+
+.match-legend-div {
+  position: absolute;
+  margin-bottom: 0px;
+  bottom: 0px;
+  left: 0px;
+  width: 190px;
+  height: 70px;
+  border-left: 0px;
+  border-bottom: 0px;
+}
+
+.attr-legend {
+  width: 18px;
+  height: 18px;
+  border-radius: 2px;
+  float: right;
+  margin-top: 3px;
+  margin-right: 3px;
+}
