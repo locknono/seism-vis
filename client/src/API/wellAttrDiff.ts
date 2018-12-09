@@ -4,7 +4,8 @@ import {
   AllMatchCurve,
   SingleWellAttrData,
   AllDiff,
-  OneLayerDiff
+  OneLayerDiff,
+  AllRecords
 } from "../ts/Type";
 import { reverseScale } from "../reducer/globalVarReducer";
 import { extractMatchVertex } from "./uncertainty";
@@ -156,4 +157,17 @@ function getMinMaxList(
   }
 
   return [minList, maxList];
+}
+
+export function getTop10RecomendedVertex(allRecords: AllRecords) {
+  const recordSet = new Set();
+  const list = [];
+  for (let record of allRecords) {
+    if (recordSet.has(record.diffSum) === false) {
+      recordSet.add(record.diffSum);
+      list.push(record);
+    }
+    if (list.length >= 10) break;
+  }
+  return list;
 }

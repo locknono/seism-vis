@@ -3,7 +3,8 @@ import {
   MatchCurvePath,
   AllMatchCurve,
   AllVertices,
-  WellAttrData
+  WellAttrData,
+  AllRecords
 } from "../ts/Type";
 import MatchCurve from "src/component/MatchCurve";
 import { compareInOneLayer } from "../API/wellAttrDiff";
@@ -320,7 +321,7 @@ export function getRecommendedVertexByAttrDiffRecords(
   curvePaths: AllMatchCurve,
   index: number,
   wellAttrData: WellAttrData
-) {
+): AllRecords {
   const xStart = curvePaths[index][0][0];
   const xEnd = curvePaths[index][2][0];
   const matchVertex = extractMatchVertex(curvePaths);

@@ -14,9 +14,15 @@ import {
   GET_UC_PATH,
   GET_WELL_ATTR_DATA,
   GET_ATTR_DIFF,
-  GET_CUR_INDEX
+  GET_CUR_INDEX,
+  GET_TOP_RECORDS
 } from "../action/changeWell";
-import { AllDiff, AllMatchCurve, CurSelectedIndex } from "src/ts/Type";
+import {
+  AllDiff,
+  AllMatchCurve,
+  CurSelectedIndex,
+  AllRecords
+} from "src/ts/Type";
 import { matchViewWidth } from "src/constraint";
 
 interface WellState {
@@ -36,6 +42,7 @@ interface WellState {
   wellAttrData: any[];
   allDiff: AllDiff;
   curSelectedIndex: CurSelectedIndex;
+  topRecords: AllRecords | undefined;
 }
 
 const initialState: WellState = {
@@ -54,7 +61,8 @@ const initialState: WellState = {
   ucPath: [],
   wellAttrData: [],
   allDiff: undefined,
-  curSelectedIndex: undefined
+  curSelectedIndex: undefined,
+  topRecords: undefined
 };
 
 export default function wellReducer(
@@ -141,6 +149,11 @@ export default function wellReducer(
       return {
         ...state,
         curSelectedIndex: action.curSelectedIndex
+      };
+    case GET_TOP_RECORDS:
+      return {
+        ...state,
+        topRecords: action.topRecords
       };
     default:
       return state;

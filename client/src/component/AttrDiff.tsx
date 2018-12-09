@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ViewHeading } from "./ViewHeading";
-import { AllDiff, CurSelectedIndex } from "src/ts/Type";
+import { AllDiff, CurSelectedIndex, AllRecords } from "src/ts/Type";
 import * as d3 from "d3";
 import { v4 } from "uuid";
 import {
@@ -13,21 +13,24 @@ interface Props {
   allDiff: AllDiff;
   curSelectedIndex: CurSelectedIndex;
   getCurIndex: any;
+  topRecords: AllRecords;
 }
 
 const svgWidth = matchViewWidth,
   svgHeight = 200,
   leftPaddingRatio = 0.1,
   topPaddingRatio = 0.1;
-const drawSvgWidth = svgWidth * (1 - 2 * leftPaddingRatio);
+const drawSvgWidth = (svgWidth * (1 - 2 * leftPaddingRatio)) / 2;
 const drawSvgHeight = svgHeight * (1 - 2 * topPaddingRatio);
 const horizontalPad = drawSvgWidth / 5;
 const topPadding = topPaddingRatio * svgHeight;
 
 export default function AttrDiff(props: Props) {
-  const { allDiff, curSelectedIndex, getCurIndex } = props;
+  const { allDiff, curSelectedIndex, getCurIndex, topRecords } = props;
   let rects;
   let baseLine;
+  let topRecordsDOM;
+  let linkLine;
   if (allDiff) {
     const verticalPad = drawSvgHeight / allDiff.length;
     const barHeight = verticalPad * 0.8;
@@ -42,7 +45,26 @@ export default function AttrDiff(props: Props) {
       curSelectedIndex,
       getCurIndex
     );
-    if (normalizedAllDiff)
+    if (normalizedAllDiff) {
+      if (topRecords && curSelectedIndex) {
+        const { rects, yList } = getTopRecordsDom(
+          topRecords,
+          svgWidth / 2 + 20
+        );
+        topRecordsDOM = rects;
+        linkLine = getLinkLine(
+          [
+            svgWidth * leftPaddingRatio +
+              normalizedAllDiff[0].length * horizontalPad,
+            topPadding +
+              verticalPad * 0.1 +
+              verticalPad * curSelectedIndex +
+              (verticalPad * 0.8) / 2
+          ],
+          svgWidth / 2 + 20,
+          yList
+        );
+      }
       rects = normalizedAllDiff.map((e, i) => {
         const y = topPadding + verticalPad * 0.1 + verticalPad * i;
         return e.map((v, j) => {
@@ -61,6 +83,7 @@ export default function AttrDiff(props: Props) {
           );
         });
       });
+    }
   }
   return (
     <div className="attr-diff-div panel panel-primary">
@@ -71,6 +94,8 @@ export default function AttrDiff(props: Props) {
       >
         {baseLine}
         {rects}
+        {topRecordsDOM}
+        {linkLine}
       </svg>
     </div>
   );
@@ -121,6 +146,7 @@ function getMinMaxList(allDiff: AllDiff) {
   }
   return [minList, maxList];
 }
+
 function getBaseLine(
   verticalPad: number,
   diffCount: number,
@@ -157,4 +183,68 @@ function getBaseLine(
     );
   }
   return lines;
+}
+
+function getTopRecordsDom(topRecords: AllRecords, xStart: number) {
+  const horizontalPad = drawSvgWidth / 5;
+  const topPadding = topPaddingRatio * svgHeight;
+  const verticalPad = drawSvgHeight / topRecords.length;
+  const barHeight = verticalPad * 0.8;
+  const scales = getTopScales(topRecords);
+  const rects = [];
+  const yList = [];
+  for (let i = 0; i < 5; i++) {
+    let x = xStart + i * horizontalPad;
+    for (let j = 0; j < topRecords.length; j++) {
+      const width = scales[i](topRecords[j].diff[i]);
+      const y = topPadding + verticalPad * 0.1 + verticalPad * j;
+      yList.push(y + (verticalPad * 0.8) / 2);
+      rects.push(
+        <rect
+          key={v4()}
+          x={x}
+          y={y}
+          width={width}
+          height={barHeight}
+          fill={rectColor}
+          rx="2px"
+        />
+      );
+    }
+  }
+  return { rects, yList };
+}
+
+function getTopScales(topRecords: AllRecords) {
+  const scales = [];
+  for (let i = 0; i < 5; i++) {
+    let min = d3.min(topRecords, e => e.diff[i]);
+    let max = d3.max(topRecords, e => e.diff[i]);
+    let scale = d3
+      .scaleLinear()
+      .domain([min as number, max as number])
+      .range([0.1 * horizontalPad, horizontalPad * 0.9]);
+    scales.push(scale);
+  }
+  return scales;
+}
+
+function getLinkLine(original: [number, number], x: number, yList: number[]) {
+  const paths = [];
+  const style = {
+    stroke: "black",
+    strokeWidth: 1
+  };
+  for (let i = 0; i < yList.length; i++) {
+    const path = d3.path();
+    let p2 = [x, yList[i]];
+    let [ox, oy] = original;
+    let c1 = [ox + (x - ox) / 2, oy + (yList[i] - oy) / 4];
+    let c2 = [ox + (x - ox) / 2, oy + ((yList[i] - oy) / 4) * 3];
+    path.moveTo(ox, oy);
+    path.bezierCurveTo(c1[0], c1[1], c2[0], c2[1], p2[0], p2[1]);
+
+    paths.push(<path d={path.toString()} key={i} style={style} />);
+  }
+  return paths;
 }

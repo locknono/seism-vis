@@ -8,7 +8,8 @@ import {
   getTrackVertex,
   getUcPath,
   getAttrDiff,
-  getCurIndex
+  getCurIndex,
+  getTopRecords
 } from "../action/changeWell";
 import { changeSvgSize } from "../action/changeWellMatchSvg";
 import * as d3 from "d3";
@@ -16,7 +17,8 @@ import Tracker from "../API/tracking";
 import WellAttr from "./WellAttr";
 import Uncertainty, {
   getRecommendedVertex,
-  getRecommendedVertexByAttrDiff
+  getRecommendedVertexByAttrDiff,
+  getRecommendedVertexByAttrDiffRecords
 } from "../API/uncertainty";
 import {
   getSize,
@@ -34,9 +36,10 @@ import {
   AllMatchCurve,
   AllDiff,
   CurSelectedIndex,
-  VertexType
+  VertexType,
+  AllRecords
 } from "src/ts/Type";
-import { diff } from "../API/wellAttrDiff";
+import { diff, getTop10RecomendedVertex } from "../API/wellAttrDiff";
 import WithButtonViewHeading from "./WithButtonViewHeading";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const {
@@ -100,7 +103,8 @@ const mapDispatchToProps = {
   getTrackVertex,
   getUcPath,
   getAttrDiff,
-  getCurIndex
+  getCurIndex,
+  getTopRecords
 };
 
 interface Props {
@@ -134,6 +138,7 @@ interface Props {
   getAttrDiff: typeof getAttrDiff;
   curSelectedIndex: CurSelectedIndex;
   getCurIndex: typeof getCurIndex;
+  getTopRecords: typeof getTopRecords;
 }
 
 interface State {
@@ -305,20 +310,26 @@ class WellMatch extends React.Component<Props, State> {
   }
 
   getRecommended(index: number) {
-    const { curvePaths, allTrackVertex, wellAttrData } = this.props;
+    const {
+      curvePaths,
+      allTrackVertex,
+      wellAttrData,
+      getTopRecords
+    } = this.props;
     const recommendedVertex = getRecommendedVertex(
       allTrackVertex,
       curvePaths,
       index
     );
-    const recVertexByDiff = getRecommendedVertexByAttrDiff(
+    const allRecords = getRecommendedVertexByAttrDiffRecords(
       allTrackVertex,
       curvePaths,
       index,
       wellAttrData
     );
-
-    this.setState({ recommendedVertex: recVertexByDiff });
+    const topRecords = getTop10RecomendedVertex(allRecords);
+    getTopRecords(topRecords);
+    this.setState({ recommendedVertex: allRecords[0].vertex });
   }
   render() {
     const {

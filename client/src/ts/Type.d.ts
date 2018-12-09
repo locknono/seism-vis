@@ -1,3 +1,5 @@
+import Vertex from "src/component/Vertex";
+
 type Point = [number, number];
 
 /** An array contains Four point */
@@ -57,3 +59,11 @@ export type OneLayerDiff = [number, number, number, number, number];
 export type AllDiff = OneLayerDiff[] | undefined;
 
 export type CurSelectedIndex = null | undefined | number;
+
+export interface Record {
+  diff: OneLayerDiff;
+  diffSum: number;
+  vertex: VertexType;
+}
+
+export type AllRecords = Record[];
