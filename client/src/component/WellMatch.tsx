@@ -57,7 +57,6 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     wellMatchDepthScale,
     depthList
   } = state.globalVarReducer;
-
   const {
     coupleWell,
     coupleWellPath,
@@ -76,6 +75,7 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     recVertex
   } = state.wellReducer;
 
+  const { focusFlag } = state.controlReducer;
   return {
     wellMinDepth,
     wellMaxDepth,
@@ -98,7 +98,8 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     wellAttrData,
     allDiff,
     curSelectedIndex,
-    recVertex
+    recVertex,
+    focusFlag
   };
 };
 
@@ -154,6 +155,7 @@ interface Props {
   recVertex: VertexType | undefined;
   getSameFlag: typeof getSameFlag;
   changeFocus: typeof changeFocus;
+  focusFlag: boolean;
 }
 
 interface State {
@@ -417,6 +419,7 @@ class WellMatch extends React.Component<Props, State> {
       //TODO:FIX BUG:Do not loop every time render triggers
       ucPath[0].push(ucPath[0][0]); //loop
       ucPath[1].push(ucPath[1][0]); //loop
+      const path = d3.path();
       let pathGene = d3
         .line()
         .x((d: any) => {
@@ -425,7 +428,7 @@ class WellMatch extends React.Component<Props, State> {
         .y((d: any) => {
           return d[1];
         })
-        .curve(d3.curveBasis);
+        .curve(d3.curveMonotoneY);
       ucPathOnSvg = ucPath.map((e, i) => {
         let style = {
           fill: `url(#MyGradient-${i})`,
@@ -470,8 +473,12 @@ class WellMatch extends React.Component<Props, State> {
         );
       });
     }
+    let divClassName = "well-match-div panel panel-primary";
+    if (this.props.focusFlag === true) {
+      divClassName += ` focus-well-match-div`;
+    }
     return (
-      <div className=" well-match-div panel panel-primary">
+      <div className={divClassName}>
         <WithButtonViewHeading
           height={22}
           title={"Match"}

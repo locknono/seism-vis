@@ -120,6 +120,24 @@ code {
   border-color: rgb(221, 221, 221);
 }
 
+.attr-diff-div {
+  width: min-content;
+  height: 200px;
+  border-color: rgb(221, 221, 221);
+}
+
+.focus-div {
+  width: 1000px;
+  height: 1500px;
+}
+
+.focus-well-match-div {
+  width: 800px;
+  height: 600px;
+}
+.focus-attr-diff-div {
+  height: 300px;
+}
 .seism {
   display: flex;
   margin: 5px;
@@ -164,12 +182,6 @@ code {
 .right-side {
   display: flex;
   flex-direction: column;
-}
-
-.attr-diff-div {
-  width: min-content;
-  height: 200px;
-  border-color: rgb(221, 221, 221);
 }
 
 .info-panel {
@@ -228,9 +240,4 @@ code {
   width: min-content;
   display: inline-block;
   font-size: 12px;
-}
-
-.focus-div {
-  width: 1000px;
-  height: 1500px;
 }

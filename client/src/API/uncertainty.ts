@@ -42,6 +42,7 @@ export default class Uncertainty {
     const matchVertex = extractMatchVertex(curvePaths);
     const trackDepthList = getTrackDepthList(trackVertex);
     let ucList: number[] = [];
+
     const leftMaps = [];
     const rightMaps = [];
     for (let i = 0; i < matchVertex.length; i++) {
@@ -57,7 +58,6 @@ export default class Uncertainty {
       convertMapValueFromDepthToPortion(leftMap);
       convertMapValueFromDepthToPortion(rightMap);
       const allKey = findAllKey(leftMap, rightMap);
-
       for (let key of allKey) {
         let leftValue = leftMap.get(key);
         let rightValue = rightMap.get(key);
@@ -71,6 +71,7 @@ export default class Uncertainty {
       }
       ucList.push(curMatchUC);
     }
+    console.log("ucList: ", ucList);
 
     return {
       path: this.getUcPath(matchVertex, ucList, width, paddingRatio, height),
@@ -119,20 +120,21 @@ export default class Uncertainty {
 
   getOneSideUcPath(
     matchVertex: any,
-    ucList: any,
+    ucList: number[],
     startX: number,
     height: number,
     paddingRatio: number,
     left: boolean
   ) {
     const ucPath = [];
+    const exp = 6;
     for (let i = 0; i < matchVertex.length; i++) {
       const value = ucList[i];
       const track = matchVertex[i];
       if (left === false) {
         const topPoint = [startX, track[2][1]];
         const midPoint = [
-          startX + Math.pow(7, value),
+          startX + Math.pow(exp, value),
           (track[2][1] + track[3][1]) / 2
         ];
         const bottomPoint = [startX, track[3][1]];
@@ -141,7 +143,7 @@ export default class Uncertainty {
       } else {
         const topPoint = [startX, track[0][1]];
         const midPoint = [
-          startX - Math.pow(5, value),
+          startX - Math.pow(exp, value),
           (track[0][1] + track[1][1]) / 2
         ];
         const bottomPoint = [startX, track[1][1]];
@@ -153,13 +155,16 @@ export default class Uncertainty {
     ucPath.sort((a: any, b: any) => {
       return a[0][1] - b[0][1];
     });
+    console.log("ucPath: ", ucPath);
     const drawPath = [[startX, height * 0.05]];
     for (let i = 0; i < ucPath.length; i++) {
       drawPath.push(ucPath[i][0]);
       drawPath.push(ucPath[i][1]);
       drawPath.push(ucPath[i][2]);
     }
-    drawPath.push([startX, height * (1 - 0.05)]);
+    console.log("drawPath: ", drawPath);
+    //do not loop and use d3.curveCardinalOpen
+    //drawPath.push([startX, height * (1 - 0.05)]);
     return drawPath;
   }
 

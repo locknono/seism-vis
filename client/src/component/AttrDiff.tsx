@@ -24,6 +24,7 @@ interface Props {
   topRecords: AllRecords;
   getRecVertex: typeof getRecVertex;
   sameLayerFlags: boolean[];
+  focusFlag: boolean;
 }
 
 const svgWidth = matchViewWidth,
@@ -44,7 +45,8 @@ export default function AttrDiff(props: Props) {
     getCurIndex,
     topRecords,
     getRecVertex,
-    sameLayerFlags
+    sameLayerFlags,
+    focusFlag
   } = props;
   let rects;
   let baseLine;
@@ -118,8 +120,12 @@ export default function AttrDiff(props: Props) {
       });
     }
   }
+  let divClassName = "attr-diff-div panel panel-primary";
+  if (focusFlag) {
+    divClassName += ` focus-attr-diff-div`;
+  }
   return (
-    <div className="attr-diff-div panel panel-primary">
+    <div className={divClassName}>
       <ViewHeading height={22} title="untitled" />
       <svg
         style={{ width: svgWidth, height: svgHeight }}

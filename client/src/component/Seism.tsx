@@ -50,17 +50,20 @@ const Seism = function(props: Props) {
       <div className="seism">
         <InfoPanel />
         <Map />
-        <div className="right-side">
-          <WellMatch />
-          <AttrDiff
-            allDiff={allDiff}
-            curSelectedIndex={curSelectedIndex}
-            getCurIndex={getCurIndex}
-            topRecords={topRecords}
-            getRecVertex={getRecVertex}
-            sameLayerFlags={sameLayerFlags}
-          />
-        </div>
+        {focusFlag === false ? (
+          <div className="right-side">
+            <WellMatch />
+            <AttrDiff
+              allDiff={allDiff}
+              curSelectedIndex={curSelectedIndex}
+              getCurIndex={getCurIndex}
+              topRecords={topRecords}
+              getRecVertex={getRecVertex}
+              sameLayerFlags={sameLayerFlags}
+              focusFlag={focusFlag}
+            />
+          </div>
+        ) : null}
       </div>
       {focusFlag === true ? (
         <div className="focus-div">
@@ -72,6 +75,7 @@ const Seism = function(props: Props) {
             topRecords={topRecords}
             getRecVertex={getRecVertex}
             sameLayerFlags={sameLayerFlags}
+            focusFlag={focusFlag}
           />
         </div>
       ) : null}
