@@ -406,9 +406,13 @@ export function generateWindow(
   const leftDepth = depthList[1] - depthList[0];
   const rightDepth = depthList[3] - depthList[2];
   const windowDepth = [];
+  const leftHeight = matchVertex[index][1][1] - matchVertex[index][0][1];
+  const rightHeight = matchVertex[index][3][1] - matchVertex[index][2][1];
+
+  //fix left side
   for (let stepCount = 30; stepCount >= 5; stepCount -= 5) {
-    const leftStep = leftDepth / stepCount;
     const rightStep = rightDepth / stepCount;
+    if (rightStep > 2 * leftHeight || rightStep < leftHeight / 2) continue;
     for (let i = 0; i < stepCount; i++) {
       windowDepth.push([
         reverseScale(matchVertex[index][0][1]),
@@ -417,6 +421,10 @@ export function generateWindow(
         depthList[2] + rightStep * (i + 1)
       ]);
     }
+  }
+  for (let stepCount = 30; stepCount >= 5; stepCount -= 5) {
+    const leftStep = leftDepth / stepCount;
+    if (leftStep > 2 * rightHeight || leftStep < rightHeight / 2) continue;
     for (let i = 0; i < stepCount; i++) {
       windowDepth.push([
         depthList[0] + leftStep * i,
@@ -426,7 +434,6 @@ export function generateWindow(
       ]);
     }
   }
-
   return windowDepth;
 }
 
