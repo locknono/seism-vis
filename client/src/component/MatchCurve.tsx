@@ -69,10 +69,7 @@ class MatchCurve extends React.Component<Props, State> {
 
   handleMouseEnter() {
     const { index, getCurIndex, path, getRecommended } = this.props;
-    const vertex = extractVertex(path);
-    this.setState({ vertex, showRecommendedVertex: true });
     getCurIndex(index);
-    getRecommended(index);
   }
 
   handleMouseLeave() {
