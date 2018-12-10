@@ -86,7 +86,7 @@ export function compareInOneLayer(
   return diffSum.map(e => e / realK) as OneLayerDiff;
 }
 
-function shouldFilterDirtyData(v: number): boolean {
+export function shouldFilterDirtyData(v: number): boolean {
   if (Number.isNaN(v)) return true;
   if (v <= -9999) return true;
   return false;
@@ -125,7 +125,7 @@ function normalize(w1: SingleWellAttrData, w2: SingleWellAttrData) {
   ];
 }
 
-function getMinMaxList(
+export function getMinMaxList(
   v1: [number, number, number, number, number, number][],
   v2: [number, number, number, number, number, number][]
 ) {

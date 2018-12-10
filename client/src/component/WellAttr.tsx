@@ -1,8 +1,38 @@
 import * as React from "react";
 import * as d3 from "d3";
 import { colorScale } from "../constraint";
+import { shouldFilterDirtyData } from "../API/wellAttrDiff";
 interface Props {}
 interface State {}
+
+function getWellScales(
+  values: [number, number, number, number, number, number][],
+  offset: number
+) {
+  const minList = Array(5).fill(Number.MAX_SAFE_INTEGER);
+  const maxList = Array(5).fill(Number.MIN_SAFE_INTEGER);
+  for (let value of values) {
+    for (let i = 1; i <= 5; i++) {
+      if (shouldFilterDirtyData(value[i])) continue;
+      if (value[i] < minList[i - 1]) {
+        minList[i - 1] = value[i];
+      }
+      if (value[i] > maxList[i - 1]) {
+        maxList[i - 1] = value[i];
+      }
+    }
+  }
+  const scales = [];
+  for (let i = 0; i < minList.length; i++) {
+    scales.push(
+      d3
+        .scaleLinear()
+        .domain([minList[i], maxList[i]])
+        .range([-offset, offset])
+    );
+  }
+  return scales;
+}
 const minList = [
   -662.546 / 4,
   -999.25 / 4,
@@ -15,7 +45,7 @@ const minDepth = 1067.18;
 
 interface Props {
   id: string;
-  values: any[];
+  values: [number, number, number, number, number, number][];
   yScale: any;
   xStart: number;
   svgWidth: number;
@@ -51,17 +81,8 @@ class WellAttr extends React.Component<Props, State> {
       leftFlag
     } = this.props;
     const { pathGen } = this.state;
-    const scales: any[] = [];
     const pad = (svgWidth * (paddingRatio - 0.1)) / 5;
-    for (let i = 0; i < minList.length; i++) {
-      const range = [minList[i], maxList[i]];
-      const scale = d3
-        .scaleLinear()
-        .domain(range)
-        .range([-pad / 2, pad / 2])
-        .clamp(true);
-      scales.push(scale);
-    }
+    const scales = getWellScales(values, pad / 2 - 2);
     const xList = [];
     if (leftFlag) {
       for (let i = 0; i < 5; i++) {
@@ -87,8 +108,7 @@ class WellAttr extends React.Component<Props, State> {
         //so `j-1`
 
         //filter dirty data
-        if (value <= -9999) continue;
-
+        if (value <= -9999 || Number.isNaN(value)) continue;
         const xOffset = scales[j - 1](value);
         const point =
           leftFlag === true
