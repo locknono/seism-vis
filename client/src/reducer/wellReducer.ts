@@ -16,7 +16,8 @@ import {
   GET_ATTR_DIFF,
   GET_CUR_INDEX,
   GET_TOP_RECORDS,
-  GET_REC_VERTEX
+  GET_REC_VERTEX,
+  GET_SAME_FLAG
 } from "../action/changeWell";
 import {
   AllDiff,
@@ -46,6 +47,7 @@ interface WellState {
   curSelectedIndex: CurSelectedIndex;
   topRecords: AllRecords | undefined;
   recVertex: VertexType | undefined;
+  sameLayerFlags: boolean[];
 }
 
 const initialState: WellState = {
@@ -66,7 +68,8 @@ const initialState: WellState = {
   allDiff: undefined,
   curSelectedIndex: undefined,
   topRecords: undefined,
-  recVertex: undefined
+  recVertex: undefined,
+  sameLayerFlags: []
 };
 
 export default function wellReducer(
@@ -163,6 +166,11 @@ export default function wellReducer(
       return {
         ...state,
         recVertex: action.recVertex
+      };
+    case GET_SAME_FLAG:
+      return {
+        ...state,
+        sameLayerFlags: action.sameLayerFlags
       };
     default:
       return state;

@@ -24,6 +24,7 @@ export const GET_ATTR_DIFF = "GET_ATTR_DIFF";
 export const GET_CUR_INDEX = "GET_CUR_INDEX";
 export const GET_TOP_RECORDS = "GET_TOP_RECORDS";
 export const GET_REC_VERTEX = "GET_REC_VERTEX";
+export const GET_SAME_FLAG = "GET_SAME_FLAG";
 
 export function getAllWells(allWells: AllWells) {
   return {
@@ -148,5 +149,12 @@ export function getRecVertex(recVertex: VertexType) {
   return {
     type: GET_REC_VERTEX,
     recVertex
+  };
+}
+
+export function getSameFlag(flags: boolean[]) {
+  return {
+    type: GET_SAME_FLAG,
+    sameLayerFlags: flags
   };
 }

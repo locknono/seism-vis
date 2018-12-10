@@ -23,6 +23,7 @@ interface Props {
   getCurIndex: any;
   topRecords: AllRecords;
   getRecVertex: typeof getRecVertex;
+  sameLayerFlags: boolean[];
 }
 
 const svgWidth = matchViewWidth,
@@ -42,13 +43,15 @@ export default function AttrDiff(props: Props) {
     curSelectedIndex,
     getCurIndex,
     topRecords,
-    getRecVertex
+    getRecVertex,
+    sameLayerFlags
   } = props;
   let rects;
   let baseLine;
   let topRecordsDOM;
   let linkLine;
   let directionDOM;
+  let topBaseLine;
   if (allDiff) {
     const verticalPad = drawSvgHeight / allDiff.length;
     const barHeight = verticalPad * 0.8;
@@ -68,7 +71,7 @@ export default function AttrDiff(props: Props) {
       if (topRecords && curSelectedIndex) {
         const { rects, yList } = getTopRecordsDOM(
           topRecords,
-          svgWidth / 2 + 30,
+          svgWidth / 2 + 30 + padBetweenTwoGraph,
           getRecVertex,
           allDiff
         );
@@ -76,7 +79,11 @@ export default function AttrDiff(props: Props) {
 
         const directions = getLeftRightLegend(topRecords);
         directionDOM = getDerectionDOM(svgWidth / 2 + 20, yList, directions);
-
+        topBaseLine = getTopBaseLine(
+          svgWidth / 2 + 30 + padBetweenTwoGraph,
+          topRecords,
+          sameLayerFlags
+        );
         linkLine = getLinkLine(
           curSelectedIndex,
           [
@@ -123,6 +130,7 @@ export default function AttrDiff(props: Props) {
         {topRecordsDOM}
         {linkLine}
         {directionDOM}
+        {topBaseLine}
       </svg>
     </div>
   );
@@ -240,7 +248,7 @@ function getTopRecordsDOM(
   const rects = [];
   const yList = [];
   for (let i = 0; i < 5; i++) {
-    let x = xStart + i * horizontalPad + padBetweenTwoGraph;
+    let x = xStart + i * horizontalPad;
     for (let j = 0; j < topRecords.length; j++) {
       if (!leftScales) break;
       const width = leftScales[i](topRecords[j].diff[i]);
@@ -264,8 +272,6 @@ function getTopRecordsDOM(
   }
   return { rects, yList };
 }
-
-function getTopBaseLine(topRecords: AllRecords, xStart: number) {}
 
 function getTopScales(topRecords: AllRecords) {
   const scales = [];
@@ -316,7 +322,7 @@ function getLinkLine(
 }
 
 function getLeftRightLegend(topRecords: AllRecords): Direction[] {
-  const directions = []
+  const directions = [];
   for (let i = 0; i < topRecords.length; i++) {
     const mv = topRecords[i].matchVertex;
     const tv = topRecords[i].vertex;
@@ -348,6 +354,47 @@ function getDerectionDOM(
         height={rectHeight}
         fill={directions[i] === 0 ? "grey" : "black"}
         rx="2px"
+      />
+    );
+  }
+  return rects;
+}
+
+function getTopBaseLine(
+  xStart: number,
+  topRecords: AllRecords,
+  sameLayerFlags: boolean[]
+) {
+  const horizontalPad = (drawSvgWidth - 20) / 5;
+  const topPadding = topPaddingRatio * svgHeight;
+  const verticalPad = drawSvgHeight / topRecords.length;
+  const barHeight = verticalPad * 0.8;
+  const rects = [];
+  for (let i = 0; i < topRecords.length; i++) {
+    let style;
+    if (sameLayerFlags[i]) {
+      style = {
+        /*   stroke: `black`,
+        strokeDasharray: `1,10`, */
+        stroke: brighterMatchColor,
+        strokeWidth: 0.5,
+        fill: brighterMatchColor,
+        fillOpacity: 0.2
+      };
+    } else {
+      style = { stroke: "none", fill: "none" };
+    }
+    rects.push(
+      <rect
+        key={v4()}
+        x={xStart}
+        y={topPadding + verticalPad * i}
+        width={5 * horizontalPad}
+        height={verticalPad}
+        rx="2px"
+        style={style}
+        pointerEvents="none"
+        onMouseEnter={function() {}}
       />
     );
   }

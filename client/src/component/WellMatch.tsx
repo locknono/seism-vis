@@ -10,7 +10,8 @@ import {
   getAttrDiff,
   getCurIndex,
   getTopRecords,
-  getRecVertex
+  getRecVertex,
+  getSameFlag
 } from "../action/changeWell";
 import { changeSvgSize } from "../action/changeWellMatchSvg";
 import * as d3 from "d3";
@@ -19,7 +20,8 @@ import WellAttr from "./WellAttr";
 import Uncertainty, {
   getRecommendedVertex,
   getRecommendedVertexByAttrDiff,
-  getRecommendedVertexByAttrDiffRecords
+  getRecommendedVertexByAttrDiffRecords,
+  IfLeftRightOnSameLayer
 } from "../API/uncertainty";
 import {
   getSize,
@@ -110,7 +112,8 @@ const mapDispatchToProps = {
   getAttrDiff,
   getCurIndex,
   getTopRecords,
-  getRecVertex
+  getRecVertex,
+  getSameFlag
 };
 
 interface Props {
@@ -147,6 +150,7 @@ interface Props {
   getTopRecords: typeof getTopRecords;
   getRecVertex: typeof getRecVertex;
   recVertex: VertexType | undefined;
+  getSameFlag: typeof getSameFlag;
 }
 
 interface State {
@@ -321,7 +325,8 @@ class WellMatch extends React.Component<Props, State> {
       allTrackVertex,
       wellAttrData,
       getTopRecords,
-      getRecVertex
+      getRecVertex,
+      getSameFlag
     } = this.props;
     const recommendedVertex = getRecommendedVertex(
       allTrackVertex,
@@ -335,6 +340,8 @@ class WellMatch extends React.Component<Props, State> {
       wellAttrData
     );
     const topRecords = getTop10RecomendedVertex(allRecords);
+    const sameLayerFlags = IfLeftRightOnSameLayer(topRecords, allTrackVertex);
+    getSameFlag(sameLayerFlags);
     getTopRecords(topRecords);
     getRecVertex(allRecords[0].vertex);
   }

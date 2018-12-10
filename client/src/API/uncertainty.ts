@@ -439,3 +439,38 @@ export function getVertexWithWindowDepthList(
   ];
   return vertex;
 }
+
+export function IfLeftRightOnSameLayer(
+  topRecords: AllRecords,
+  trackVertex: AllVertices
+) {
+  const sameLayerFlags = [];
+  for (let i = 0; i < topRecords.length; i++) {
+    const tv = topRecords[i].vertex;
+    const leftSet = new Set();
+    const rightSet = new Set();
+    for (let j = 0; j < trackVertex.length; j++) {
+      if (tv[0][1] > trackVertex[j][0][1] && tv[0][1] < trackVertex[j][1][1]) {
+        leftSet.add(j);
+      }
+      if (tv[1][1] > trackVertex[j][0][1] && tv[0][1] < trackVertex[j][1][1]) {
+        leftSet.add(j);
+      }
+      if (tv[2][1] > trackVertex[j][2][1] && tv[2][1] < trackVertex[j][3][1]) {
+        rightSet.add(j);
+      }
+      if (tv[3][1] > trackVertex[j][2][1] && tv[3][1] < trackVertex[j][3][1]) {
+        rightSet.add(j);
+      }
+    }
+    let sameLayerFlag = true;
+    for (let l of leftSet.values()) {
+      for (let r of leftSet.values()) {
+        if (l !== r) sameLayerFlag = false;
+        break;
+      }
+    }
+    sameLayerFlags.push(sameLayerFlag);
+  }
+  return sameLayerFlags;
+}

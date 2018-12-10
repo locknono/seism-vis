@@ -9,8 +9,14 @@ import { connect } from "react-redux";
 import { AllDiff, CurSelectedIndex, AllRecords } from "src/ts/Type";
 import { getCurIndex, getRecVertex } from "../action/changeWell";
 const mapStateToProps = (state: any, ownProps?: any) => {
-  const { allDiff, curSelectedIndex, topRecords, } = state.wellReducer;
-  return { allDiff, curSelectedIndex, topRecords };
+  const {
+    allDiff,
+    curSelectedIndex,
+    topRecords,
+    sameLayerFlags
+  } = state.wellReducer;
+  console.log("sameLayerFlags: ", sameLayerFlags);
+  return { allDiff, curSelectedIndex, topRecords, sameLayerFlags };
 };
 
 const mapDispatchToProps = {
@@ -24,6 +30,7 @@ interface Props {
   getCurIndex: typeof getCurIndex;
   topRecords: AllRecords;
   getRecVertex: typeof getRecVertex;
+  sameLayerFlags: boolean[];
 }
 
 const Seism = function(props: Props) {
@@ -32,7 +39,8 @@ const Seism = function(props: Props) {
     curSelectedIndex,
     getCurIndex,
     topRecords,
-    getRecVertex
+    getRecVertex,
+    sameLayerFlags
   } = props;
   return (
     <React.Fragment>
@@ -47,6 +55,7 @@ const Seism = function(props: Props) {
             getCurIndex={getCurIndex}
             topRecords={topRecords}
             getRecVertex={getRecVertex}
+            sameLayerFlags={sameLayerFlags}
           />
         </div>
       </div>
