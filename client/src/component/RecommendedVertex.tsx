@@ -6,6 +6,7 @@ import { vertexRadius, vertexFillOpacity } from "../constraint";
 interface Props {
   vertex: VertexType | undefined;
   changeVertexPosition: any;
+  originalVertex: VertexType;
 }
 
 class RecommendedVertex extends React.Component<Props> {
@@ -19,10 +20,13 @@ class RecommendedVertex extends React.Component<Props> {
     changeVertexPosition(vertex);
   }
   render() {
-    const { vertex } = this.props;
+    const { vertex, originalVertex } = this.props;
     let drawVertex = null;
     if (vertex) {
-      drawVertex = vertex.map(e => {
+      drawVertex = vertex.map((e, i) => {
+        if (e[0] === originalVertex[i][0] && e[1] === originalVertex[i][1]) {
+          return null;
+        }
         return (
           <circle
             key={v4()}

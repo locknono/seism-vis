@@ -71,7 +71,6 @@ export default class Uncertainty {
       }
       ucList.push(curMatchUC);
     }
-    console.log("ucList: ", ucList);
 
     return {
       path: this.getUcPath(matchVertex, ucList, width, paddingRatio, height),
@@ -155,14 +154,12 @@ export default class Uncertainty {
     ucPath.sort((a: any, b: any) => {
       return a[0][1] - b[0][1];
     });
-    console.log("ucPath: ", ucPath);
     const drawPath = [[startX, height * 0.05]];
     for (let i = 0; i < ucPath.length; i++) {
       drawPath.push(ucPath[i][0]);
       drawPath.push(ucPath[i][1]);
       drawPath.push(ucPath[i][2]);
     }
-    console.log("drawPath: ", drawPath);
     //do not loop and use d3.curveCardinalOpen
     //drawPath.push([startX, height * (1 - 0.05)]);
     return drawPath;
@@ -469,10 +466,38 @@ export function IfLeftRightOnSameLayer(
       if (tv[3][1] > trackVertex[j][2][1] && tv[3][1] < trackVertex[j][3][1]) {
         rightSet.add(j);
       }
+      if (
+        tv[0][1] > trackVertex[j][1][1] &&
+        tv[0][1] < trackVertex[j + 1][0][1]
+      ) {
+        leftSet.add(j + 0.5);
+      }
+      if (
+        tv[1][1] > trackVertex[j][1][1] &&
+        tv[1][1] < trackVertex[j + 1][0][1]
+      ) {
+        leftSet.add(j + 0.5);
+      }
+      if (
+        tv[2][1] > trackVertex[j][3][1] &&
+        tv[2][1] < trackVertex[j + 1][2][1]
+      ) {
+        rightSet.add(j + 0.5);
+      }
+      if (
+        tv[3][1] > trackVertex[j][3][1] &&
+        tv[3][1] < trackVertex[j + 1][2][1]
+      ) {
+        rightSet.add(j + 0.5);
+      }
     }
     let sameLayerFlag = true;
+    console.log("leftSet.values(): ", leftSet.values());
+    console.log("rightSet.values(): ", rightSet.values());
+    console.log(`-----------`);
+
     for (let l of leftSet.values()) {
-      for (let r of leftSet.values()) {
+      for (let r of rightSet.values()) {
         if (l !== r) sameLayerFlag = false;
         break;
       }

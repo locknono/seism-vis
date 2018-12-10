@@ -125,6 +125,7 @@ class MatchCurve extends React.Component<Props, State> {
         {baseLine}
         {showRecommendedVertex ? (
           <RecommendedVertex
+            originalVertex={VertexOnPath}
             vertex={recommendedVertex}
             changeVertexPosition={this.changeVertexPosition}
           />

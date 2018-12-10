@@ -164,6 +164,7 @@ class Map extends React.Component<Props, object> {
     const self = this;
     this.map.pm.addControls(options);
     this.map.pm.enableDraw("Circle", drawOptions);
+    this.map.pm.disableDraw("circle");
     this.map.on("pm:create", function(e1: any) {
       const { allWells } = self.props;
       const radius = e1.layer._radius;
