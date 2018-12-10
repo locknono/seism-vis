@@ -57,7 +57,7 @@ class RecommendedVertex extends React.Component<Props> {
       recommendRect = (
         <path
           d={path.toString()}
-          style={{ fill: darkerMatchColor, fillOpacity: 0.8 }}
+          style={{ fill: darkerMatchColor, fillOpacity: 0.5 }}
         />
       );
       recommendBaseLine = getBaseLine(vertex);
@@ -78,7 +78,7 @@ function getBaseLine(vertex: VertexType) {
   let baseLineStyle = {
     stroke: darkerMatchColor,
     fill: darkerMatchColor,
-    fillOpacity: 0.6
+    fillOpacity: 0.5
   };
 
   const lPath = d3.path();

@@ -12,6 +12,7 @@ import {
   reverseScale,
   initialWellMatchDepthScale
 } from "../reducer/globalVarReducer";
+import * as d3 from "d3";
 export function extractPathVertex(e: MatchCurvePath): VertexType {
   return [
     e[0],
@@ -56,8 +57,34 @@ export default class Uncertainty {
       const rightMap = rightMaps[i];
       let curMatchUC = 0;
       convertMapValueFromDepthToPortion(leftMap);
+
       convertMapValueFromDepthToPortion(rightMap);
-      const allKey = findAllKey(leftMap, rightMap);
+
+      let time = 0;
+      while (notFinish(leftMap) && time < 5) {
+        loop: for (let [k1, v1] of leftMap) {
+          if (v1 === 0) continue;
+          for (let [k2, v2] of rightMap) {
+            if (v2 === 0) {
+              continue;
+            } else {
+              if (v1 > v2) {
+                curMatchUC += (v1 - v2) * Math.abs(k1 - k2);
+                rightMap.set(k2, 0);
+                leftMap.set(k1, v1 - v2);
+                break loop;
+              } else {
+                curMatchUC += (v2 - v1) * Math.abs(k1 - k2);
+                rightMap.set(k2, v2 - v1);
+                leftMap.set(k1, 0);
+                break loop;
+              }
+            }
+          }
+        }
+        time += 1;
+      }
+      /* const allKey = findAllKey(leftMap, rightMap);
       for (let key of allKey) {
         let leftValue = leftMap.get(key);
         let rightValue = rightMap.get(key);
@@ -68,14 +95,21 @@ export default class Uncertainty {
         } else if (rightValue && !leftValue) {
           curMatchUC += rightValue;
         }
-      }
+      } */
       ucList.push(curMatchUC);
     }
-
+    console.log("ucList: ", ucList);
     return {
       path: this.getUcPath(matchVertex, ucList, width, paddingRatio, height),
       ucList
     };
+
+    function notFinish(map: Map<number, number>) {
+      for (let [k, v] of map) {
+        if (v !== 0) return true;
+      }
+      return false;
+    }
   }
 
   getUcPath(
@@ -126,14 +160,19 @@ export default class Uncertainty {
     left: boolean
   ) {
     const ucPath = [];
-    const exp = 6;
+    const exp = 40;
+    const scale = d3
+      .scaleLinear()
+      .domain([0, 4])
+      .range([0, 70])
+      .clamp(true);
     for (let i = 0; i < matchVertex.length; i++) {
       const value = ucList[i];
       const track = matchVertex[i];
       if (left === false) {
         const topPoint = [startX, track[2][1]];
         const midPoint = [
-          startX + Math.pow(exp, value),
+          startX + scale(value),
           (track[2][1] + track[3][1]) / 2
         ];
         const bottomPoint = [startX, track[3][1]];
@@ -142,7 +181,7 @@ export default class Uncertainty {
       } else {
         const topPoint = [startX, track[0][1]];
         const midPoint = [
-          startX - Math.pow(exp, value),
+          startX - scale(value),
           (track[0][1] + track[1][1]) / 2
         ];
         const bottomPoint = [startX, track[1][1]];
@@ -499,9 +538,6 @@ export function IfLeftRightOnSameLayer(
       }
     }
     let sameLayerFlag = true;
-    console.log("leftSet.values(): ", leftSet.values());
-    console.log("rightSet.values(): ", rightSet.values());
-    console.log(`-----------`);
 
     for (let l of leftSet.values()) {
       for (let r of rightSet.values()) {
