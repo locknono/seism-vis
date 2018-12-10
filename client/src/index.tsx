@@ -9,11 +9,14 @@ import figReducer from "./reducer/figReducer";
 import globalVarReducer from "./reducer/globalVarReducer";
 import wellReducer from "./reducer/wellReducer";
 import storageReducer from "./reducer/storageReducer";
+import controlReducer from "./reducer/controlReducer";
+
 const rootReducer = combineReducers({
   figReducer,
   wellReducer,
   globalVarReducer,
-  storageReducer
+  storageReducer,
+  controlReducer
 });
 
 let store = createStore(rootReducer);

@@ -14,6 +14,7 @@ import {
   getSameFlag
 } from "../action/changeWell";
 import { changeSvgSize } from "../action/changeWellMatchSvg";
+import { changeFocus } from "../action/control";
 import * as d3 from "d3";
 import Tracker from "../API/tracking";
 import WellAttr from "./WellAttr";
@@ -113,7 +114,8 @@ const mapDispatchToProps = {
   getCurIndex,
   getTopRecords,
   getRecVertex,
-  getSameFlag
+  getSameFlag,
+  changeFocus
 };
 
 interface Props {
@@ -151,6 +153,7 @@ interface Props {
   getRecVertex: typeof getRecVertex;
   recVertex: VertexType | undefined;
   getSameFlag: typeof getSameFlag;
+  changeFocus: typeof changeFocus;
 }
 
 interface State {
@@ -469,7 +472,11 @@ class WellMatch extends React.Component<Props, State> {
     }
     return (
       <div className=" well-match-div panel panel-primary">
-        <WithButtonViewHeading height={22} title={"Match"} />
+        <WithButtonViewHeading
+          height={22}
+          title={"Match"}
+          changeFocus={this.props.changeFocus}
+        />
         <svg className="well-match-svg">
           {positivePaths}
           {negativePaths}

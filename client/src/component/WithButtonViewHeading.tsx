@@ -6,6 +6,7 @@ import { v4 } from "uuid";
 interface Props {
   height: number;
   title: string;
+  changeFocus: any;
 }
 
 class WithButtonViewHeading extends React.Component<Props> {
@@ -15,7 +16,7 @@ class WithButtonViewHeading extends React.Component<Props> {
 
   handleClick() {}
   render() {
-    const { height, title } = this.props;
+    const { height, title, changeFocus } = this.props;
     return (
       <Panel.Heading
         style={{
@@ -40,6 +41,9 @@ class WithButtonViewHeading extends React.Component<Props> {
           <span
             className=" oi oi-fullscreen-enter icon-style"
             style={{ right: `1%` }}
+            onClick={function() {
+              changeFocus(true);
+            }}
           />
           {["SP", "COND", "ML1", "ML2", "AC"].map((e, i) => {
             const margin = i === 0 ? `100px` : `10px`;

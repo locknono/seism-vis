@@ -114,7 +114,7 @@ code {
   width: 700px;
   height: 500px;
   position: relative;
-  margin-right: 100px;
+  margin-right: 50px;
   border-left: none;
   margin-bottom: 0;
   border-color: rgb(221, 221, 221);
@@ -173,7 +173,7 @@ code {
 }
 
 .info-panel {
-  width: 180px;
+  width: 220px;
   border-color: rgb(221, 221, 221);
 }
 
@@ -184,6 +184,10 @@ code {
 .icon-style {
   float: right;
   top: 4px;
+}
+
+.icon-style:hover {
+  cursor: pointer;
 }
 
 .diff-baseline {
@@ -224,4 +228,9 @@ code {
   width: min-content;
   display: inline-block;
   font-size: 12px;
+}
+
+.focus-div {
+  width: 1000px;
+  height: 1500px;
 }

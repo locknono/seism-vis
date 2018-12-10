@@ -15,7 +15,9 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     topRecords,
     sameLayerFlags
   } = state.wellReducer;
-  return { allDiff, curSelectedIndex, topRecords, sameLayerFlags };
+  const { focusFlag } = state.controlReducer;
+  console.log("focusFlag: ", focusFlag);
+  return { allDiff, curSelectedIndex, topRecords, sameLayerFlags, focusFlag };
 };
 
 const mapDispatchToProps = {
@@ -30,6 +32,7 @@ interface Props {
   topRecords: AllRecords;
   getRecVertex: typeof getRecVertex;
   sameLayerFlags: boolean[];
+  focusFlag: boolean;
 }
 
 const Seism = function(props: Props) {
@@ -39,7 +42,8 @@ const Seism = function(props: Props) {
     getCurIndex,
     topRecords,
     getRecVertex,
-    sameLayerFlags
+    sameLayerFlags,
+    focusFlag
   } = props;
   return (
     <React.Fragment>
@@ -58,6 +62,19 @@ const Seism = function(props: Props) {
           />
         </div>
       </div>
+      {focusFlag === true ? (
+        <div className="focus-div">
+          <WellMatch />
+          <AttrDiff
+            allDiff={allDiff}
+            curSelectedIndex={curSelectedIndex}
+            getCurIndex={getCurIndex}
+            topRecords={topRecords}
+            getRecVertex={getRecVertex}
+            sameLayerFlags={sameLayerFlags}
+          />
+        </div>
+      ) : null}
     </React.Fragment>
   );
 };
