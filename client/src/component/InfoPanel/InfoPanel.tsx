@@ -6,6 +6,7 @@ import { ViewHeading } from "../ViewHeading";
 import { CoupleWell } from "src/ts/Type";
 import SliderWithLabel from "./SliderWithLabel";
 import { colorScale } from "../../constraint";
+import { v4 } from "uuid";
 interface Props {
   planeName: string;
   depth: number;
@@ -27,11 +28,13 @@ class InfoPanel extends React.Component<Props> {
   render() {
     const { planeName, depth, coupleWell } = this.props;
     const sliders = ["AC", "ML2", "ML1", "COND", "SP"].map((e, i) => {
-      return <SliderWithLabel name={e} color={colorScale(i.toString())} />;
+      return (
+        <SliderWithLabel key={v4()} name={e} color={colorScale(i.toString())} />
+      );
     });
     return (
       <div className="info-panel panel panel-primary">
-        <ViewHeading height={22} title={`Info`} />
+        <ViewHeading height={22} title={`Control Panel`} />
         <div />
         <WellCircle coupleWell={coupleWell} />
         <div className="panel panel-primary attr-control-panel">

@@ -210,7 +210,9 @@ export function getMatchVertexPosition(
   }
   const map: Map<number, number> = new Map();
 
-  if (endIndex === startIndex + 1) {
+  if (startIndex === endIndex) {
+    map.set(startIndex, startDepth); //no matter what depth is,portion==1
+  } else if (endIndex === startIndex + 1) {
     map.set(startIndex, startDepth);
     map.set(endIndex, endDepth);
   } else {

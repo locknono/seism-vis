@@ -181,6 +181,7 @@ export default class Tracker {
 
     this.RemoveOverlapTrackingPath(allTracks);
     this.RemoveValleyAndPeakCross(allTracks, traceCount);
+    console.log("allTracks: ", allTracks);
   }
 
   RemoveOverlapTrackingPath(allTracks: AllTracks) {
