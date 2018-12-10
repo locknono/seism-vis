@@ -15,7 +15,6 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     topRecords,
     sameLayerFlags
   } = state.wellReducer;
-  console.log("sameLayerFlags: ", sameLayerFlags);
   return { allDiff, curSelectedIndex, topRecords, sameLayerFlags };
 };
 

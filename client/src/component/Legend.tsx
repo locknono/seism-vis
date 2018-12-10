@@ -4,19 +4,20 @@ import { v4 } from "uuid";
 const Legend = () => {
   const xStart = 20;
   const yStart = 8;
-  const pad = 35;
-  const yPad = 25;
+  const pad = 25;
+  const yPad = 20;
   const peaks = [];
   for (let i = 0; i < 3; i++) {
     const path = d3.path();
-    path.moveTo(xStart + i * pad, yStart);
+    const x = xStart - 2.5;
+    path.moveTo(x + i * pad, yStart);
     path.quadraticCurveTo(
-      xStart + (i + 1) * pad,
+      x + (i + 1) * pad,
       (yStart + yStart + yPad) / 2,
-      xStart + i * pad,
+      x + i * pad,
       yStart + yPad
     );
-    path.lineTo(xStart + i * pad, yStart);
+    path.lineTo(x + i * pad, yStart);
     peaks.push(
       <path key={v4()} d={path.toString()} style={{ fill: `black` }} />
     );
@@ -33,7 +34,7 @@ const Legend = () => {
   const match = (
     <rect
       x={xStart - 10}
-      y={yStart + yPad + 10}
+      y={yStart + yPad + 15}
       width={3 * pad}
       height={20}
       style={{ fill: "grey" }}
@@ -41,11 +42,23 @@ const Legend = () => {
   );
   return (
     <div className="match-legend-div panel panel-default">
-      <svg style={{ width: `100%`, height: `100%` }}>
+      <svg style={{ width: `55%`, height: `100%`, display: "inline-block" }}>
         {peaks}
         {track}
         {match}
       </svg>
+      <div className="legend-text" style={{ position: `absolute` }}>
+        seismic
+        <br />
+        horizon
+      </div>
+      <div
+        className="legend-text"
+        style={{ position: `absolute`, top: `35px` }}
+      >
+        stratigraphic <br />
+        horizon
+      </div>
     </div>
   );
 };

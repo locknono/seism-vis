@@ -205,7 +205,7 @@ code {
   margin-bottom: 0px;
   bottom: 0px;
   left: 0px;
-  width: 190px;
+  width: 170px;
   height: 70px;
   border-left: 0px;
   border-bottom: 0px;
@@ -218,4 +218,10 @@ code {
   float: right;
   margin-top: 3px;
   margin-right: 3px;
+}
+
+.legend-text {
+  width: min-content;
+  display: inline-block;
+  font-size: 12px;
 }

@@ -314,8 +314,11 @@ function getLinkLine(
     let [ox, oy] = original;
     ox = ox - padBetweenTwoGraph;
     let c = [(ox + x) / 2, oy];
+    const c1 = [ox + (x - ox) / 4, oy];
+    const c2 = [ox + ((x - ox) / 4) * 2, yList[i]];
     path.moveTo(ox, oy);
-    path.quadraticCurveTo(c[0], c[1], p2[0], p2[1]);
+    path.bezierCurveTo(c1[0], c1[1], c2[0], c2[1], p2[0], p2[1]);
+    /* path.quadraticCurveTo(c[0], c[1], p2[0], p2[1]); */
     paths.push(<path d={path.toString()} key={i} style={style} />);
   }
   return paths;
@@ -352,11 +355,21 @@ function getDerectionDOM(
         y={yList[i] - (verticalPad * 0.8) / 2}
         width={directionRectLength}
         height={rectHeight}
-        fill={directions[i] === 0 ? "grey" : "black"}
+        fill={directions[i] === 0 ? "grey" : "grey"}
         rx="2px"
       />
     );
   }
+  rects.push(
+    <line
+      key={v4()}
+      x1={xStart + directionRectLength}
+      x2={xStart + directionRectLength}
+      y1={yList[0] - (verticalPad * 0.8) / 2}
+      y2={yList[yList.length - 1] + verticalPad * 0.5}
+      style={{ stroke: "black", strokeWidth: 2 }}
+    />
+  );
   return rects;
 }
 
