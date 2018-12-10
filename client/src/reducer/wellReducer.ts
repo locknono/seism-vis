@@ -129,7 +129,6 @@ export default function wellReducer(
       };
     case GET_ALL_TRACK:
       if (action.allTrack[0][0].highestX === -1) {
-        console.log(`消除啦！`);
         action.allTrack.splice(0, 1);
       }
       return {

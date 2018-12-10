@@ -16,7 +16,7 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     sameLayerFlags
   } = state.wellReducer;
   const { focusFlag } = state.controlReducer;
-  console.log("focusFlag: ", focusFlag);
+
   return { allDiff, curSelectedIndex, topRecords, sameLayerFlags, focusFlag };
 };
 

@@ -398,7 +398,7 @@ function getTopBaseLine(
         stroke: brighterMatchColor,
         strokeWidth: 0.5,
         fill: brighterMatchColor,
-        fillOpacity: 0.2
+        fillOpacity: 0.5
       };
     } else {
       style = { stroke: "none", fill: "none" };

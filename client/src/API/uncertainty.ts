@@ -460,7 +460,7 @@ export function IfLeftRightOnSameLayer(
       if (tv[0][1] > trackVertex[j][0][1] && tv[0][1] < trackVertex[j][1][1]) {
         leftSet.add(j);
       }
-      if (tv[1][1] > trackVertex[j][0][1] && tv[0][1] < trackVertex[j][1][1]) {
+      if (tv[1][1] > trackVertex[j][0][1] && tv[1][1] < trackVertex[j][1][1]) {
         leftSet.add(j);
       }
       if (tv[2][1] > trackVertex[j][2][1] && tv[2][1] < trackVertex[j][3][1]) {
