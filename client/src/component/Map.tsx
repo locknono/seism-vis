@@ -36,6 +36,8 @@ import {
 import { MatrixData, AllWells, WellAttrData } from "../ts/Type";
 import { diff } from "../API/wellAttrDiff";
 import { ViewHeading } from "./ViewHeading";
+import "leaflet.pm";
+import "leaflet.pm/dist/leaflet.pm.css";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const scaler = state.figReducer.scaler;
   const {
@@ -127,6 +129,89 @@ class Map extends React.Component<Props, object> {
     this.generateGrid().then(layerControl => {
       this.drawWells(layerControl);
     });
+    const options = {
+      position: "topleft", // toolbar position, options are 'topleft', 'topright', 'bottomleft', 'bottomright'
+      useFontAwesome: false, // use fontawesome instead of glyphicons (you need to include fontawesome yourself)
+      drawMarker: true, // adds button to draw markers
+      drawPolyline: true, // adds button to draw a polyline
+      drawRectangle: true, // adds button to draw a rectangle
+      drawPolygon: true, // adds button to draw a polygon
+      drawCircle: true, // adds button to draw a cricle
+      cutPolygon: true, // adds button to cut a hole in a polygon
+      editMode: true, // adds button to toggle edit mode for all layers
+      removalMode: true // adds a button to remove layers
+    };
+    const drawOptions = {
+      snappable: true,
+      snapDistance: 20,
+      snapMiddle: false,
+      allowSelfIntersection: true,
+      templineStyle: {
+        color: "blue"
+      },
+      hintlineStyle: {
+        color: "blue",
+        dashArray: [5, 5]
+      },
+      cursorMarker: false,
+      finishOn: null,
+      markerStyle: {
+        opacity: 0.5,
+        draggable: true,
+        pointerEvents: `none`
+      }
+    };
+    const self = this;
+    // add leaflet.pm controls to the map
+    this.map.pm.addControls(options);
+    this.map.pm.enableDraw("Circle", drawOptions);
+    this.map.on("pm:create", function(e1: any) {
+      console.log("e1: ", e1);
+      const { allWells } = self.props;
+      const radius = e1.layer._radius;
+      const center: [number, number] = [
+        e1.layer._latlng.lat,
+        e1.layer._latlng.lng
+      ];
+      console.log("center: ", center);
+      const insideWells = [];
+      for (let well of allWells) {
+        console.log("well: ", well);
+        if (ifInside(well.latlng, center, radius)) {
+          insideWells.push(well);
+        }
+      }
+      var circle = e1.layer;
+      console.log("insideWells: ", insideWells);
+      for (let well of insideWells) {
+        L.circle(well.latlng, {
+          radius: 10,
+          stroke: false,
+          color: "red",
+          fillOpacity: 1
+        }).addTo(self.map);
+      }
+    });
+
+    function ifInside(p: [number, number], c: [number, number], r: number) {
+      if (
+        Math.sqrt(
+          Math.pow(
+            self.map.latLngToLayerPoint(p).x - self.map.latLngToLayerPoint(c).x,
+            2
+          ) +
+            Math.pow(
+              self.map.latLngToLayerPoint(p).y -
+                self.map.latLngToLayerPoint(c).y,
+              2
+            )
+        ) <= r
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   }
 
   componentDidUpdate(prevProps: Props, prevState: Props, snapshot: any) {
