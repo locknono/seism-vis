@@ -17,5 +17,7 @@ export const WellCircle = (props: Props) => {
       </div>
     );
   });
-  return <React.Fragment>{circles}</React.Fragment>;
+  return (
+    <div className="panel panel-default info-well-circle-div">{circles}</div>
+  );
 };

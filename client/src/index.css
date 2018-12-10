@@ -135,6 +135,7 @@ code {
   width: 800px;
   height: 600px;
 }
+
 .focus-attr-diff-div {
   height: 300px;
 }
@@ -182,11 +183,6 @@ code {
 .right-side {
   display: flex;
   flex-direction: column;
-}
-
-.info-panel {
-  width: 220px;
-  border-color: rgb(221, 221, 221);
 }
 
 .button-div {
@@ -240,4 +236,18 @@ code {
   width: min-content;
   display: inline-block;
   font-size: 12px;
+}
+
+
+
+
+
+
+.info-panel {
+  width: 220px;
+  border-color: rgb(221, 221, 221);
+}
+
+.info-well-circle-div{
+  
 }

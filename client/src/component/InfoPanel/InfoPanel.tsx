@@ -15,6 +15,7 @@ const InfoPanel = (props: any) => {
   return (
     <div className="info-panel panel panel-primary">
       <ViewHeading height={22} title={`Info`} />
+      <div />
       <WellCircle coupleWell={coupleWell} />
     </div>
   );
