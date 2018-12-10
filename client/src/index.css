@@ -238,16 +238,31 @@ code {
   font-size: 12px;
 }
 
-
-
-
-
-
 .info-panel {
-  width: 220px;
+  min-width: 220px;
   border-color: rgb(221, 221, 221);
 }
 
-.info-well-circle-div{
-  
+.info-well-circle-div {
+}
+
+.slider-text {
+  margin-left: 5px;
+  font-family: "Arial", "Microsoft YaHei", "黑体", "宋体", sans-serif;
+}
+.slider-div {
+  width: 60%;
+  float: right;
+  margin-right: 5px;
+  margin-top: 4px;
+}
+
+.attr-control-panel {
+  bottom: 0px;
+}
+
+.slider-value-text {
+  float: right;
+  margin-right: 5px;
+  font-family: "Arial", "Microsoft YaHei", "黑体", "宋体", sans-serif;
 }

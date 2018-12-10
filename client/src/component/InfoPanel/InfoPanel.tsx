@@ -4,7 +4,8 @@ import { Panel } from "react-bootstrap";
 import { WellCircle } from "./WellCircle";
 import { ViewHeading } from "../ViewHeading";
 import { CoupleWell } from "src/ts/Type";
-import * as $ from "jquery";
+import SliderWithLabel from "./SliderWithLabel";
+import { colorScale } from "../../constraint";
 interface Props {
   planeName: string;
   depth: number;
@@ -22,35 +23,20 @@ class InfoPanel extends React.Component<Props> {
     super(props);
   }
 
-  componentDidMount() {
-    ($("#ex1") as any).slider({
-      formatter: function(value: any) {
-        return "Current value: " + value;
-      }
-    });
-    var slider = new Slider("#ex1", {
-      formatter: function(value) {
-        return "Current value: " + value;
-      }
-    });
-  }
+  componentDidMount() {}
   render() {
     const { planeName, depth, coupleWell } = this.props;
+    const sliders = ["AC", "ML2", "ML1", "COND", "SP"].map((e, i) => {
+      return <SliderWithLabel name={e} color={colorScale(i.toString())} />;
+    });
     return (
       <div className="info-panel panel panel-primary">
         <ViewHeading height={22} title={`Info`} />
         <div />
         <WellCircle coupleWell={coupleWell} />
-        <div>
-          <input
-            id="ex1"
-            data-slider-id="ex1Slider"
-            type="text"
-            data-slider-min="0"
-            data-slider-max="20"
-            data-slider-step="1"
-            data-slider-value="14"
-          />
+        <div className="panel panel-primary attr-control-panel">
+          <ViewHeading height={22} title={`untitled`} />
+          {sliders}
         </div>
       </div>
     );

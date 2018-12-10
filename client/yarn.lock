@@ -340,6 +340,21 @@
   resolved "http://registry.npm.taobao.org/@types/prop-types/download/@types/prop-types-15.5.7.tgz#c6f1e0d0109ff358b132d98b7b4025c7a7b707c5"
   integrity sha1-xvHg0BCf81ixMtmLe0Alx6e3B8U=
 
+"@types/rc-slider@^8.6.0":
+  version "8.6.0"
+  resolved "http://registry.npm.taobao.org/@types/rc-slider/download/@types/rc-slider-8.6.0.tgz#7f061a920b067825c8455cf481c57b0927889c72"
+  integrity sha1-fwYakgsGeCXIRVz0gcV7CSeInHI=
+  dependencies:
+    "@types/rc-tooltip" "*"
+    "@types/react" "*"
+
+"@types/rc-tooltip@*":
+  version "3.7.0"
+  resolved "http://registry.npm.taobao.org/@types/rc-tooltip/download/@types/rc-tooltip-3.7.0.tgz#6dc9898dc426495baea1b786e5dbde8980bf9737"
+  integrity sha1-bcmJjcQmSVuuobeG5dveiYC/lzc=
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-bootstrap@^0.32.15":
   version "0.32.15"
   resolved "http://registry.npm.taobao.org/@types/react-bootstrap/download/@types/react-bootstrap-0.32.15.tgz#66363d67fb23a610c378b0737b18cbfbc1b232f2"

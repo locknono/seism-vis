@@ -6,6 +6,7 @@
     "@types/d3": "^5.0.1",
     "@types/d3-delaunay": "^4.1.0",
     "@types/leaflet": "^1.2.14",
+    "@types/rc-slider": "^8.6.0",
     "@types/react-bootstrap": "^0.32.15",
     "@types/react-redux": "^6.0.9",
     "@types/uuid": "^3.4.4",
