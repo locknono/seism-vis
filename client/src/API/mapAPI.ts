@@ -228,6 +228,7 @@ export function withDataVoronoi(wells: AllWells, map: L.Map) {
       const { id1, id2, value } = link;
       if (!id1 || !id2 || !value) return;
       values.push(parseInt(value));
+      if (!mapCollection.has(id1) || !mapCollection.has(id2)) continue;
       const well1 = wells[mapCollection.get(id1) as number];
       const well2 = wells[mapCollection.get(id2) as number];
       const points = [(well1 as any).latlng, (well2 as any).latlng];

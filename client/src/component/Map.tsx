@@ -33,7 +33,7 @@ import {
   getHeatData,
   storeVoronoiUcData
 } from "../API/heatMap";
-import { MatrixData, AllWells, WellAttrData } from "../ts/Type";
+import { MatrixData, AllWells, WellAttrData, Well } from "../ts/Type";
 import { diff } from "../API/wellAttrDiff";
 import { ViewHeading } from "./ViewHeading";
 import "leaflet.pm";
@@ -72,16 +72,6 @@ const mapDispathToProps = {
   getWellAttrData
 };
 
-interface Well {
-  x: number;
-  y: number;
-  latlng: [number, number];
-  id: string;
-  xOnSvg?: number;
-  yOnSvg?: number;
-  xOnMatrix: number;
-  yOnMatrix: number;
-}
 interface Props {
   scaler: any;
   allWells: Well[];
@@ -112,6 +102,7 @@ interface Map {
   UNSAFE_IndexStore: number[];
   UNSAFE_circlesLayer: L.LayerGroup;
   UNSAFE_AllCircles: L.Circle[];
+  layerControl: any;
 }
 
 class Map extends React.Component<Props, object> {
@@ -156,41 +147,40 @@ class Map extends React.Component<Props, object> {
       cursorMarker: false,
       finishOn: null,
       markerStyle: {
-        opacity: 0.5,
+        fillColor: "none",
+        stroke: "blue",
+        opacity: 0,
         draggable: true,
+        pointerEvents: `none`
+      },
+      pathOptions: {
+        fill: "blue",
+        fillOpacity: 0,
+        color: "blue",
+        fillColor: "none",
         pointerEvents: `none`
       }
     };
     const self = this;
-    // add leaflet.pm controls to the map
     this.map.pm.addControls(options);
     this.map.pm.enableDraw("Circle", drawOptions);
     this.map.on("pm:create", function(e1: any) {
-      console.log("e1: ", e1);
       const { allWells } = self.props;
       const radius = e1.layer._radius;
       const center: [number, number] = [
         e1.layer._latlng.lat,
         e1.layer._latlng.lng
       ];
-      console.log("center: ", center);
-      const insideWells = [];
+      const insideWells: AllWells = [];
       for (let well of allWells) {
-        console.log("well: ", well);
         if (ifInside(well.latlng, center, radius)) {
           insideWells.push(well);
         }
       }
-      var circle = e1.layer;
-      console.log("insideWells: ", insideWells);
-      for (let well of insideWells) {
-        L.circle(well.latlng, {
-          radius: 10,
-          stroke: false,
-          color: "red",
-          fillOpacity: 1
-        }).addTo(self.map);
-      }
+      withDataVoronoi(insideWells, self.map).then(voronoiLayer => {
+        self.layerControl.addOverlay(voronoiLayer, "Selected");
+        e1.layer.remove();
+      });
     });
 
     function ifInside(p: [number, number], c: [number, number], r: number) {
@@ -313,6 +303,7 @@ class Map extends React.Component<Props, object> {
         const layerControl = L.control.layers(undefined, overlayMaps, {
           collapsed: false
         });
+        this.layerControl = layerControl;
         layerControl.addTo(this.map);
         return layerControl;
       });
