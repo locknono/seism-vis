@@ -16,3 +16,7 @@ export const vertexRadius = 3;
 export const vertexFillOpacity = 0.5;
 
 export const colorScale = d3.scaleOrdinal(d3.schemeSet1);
+
+export const recommendedRectColor = `rgb(224,233,238)`;
+
+export const recommendedOpacity = 0.8;

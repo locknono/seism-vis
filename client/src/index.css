@@ -304,11 +304,14 @@ code {
   margin-top: 4px;
 }
 
-/* .slider-with-label {
-  margin-top: 10px;
+.slider-with-label {
+  margin-top: 14px;
 }
-*/
-.sliders:last-child div {
+
+.sliders:last-child {
+  margin-bottom: 20px;
+}
+/* .sliders:last-child div {
   position: relative;
   bottom: 7px;
 }
@@ -316,4 +319,4 @@ code {
 .sliders:last-child span {
   position: relative;
   bottom: 5px;
-}
+} */

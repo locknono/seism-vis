@@ -33,6 +33,14 @@ class ParaSetting extends React.Component {
               defaultValue={1}
               step={1}
             />
+            <SliderWithLabel
+              name={"Threshold"}
+              color=""
+              min={0}
+              max={3}
+              defaultValue={1}
+              step={1}
+            />
           </div>
         </div>
       </div>

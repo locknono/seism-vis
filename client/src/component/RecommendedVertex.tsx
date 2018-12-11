@@ -4,7 +4,9 @@ import { v4 } from "uuid";
 import {
   vertexRadius,
   vertexFillOpacity,
-  darkerMatchColor
+  darkerMatchColor,
+  recommendedRectColor,
+  recommendedOpacity
 } from "../constraint";
 import * as d3 from "d3";
 interface Props {
@@ -42,7 +44,7 @@ class RecommendedVertex extends React.Component<Props> {
             style={{
               fill: "red",
               stroke: "red",
-              fillOpacity: vertexFillOpacity
+              fillOpacity: recommendedOpacity
             }}
             onClick={this.handleClick}
           />
@@ -57,7 +59,11 @@ class RecommendedVertex extends React.Component<Props> {
       recommendRect = (
         <path
           d={path.toString()}
-          style={{ fill: darkerMatchColor, fillOpacity: 0.5 }}
+          style={{
+            stroke: darkerMatchColor,
+            fill: recommendedRectColor,
+            fillOpacity: recommendedOpacity
+          }}
         />
       );
       recommendBaseLine = getBaseLine(vertex);
@@ -77,8 +83,8 @@ export default RecommendedVertex;
 function getBaseLine(vertex: VertexType) {
   let baseLineStyle = {
     stroke: darkerMatchColor,
-    fill: darkerMatchColor,
-    fillOpacity: 0.5
+    fill: recommendedRectColor,
+    fillOpacity: recommendedOpacity
   };
 
   const lPath = d3.path();

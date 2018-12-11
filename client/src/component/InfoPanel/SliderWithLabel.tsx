@@ -42,6 +42,10 @@ class SliderWithLabel extends React.Component<Props, State> {
     } else {
       nameTag = name;
     }
+    let nameStyle;
+    if (name === "Threshold") {
+      nameStyle = { fontSize: `13px` };
+    }
     let valueStr;
     if (value < 1) valueStr = value.toFixed(2).toString();
     else if (value >= 1 && value < 10) {
@@ -51,7 +55,9 @@ class SliderWithLabel extends React.Component<Props, State> {
     }
     return (
       <div className="slider-with-label">
-        <span className="slider-text">{nameTag}</span>
+        <span className="slider-text" style={nameStyle}>
+          {nameTag}
+        </span>
         <span className="slider-value-text">{valueStr}</span>
         <div className="slider-div">
           <Slider
