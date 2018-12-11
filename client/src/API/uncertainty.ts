@@ -363,7 +363,8 @@ export function getRecommendedVertexByAttrDiffRecords(
   trackVertex: AllVertices,
   curvePaths: AllMatchCurve,
   index: number,
-  wellAttrData: WellAttrData
+  wellAttrData: WellAttrData,
+  weightList: number[]
 ): AllRecords {
   const xStart = curvePaths[index][0][0];
   const xEnd = curvePaths[index][2][0];
@@ -381,7 +382,8 @@ export function getRecommendedVertexByAttrDiffRecords(
     const diff = compareInOneLayer(
       window as [number, number, number, number],
       well1,
-      well2
+      well2,
+      weightList
     );
     const diffSum = diff.reduce((prev, cur) => prev + cur);
     const vertex = getVertexWithWindowDepthList(xStart, xEnd, window);
@@ -396,13 +398,15 @@ export function getRecommendedVertexByAttrDiff(
   trackVertex: AllVertices,
   curvePaths: AllMatchCurve,
   index: number,
-  wellAttrData: WellAttrData
+  wellAttrData: WellAttrData,
+  weightList: number[]
 ): VertexType {
   const records = getRecommendedVertexByAttrDiffRecords(
     trackVertex,
     curvePaths,
     index,
-    wellAttrData
+    wellAttrData,
+    weightList
   );
   return records[0].vertex;
 }

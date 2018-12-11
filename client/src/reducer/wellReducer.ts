@@ -116,7 +116,7 @@ export default function wellReducer(
       };
     case GET_WELL_CURVE:
       const curvePaths = [...sortMatchCurve(action.wellCurve)];
-
+      console.log("curvePaths: ", curvePaths);
       return {
         ...state,
         curvePaths
@@ -132,8 +132,13 @@ export default function wellReducer(
         paths: action.paths
       };
     case GET_ALL_TRACK:
-      if (action.allTrack[0][0].highestX === -1) {
-        action.allTrack.splice(0, 1);
+      for (let i = action.allTrack.length - 1; i >= 0; i--) {
+        for (let j = 0; j < action.allTrack[i].length; j++) {
+          if (action.allTrack[i][j].highestX === -1) {
+            action.allTrack[i].splice(i, 1);
+            break;
+          }
+        }
       }
       return {
         ...state,

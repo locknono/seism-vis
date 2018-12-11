@@ -29,7 +29,7 @@ class SliderWithLabel extends React.Component<Props, State> {
   handleSlide(e: number) {
     const { changeOneWeight, index } = this.props;
     this.setState({ value: e });
-    if (changeOneWeight && index) {
+    if (changeOneWeight && index !== undefined) {
       changeOneWeight(index, e);
     }
   }

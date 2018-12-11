@@ -2,7 +2,7 @@ import { CHANGE_FOCUS, CHANGE_WEIGHT } from "../action/control";
 
 const initialState = {
   focusFlag: false,
-  weightList: [1, 1, 1, 1, 1]
+  weightList: [0.2, 0.2, 0.2, 0.2, 0.2]
 };
 
 export default function controlReducer(state = initialState, action: any) {

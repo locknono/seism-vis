@@ -16,7 +16,7 @@ class AttrWeight extends React.Component<Props> {
     const { weightList, changeWeight } = this.props;
     const newWeightList = [];
     for (let i = 0; i < weightList.length; i++) {
-      if (i === index) newWeightList.push(value * 5);
+      if (i === index) newWeightList.push(value);
       else newWeightList.push(weightList[i]);
     }
     changeWeight(newWeightList);

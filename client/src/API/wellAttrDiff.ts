@@ -12,13 +12,14 @@ import { extractMatchVertex } from "./uncertainty";
 import * as d3 from "d3";
 export function diff(
   wellAttrData: WellAttrData,
-  matchCurve: AllMatchCurve
+  matchCurve: AllMatchCurve,
+  weightList: number[]
 ): AllDiff {
   const [well1, well2] = wellAttrData;
   const allDepth = getLayerDepth(matchCurve);
   const allDiff: AllDiff = [];
   for (let oneLayerDepthList of allDepth) {
-    const diff = compareInOneLayer(oneLayerDepthList, well1, well2);
+    const diff = compareInOneLayer(oneLayerDepthList, well1, well2, weightList);
     allDiff.push(diff);
   }
   return allDiff;
@@ -55,7 +56,8 @@ function getDivisionIndex(start: number, end: number, k: number) {
 export function compareInOneLayer(
   depthList: [number, number, number, number],
   w1: SingleWellAttrData,
-  w2: SingleWellAttrData
+  w2: SingleWellAttrData,
+  weightList: number[]
 ): OneLayerDiff {
   const [normalizedV1, normalizedV2] = normalize(w1, w2);
   const k = 20;
@@ -79,7 +81,7 @@ export function compareInOneLayer(
         break;
       }
       const diff = Math.pow(value1 - value2, 2);
-      diffSum[j - 1] += diff;
+      diffSum[j - 1] += weightList[j - 1] * diff;
     }
   }
   return diffSum.map(e => e / realK) as OneLayerDiff;

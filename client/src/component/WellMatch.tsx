@@ -79,7 +79,7 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     recVertex
   } = state.wellReducer;
 
-  const { focusFlag } = state.controlReducer;
+  const { focusFlag, weightList } = state.controlReducer;
   return {
     wellMinDepth,
     wellMaxDepth,
@@ -103,7 +103,8 @@ const mapStateToProps = (state: any, ownProps?: any) => {
     allDiff,
     curSelectedIndex,
     recVertex,
-    focusFlag
+    focusFlag,
+    weightList
   };
 };
 
@@ -160,6 +161,7 @@ interface Props {
   getSameFlag: typeof getSameFlag;
   changeFocus: typeof changeFocus;
   focusFlag: boolean;
+  weightList: number[];
 }
 
 interface State {
@@ -232,7 +234,9 @@ class WellMatch extends React.Component<Props, State> {
       width,
       curvePaths,
       allTrackVertex,
-      ucPath
+      ucPath,
+      weightList,
+      curSelectedIndex
     } = this.props;
 
     if (matrixData && matrixData !== prevProps.matrixData) {
@@ -254,6 +258,10 @@ class WellMatch extends React.Component<Props, State> {
         ifMatchCurveEqual(curvePaths, prevProps.curvePaths) === false)
     ) {
       this.calUncertainty();
+    }
+    if (prevProps.weightList !== weightList) {
+      this.calUncertainty();
+      this.getRecommended(curSelectedIndex as number);
     }
   }
 
@@ -317,9 +325,10 @@ class WellMatch extends React.Component<Props, State> {
       height,
       wellAttrData,
       scale,
-      getAttrDiff
+      getAttrDiff,
+      weightList
     } = this.props;
-    const allDiff = diff(wellAttrData, curvePaths);
+    const allDiff = diff(wellAttrData, curvePaths, weightList);
     getAttrDiff(allDiff);
 
     const uc = new Uncertainty();
@@ -373,7 +382,8 @@ class WellMatch extends React.Component<Props, State> {
       wellAttrData,
       getTopRecords,
       getRecVertex,
-      getSameFlag
+      getSameFlag,
+      weightList
     } = this.props;
     const recommendedVertex = getRecommendedVertex(
       allTrackVertex,
@@ -384,7 +394,8 @@ class WellMatch extends React.Component<Props, State> {
       allTrackVertex,
       curvePaths,
       index,
-      wellAttrData
+      wellAttrData,
+      weightList
     );
     const topRecords = getTop10RecomendedVertex(allRecords);
     const sameLayerFlags = IfLeftRightOnSameLayer(topRecords, allTrackVertex);
