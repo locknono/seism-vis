@@ -82,7 +82,6 @@ export function compareInOneLayer(
       diffSum[j - 1] += diff;
     }
   }
-
   return diffSum.map(e => e / realK) as OneLayerDiff;
 }
 

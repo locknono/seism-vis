@@ -5,7 +5,7 @@ class DataInfo extends React.Component {
     return (
       <div className="panel panel-info sub-infopanel">
         <div className="panel-heading info-panel-heading">Loading Data</div>
-        <div className="sub-panel-body">
+        <div className="sub-panel-body" style={{ marginLeft: `5px` }}>
           Well-logging data{" "}
           <button
             type="button"

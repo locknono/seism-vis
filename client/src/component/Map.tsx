@@ -39,6 +39,7 @@ import { diff } from "../API/wellAttrDiff";
 import { ViewHeading } from "./ViewHeading";
 import "leaflet.pm";
 import "leaflet.pm/dist/leaflet.pm.css";
+import MapviewHeading from "./MapviewHeading";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const scaler = state.figReducer.scaler;
   const {
@@ -436,7 +437,7 @@ class Map extends React.Component<Props, object> {
     return (
       <React.Fragment>
         <div className="panel panel-primary map-container">
-          <ViewHeading height={22} title={`Map View`} />
+          <MapviewHeading height={22} title={`Map View`} />
           <div id="map" ref={this.mapRef} className="panel panel-default" />
         </div>
       </React.Fragment>

@@ -31,7 +31,10 @@ export const WellCircle = (props: Props) => {
   return (
     <div className="panel panel-info info-well-circle-div sub-infopanel">
       <div className="panel-heading info-panel-heading">Well_IDs</div>
-      <div className="sub-panel-body">
+      <div
+        className="sub-panel-body"
+        style={{ maxHeight: `160px`, overflow: "auto" }}
+      >
         {circles}
         {insideCircles}
       </div>

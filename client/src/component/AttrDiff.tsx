@@ -62,6 +62,10 @@ export default function AttrDiff(props: Props) {
       number,
       number
     >[];
+    const singleScale = getSingleScale(normalizedAllDiff) as d3.ScaleLinear<
+      number,
+      number
+    >;
     baseLine = getBaseLine(
       verticalPad,
       allDiff.length,
@@ -105,7 +109,7 @@ export default function AttrDiff(props: Props) {
       rects = normalizedAllDiff.map((e, i) => {
         const y = topPadding + verticalPad * 0.1 + verticalPad * i;
         return e.map((v, j) => {
-          const width = scales[j](v);
+          const width = singleScale(v);
           const x =
             svgWidth * leftPaddingRatio +
             j * horizontalPad -
@@ -159,19 +163,31 @@ function getWidthScales(allDiff: AllDiff) {
   });
   return scales;
 }
+function getSingleScale(allDiff: AllDiff) {
+  if (!allDiff) return;
+  const [minList, maxList] = getMinMaxList(allDiff);
+  const min = d3.min(minList);
+  const max = d3.max(maxList);
+  return d3
+    .scaleLinear()
+    .domain([min, max])
+    .range([0.1 * horizontalPad, horizontalPad * 0.9]);
+}
 
 function normalize(allDiff: AllDiff): AllDiff {
   if (!allDiff) return;
   const [minList, maxList] = getMinMaxList(allDiff);
-  const scales = minList.map((e, i: number) => {
-    return d3
-      .scaleLinear()
-      .domain([minList[i], maxList[i]])
-      .range([0, 1]);
-  });
+  const min = minList.sort()[0];
+  console.log("min: ", min);
+  const max = maxList.sort()[0];
+  console.log("max: ", max);
+  const scale = d3
+    .scaleLinear()
+    .domain([min, max])
+    .range([0, 1]);
   const normalizedAllDiff = allDiff.map((e, i) => {
     return e.map((v, j) => {
-      return scales[j](v);
+      return scale(v);
     });
   });
   return normalizedAllDiff as AllDiff;
@@ -254,7 +270,7 @@ function getTopRecordsDOM(
   const verticalPad = drawSvgHeight / topRecords.length;
   const barHeight = verticalPad * 0.8;
   const scales = getTopScales(topRecords);
-  const singleScale = getTopScale(topRecords);
+  const singleScale = getSingleScale(allDiff) as d3.ScaleLinear<number, number>;
   const leftScales = getWidthScales(allDiff);
   const rects = [];
   const yList = [];
@@ -262,7 +278,7 @@ function getTopRecordsDOM(
     let x = xStart + 3 + i * horizontalPad;
     for (let j = 0; j < topRecords.length; j++) {
       if (!leftScales) break;
-      const width = leftScales[i](topRecords[j].diff[i]);
+      const width = singleScale(topRecords[j].diff[i]);
       const y = topPadding + verticalPad * 0.1 + verticalPad * j;
       yList.push(y + (verticalPad * 0.8) / 2);
       rects.push(

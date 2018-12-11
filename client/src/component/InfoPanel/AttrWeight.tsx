@@ -2,18 +2,37 @@ import * as React from "react";
 import SliderWithLabel from "./SliderWithLabel";
 import { v4 } from "uuid";
 import { colorScale } from "../../constraint";
-class AttrWeight extends React.Component {
+
+interface Props {
+  changeWeight: any;
+  weightList: number[];
+}
+class AttrWeight extends React.Component<Props> {
+  constructor(props: Props) {
+    super(props);
+    this.changeOneWeight = this.changeOneWeight.bind(this);
+  }
+  changeOneWeight(index: number, value: number) {
+    const { weightList, changeWeight } = this.props;
+    const newWeightList = [];
+    for (let i = 0; i < weightList.length; i++) {
+      if (i === index) newWeightList.push(value * 5);
+      else newWeightList.push(weightList[i]);
+    }
+    changeWeight(newWeightList);
+  }
   render() {
     const sliders = ["AC", "ML2", "ML1", "COND", "SP"].map((e, i) => {
       return (
         <SliderWithLabel
-          key={v4()}
+          key={e}
           name={e}
           color={colorScale(i.toString())}
           min={0}
           max={1}
-          defaultValue={0.2}
           step={0.01}
+          index={i}
+          changeOneWeight={this.changeOneWeight}
         />
       );
     });
@@ -29,7 +48,9 @@ class AttrWeight extends React.Component {
           Attribute Weights
         </div>
         <div className="sub-panel-body">
-          <div className="sliders" id='attr-weight-sliders'>{sliders}</div>
+          <div className="sliders" id="attr-weight-sliders">
+            {sliders}
+          </div>
         </div>
       </div>
     );

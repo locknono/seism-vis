@@ -8,7 +8,9 @@ interface Props {
   min: number;
   max: number;
   step: number;
-  defaultValue: number;
+  defaultValue?: number;
+  changeOneWeight?: any;
+  index?: number;
 }
 interface State {
   value: number;
@@ -18,16 +20,23 @@ class SliderWithLabel extends React.Component<Props, State> {
     super(props);
     /**Initializing state with props is not recommended and sometimes dangerous
      * but i'm sure defaultValue's never gonna change here */
-    this.state = { value: this.props.defaultValue };
+    this.state = {
+      value: this.props.defaultValue ? this.props.defaultValue : 0.2
+    };
     this.handleSlide = this.handleSlide.bind(this);
   }
 
   handleSlide(e: number) {
+    const { changeOneWeight, index } = this.props;
     this.setState({ value: e });
+    if (changeOneWeight && index) {
+      changeOneWeight(index, e);
+    }
   }
   render() {
     const { name, color, min, max, step, defaultValue } = this.props;
     const { value } = this.state;
+    console.log("value: ", value);
     let nameTag;
     if (name === "Searching Region") {
       nameTag = (
