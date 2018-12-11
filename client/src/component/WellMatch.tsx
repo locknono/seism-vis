@@ -200,12 +200,29 @@ class WellMatch extends React.Component<Props, State> {
       .append("g")
       .attr("transform", "translate(675,0)")
       .call(rAxis);
+
     g1.selectAll("text")
       .style("font-size", "6px")
       .style(`font-weight`, "bold");
     g2.selectAll("text")
       .style("font-size", "6px")
       .style(`font-weight`, "bold");
+    g1.append("text")
+      .text("depth")
+      .attr("x", -4)
+      .attr("y", 10)
+      .style("stroke", "black")
+      .style("stroke-weight", "normal")
+      .style("font-family", "Arial")
+      .style("font-size", "8px");
+    g2.append("text")
+      .text("depth")
+      .attr("x", 4)
+      .attr("y", 10)
+      .style("stroke", "black")
+      .style("stroke-weight", "normal")
+      .style("font-family", "Arial")
+      .style("font-size", "8px");
   }
   componentDidUpdate(prevProps: any) {
     const {

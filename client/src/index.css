@@ -317,6 +317,10 @@ code {
 .sliders:last-child {
   margin-bottom: 20px;
 }
+
+#attr-weight-sliders > div {
+  margin-top: 14px;
+}
 /* .sliders:last-child div {
   position: relative;
   bottom: 7px;
