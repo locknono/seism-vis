@@ -25,6 +25,7 @@ export const GET_CUR_INDEX = "GET_CUR_INDEX";
 export const GET_TOP_RECORDS = "GET_TOP_RECORDS";
 export const GET_REC_VERTEX = "GET_REC_VERTEX";
 export const GET_SAME_FLAG = "GET_SAME_FLAG";
+export const GET_INSIDE_WELLS = "GET_INSIDE_WELLS";
 
 export function getAllWells(allWells: AllWells) {
   return {
@@ -156,5 +157,12 @@ export function getSameFlag(flags: boolean[]) {
   return {
     type: GET_SAME_FLAG,
     sameLayerFlags: flags
+  };
+}
+
+export function getInsideWells(wells: AllWells) {
+  return {
+    type: GET_INSIDE_WELLS,
+    insideWells: wells
   };
 }

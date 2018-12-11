@@ -259,7 +259,7 @@ function getTopRecordsDOM(
   const rects = [];
   const yList = [];
   for (let i = 0; i < 5; i++) {
-    let x = xStart + i * horizontalPad;
+    let x = xStart + 3 + i * horizontalPad;
     for (let j = 0; j < topRecords.length; j++) {
       if (!leftScales) break;
       const width = leftScales[i](topRecords[j].diff[i]);
@@ -368,7 +368,7 @@ function getDerectionDOM(
       <rect
         key={i}
         x={
-          directions[i] === 0
+          directions[i] === 1
             ? xStart + directionRectLength - scale(topRecords[i].diffSum)
             : xStart + directionRectLength
         }

@@ -17,14 +17,16 @@ import {
   GET_CUR_INDEX,
   GET_TOP_RECORDS,
   GET_REC_VERTEX,
-  GET_SAME_FLAG
+  GET_SAME_FLAG,
+  GET_INSIDE_WELLS
 } from "../action/changeWell";
 import {
   AllDiff,
   AllMatchCurve,
   CurSelectedIndex,
   AllRecords,
-  VertexType
+  VertexType,
+  AllWells
 } from "src/ts/Type";
 import { matchViewWidth } from "src/constraint";
 
@@ -48,6 +50,7 @@ interface WellState {
   topRecords: AllRecords | undefined;
   recVertex: VertexType | undefined;
   sameLayerFlags: boolean[];
+  insideWells: AllWells;
 }
 
 const initialState: WellState = {
@@ -69,7 +72,8 @@ const initialState: WellState = {
   curSelectedIndex: undefined,
   topRecords: undefined,
   recVertex: undefined,
-  sameLayerFlags: []
+  sameLayerFlags: [],
+  insideWells: []
 };
 
 export default function wellReducer(
@@ -174,6 +178,11 @@ export default function wellReducer(
       return {
         ...state,
         sameLayerFlags: action.sameLayerFlags
+      };
+    case GET_INSIDE_WELLS:
+      return {
+        ...state,
+        insideWells: action.insideWells
       };
     default:
       return state;

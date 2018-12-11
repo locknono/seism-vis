@@ -25,7 +25,8 @@ import {
   getFigURI,
   getWellIDNearLine,
   getWellIDNearLineIndex,
-  getMatrixData
+  getMatrixData,
+  getInsideWells
 } from "../action/changeWell";
 import {
   getTwoWellUc,
@@ -69,7 +70,8 @@ const mapDispathToProps = {
   getWellIDNearLine,
   getWellIDNearLineIndex,
   getMatrixData,
-  getWellAttrData
+  getWellAttrData,
+  getInsideWells
 };
 
 interface Props {
@@ -91,6 +93,7 @@ interface Props {
   getWellIDNearLineIndex: any;
   getMatrixData: any;
   getWellAttrData: any;
+  getInsideWells: typeof getInsideWells;
 }
 
 interface Map {
@@ -164,9 +167,9 @@ class Map extends React.Component<Props, object> {
     const self = this;
     this.map.pm.addControls(options);
     this.map.pm.enableDraw("Circle", drawOptions);
-    this.map.pm.disableDraw("circle");
+    //this.map.pm.disableDraw("circle");
     this.map.on("pm:create", function(e1: any) {
-      const { allWells } = self.props;
+      const { allWells, getInsideWells } = self.props;
       const radius = e1.layer._radius;
       const center: [number, number] = [
         e1.layer._latlng.lat,
@@ -178,6 +181,7 @@ class Map extends React.Component<Props, object> {
           insideWells.push(well);
         }
       }
+      getInsideWells(insideWells);
       withDataVoronoi(insideWells, self.map).then(voronoiLayer => {
         self.layerControl.addOverlay(voronoiLayer, "Selected");
         e1.layer.remove();
