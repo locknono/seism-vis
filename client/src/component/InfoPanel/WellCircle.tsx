@@ -18,6 +18,9 @@ export const WellCircle = (props: Props) => {
     );
   });
   return (
-    <div className="panel panel-default info-well-circle-div">{circles}</div>
+    <div className="panel panel-info info-well-circle-div sub-infopanel">
+      <div className="panel-heading info-panel-heading">Well_IDs</div>
+      <div className="sub-panel-body">{circles}</div>
+    </div>
   );
 };

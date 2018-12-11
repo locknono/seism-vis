@@ -451,7 +451,7 @@ export function generateWindow(
   //fix left side
   for (let stepCount = 10; stepCount >= 0.5; stepCount -= 0.5) {
     const rightStep = rightDepth / stepCount;
-    if (rightStep > 2 * leftHeight || rightStep < leftHeight / 2) continue;
+    if (rightStep > 1.5 * leftHeight || rightStep < leftHeight / 2) continue;
     for (let i = 0; i < stepCount; i++) {
       windowDepth.push([
         reverseScale(matchVertex[index][0][1]),

@@ -7,6 +7,8 @@ import { CoupleWell } from "src/ts/Type";
 import SliderWithLabel from "./SliderWithLabel";
 import { colorScale } from "../../constraint";
 import { v4 } from "uuid";
+import DataInfo from "./DataInfo";
+import ParaSetting from "./ParaSetting";
 interface Props {
   planeName: string;
   depth: number;
@@ -29,17 +31,35 @@ class InfoPanel extends React.Component<Props> {
     const { planeName, depth, coupleWell } = this.props;
     const sliders = ["AC", "ML2", "ML1", "COND", "SP"].map((e, i) => {
       return (
-        <SliderWithLabel key={v4()} name={e} color={colorScale(i.toString())} />
+        <SliderWithLabel
+          key={v4()}
+          name={e}
+          color={colorScale(i.toString())}
+          min={0}
+          max={1}
+          defaultValue={0.2}
+          step={0.01}
+        />
       );
     });
     return (
       <div className="info-panel panel panel-primary">
         <ViewHeading height={22} title={`Control Panel`} />
-        <div />
-        <WellCircle coupleWell={coupleWell} />
-        <div className="panel panel-primary attr-control-panel">
-          <ViewHeading height={22} title={`untitled`} />
-          {sliders}
+        <div className="panel-font">
+          <DataInfo />
+          <WellCircle coupleWell={coupleWell} />
+          <ParaSetting />
+          <div className="panel panel-info attr-control-panel">
+            <div
+              className="panel-heading info-panel-heading"
+              style={{ paddingRight: 0, whiteSpace: `nowrap` }}
+            >
+              Attribute Weights
+            </div>
+            <div className="sub-panel-body">
+              <div className="sliders">{sliders}</div>
+            </div>
+          </div>
         </div>
       </div>
     );

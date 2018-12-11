@@ -32,7 +32,8 @@ class WithButtonViewHeading extends React.Component<Props> {
           style={{
             marginTop: "auto",
             marginBottom: "auto",
-            marginLeft: "3px"
+            marginLeft: "3px",
+            whiteSpace: `nowrap`
           }}
         >
           {title}

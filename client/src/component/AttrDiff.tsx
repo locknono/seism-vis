@@ -36,7 +36,7 @@ const drawSvgHeight = svgHeight * (1 - 2 * topPaddingRatio);
 const horizontalPad = drawSvgWidth / 5;
 const topPadding = topPaddingRatio * svgHeight;
 const padBetweenTwoGraph = 20;
-const directionRectLength = 10;
+const directionRectLength = 16;
 
 export default function AttrDiff(props: Props) {
   const {
@@ -80,7 +80,12 @@ export default function AttrDiff(props: Props) {
         topRecordsDOM = rects;
 
         const directions = getLeftRightLegend(topRecords);
-        directionDOM = getDerectionDOM(svgWidth / 2 + 20, yList, directions);
+        directionDOM = getDerectionDOM(
+          svgWidth / 2 + 20,
+          yList,
+          directions,
+          topRecords
+        );
         topBaseLine = getTopBaseLine(
           svgWidth / 2 + 30 + padBetweenTwoGraph,
           topRecords,
@@ -126,7 +131,7 @@ export default function AttrDiff(props: Props) {
   }
   return (
     <div className={divClassName}>
-      <ViewHeading height={22} title="untitled" />
+      <ViewHeading height={22} title="Evaluation View" />
       <svg
         style={{ width: svgWidth, height: svgHeight }}
         className="attr-diff-svg"
@@ -347,19 +352,28 @@ function getLeftRightLegend(topRecords: AllRecords): Direction[] {
 function getDerectionDOM(
   xStart: number,
   yList: number[],
-  directions: Direction[]
+  directions: Direction[],
+  topRecords: AllRecords
 ) {
   const rects = [];
   const rectHeight = yList[1] - yList[0];
   const verticalPad = drawSvgHeight / directions.length;
-
+  const [min, max] = d3.extent(topRecords, e => e.diffSum);
+  const scale = d3
+    .scaleLinear()
+    .domain([min as number, max as number])
+    .range([7, directionRectLength]);
   for (let i = 0; i < directions.length; i++) {
     rects.push(
       <rect
         key={i}
-        x={directions[i] === 0 ? xStart : xStart + directionRectLength}
+        x={
+          directions[i] === 0
+            ? xStart + directionRectLength - scale(topRecords[i].diffSum)
+            : xStart + directionRectLength
+        }
         y={yList[i] - (verticalPad * 0.8) / 2}
-        width={directionRectLength}
+        width={scale(topRecords[i].diffSum)}
         height={rectHeight}
         fill={directions[i] === 0 ? "grey" : "grey"}
         rx="2px"

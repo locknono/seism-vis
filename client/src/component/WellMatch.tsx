@@ -481,7 +481,7 @@ class WellMatch extends React.Component<Props, State> {
       <div className={divClassName}>
         <WithButtonViewHeading
           height={22}
-          title={"Match"}
+          title={"Horizon View"}
           changeFocus={this.props.changeFocus}
         />
         <svg className="well-match-svg">
