@@ -67,9 +67,7 @@ class WellAttr extends React.Component<Props, State> {
     };
   }
 
-  componentDidMount() {
-    //TODO:ADD BASELINE
-  }
+  componentDidMount() {}
   render() {
     //TODO:handle error value
     const {

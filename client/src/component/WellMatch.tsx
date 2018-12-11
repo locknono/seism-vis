@@ -47,6 +47,10 @@ import { diff, getTop10RecomendedVertex } from "../API/wellAttrDiff";
 import WithButtonViewHeading from "./WithButtonViewHeading";
 import Vertex from "./Vertex";
 import Legend from "./Legend";
+import {
+  reverseScale,
+  initialWellMatchDepthScale
+} from "../reducer/globalVarReducer";
 const mapStateToProps = (state: any, ownProps?: any) => {
   const {
     wellMinDepth,
@@ -181,7 +185,28 @@ class WellMatch extends React.Component<Props, State> {
     this.changeCurvePath = this.changeCurvePath.bind(this);
     this.getRecommended = this.getRecommended.bind(this);
   }
-
+  componentDidMount() {
+    const { scale } = this.props;
+    //TODO:ADD BASELINE
+    const laxis = d3.axisLeft(initialWellMatchDepthScale).tickSize(3);
+    const rAxis = d3.axisRight(initialWellMatchDepthScale);
+    const g1 = d3
+      .select(".well-match-svg")
+      .append("g")
+      .attr("transform", "translate(25,0)")
+      .call(laxis);
+    const g2 = d3
+      .select(".well-match-svg")
+      .append("g")
+      .attr("transform", "translate(675,0)")
+      .call(rAxis);
+    g1.selectAll("text")
+      .style("font-size", "6px")
+      .style(`font-weight`, "bold");
+    g2.selectAll("text")
+      .style("font-size", "6px")
+      .style(`font-weight`, "bold");
+  }
   componentDidUpdate(prevProps: any) {
     const {
       coupleWell,
@@ -458,7 +483,7 @@ class WellMatch extends React.Component<Props, State> {
     if (wellAttrData) {
       wellAttrCurve = wellAttrData.map((e, i) => {
         const pad = (width * (paddingRatio - 0.1)) / 5;
-        const xStart = i === 0 ? pad / 2 : width - pad / 2;
+        const xStart = i === 0 ? pad / 2 + 25 : width - pad / 2 - 25;
         return (
           <WellAttr
             key={e.id}

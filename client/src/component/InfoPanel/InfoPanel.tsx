@@ -49,7 +49,10 @@ class InfoPanel extends React.Component<Props> {
           <DataInfo />
           <WellCircle coupleWell={coupleWell} />
           <ParaSetting />
-          <div className="panel panel-info attr-control-panel">
+          <div
+            className="panel panel-info attr-control-panel sub-infopanel"
+            style={{ height: `205px` }}
+          >
             <div
               className="panel-heading info-panel-heading"
               style={{ paddingRight: 0, whiteSpace: `nowrap` }}
