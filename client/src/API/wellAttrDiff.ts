@@ -46,11 +46,11 @@ function getIndexWithMeterDepth(depth: number) {
 }
 
 function getDivisionIndex(start: number, end: number, k: number) {
-  const indices: number[] = [];
+  const indices = new Set();
   for (let i = 1; i <= k; i++) {
-    indices.push(Math.floor(((end - start) / k) * i));
+    indices.add(Math.floor(((end - start) / k) * i));
   }
-  return indices;
+  return Array.from(indices);
 }
 
 export function compareInOneLayer(
@@ -60,8 +60,8 @@ export function compareInOneLayer(
   weightList: number[]
 ): OneLayerDiff {
   const [normalizedV1, normalizedV2] = normalize(w1, w2);
-  const k = 20;
-  let realK = 20;
+  const k = 50;
+  let realK = 50;
   const indexList = depthList.map(e => getIndexWithMeterDepth(e));
   const [l1, l2, r1, r2] = indexList;
   const v1 = normalizedV1;
@@ -72,7 +72,6 @@ export function compareInOneLayer(
   //j for attrIndex
   for (let i = 0; i < k; i++) {
     for (let j = 1; j <= 5; j = j + 1) {
-      //TODO:should not just `break` if some data's missing
       if (!v1[leftIndices[i]] || !v2[rightIndices[i]]) break;
       const value1 = v1[leftIndices[i]][j];
       const value2 = v2[rightIndices[i]][j];

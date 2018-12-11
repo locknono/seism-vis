@@ -116,7 +116,19 @@ export default function wellReducer(
       };
     case GET_WELL_CURVE:
       const curvePaths = [...sortMatchCurve(action.wellCurve)];
+      /*   for (let i = 0; i < curvePaths.length; i++) {
+        curvePaths[i].splice(4, 1);
+        curvePaths[i].splice(1, 1);
+      }
       console.log("curvePaths: ", curvePaths);
+
+      curvePaths[0][1][1] = curvePaths[0][1][1] + 15;
+      curvePaths[0][2][1] = curvePaths[0][2][1] + 15;
+
+      curvePaths[2][1][1] = curvePaths[2][1][1] + 5;
+      curvePaths[2][2][1] = curvePaths[2][2][1] + 4;
+      curvePaths[3][1][1] = curvePaths[3][1][1] + 5;
+      curvePaths[3][2][1] = curvePaths[3][2][1] + 5; */
       return {
         ...state,
         curvePaths

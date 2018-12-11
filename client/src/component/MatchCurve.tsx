@@ -62,6 +62,7 @@ class MatchCurve extends React.Component<Props, State> {
   componentDidMount() {}
   handleClick() {
     const { path, getRecommended, index, getCurIndex } = this.props;
+    console.log("index: ", index);
 
     const vertex = extractVertex(path);
     this.setState({ vertex, showRecommendedVertex: true });

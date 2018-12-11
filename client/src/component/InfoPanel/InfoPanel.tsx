@@ -24,7 +24,6 @@ const mapStateToProps = (state: any, ownProps?: any) => {
   const { xStart, yStart, xEnd, yEnd } = state.globalVarReducer;
   const { coupleWell, insideWells } = state.wellReducer;
   const { weightList } = state.controlReducer;
-  console.log("weightList: ", weightList);
 
   return {
     planeName,

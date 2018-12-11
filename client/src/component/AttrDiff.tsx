@@ -178,9 +178,9 @@ function normalize(allDiff: AllDiff): AllDiff {
   if (!allDiff) return;
   const [minList, maxList] = getMinMaxList(allDiff);
   const min = minList.sort()[0];
-  console.log("min: ", min);
+
   const max = maxList.sort()[0];
-  console.log("max: ", max);
+
   const scale = d3
     .scaleLinear()
     .domain([min, max])

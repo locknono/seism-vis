@@ -36,7 +36,7 @@ class SliderWithLabel extends React.Component<Props, State> {
   render() {
     const { name, color, min, max, step, defaultValue } = this.props;
     const { value } = this.state;
-    console.log("value: ", value);
+
     let nameTag;
     if (name === "Searching Region") {
       nameTag = (

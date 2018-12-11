@@ -49,9 +49,11 @@ export default class Uncertainty {
     for (let i = 0; i < matchVertex.length; i++) {
       const curMatch = matchVertex[i];
       leftMaps.push(getMatchVertexPosition(curMatch, trackVertex, 0, 1));
+
       rightMaps.push(getMatchVertexPosition(curMatch, trackVertex, 2, 3));
     }
-
+    console.log("leftMaps: ", leftMaps);
+    console.log("rightMaps: ", rightMaps);
     for (let i = 0; i < leftMaps.length; i++) {
       const leftMap = leftMaps[i];
       const rightMap = rightMaps[i];
@@ -61,7 +63,7 @@ export default class Uncertainty {
       convertMapValueFromDepthToPortion(rightMap);
 
       let time = 0;
-      while (notFinish(leftMap) && time < 5) {
+      while (notFinish(leftMap) && time < 10) {
         loop: for (let [k1, v1] of leftMap) {
           if (v1 === 0) continue;
           for (let [k2, v2] of rightMap) {
@@ -69,12 +71,12 @@ export default class Uncertainty {
               continue;
             } else {
               if (v1 > v2) {
-                curMatchUC += (v1 - v2) * Math.abs(k1 - k2);
+                curMatchUC += v2 * Math.abs(k1 - k2);
                 rightMap.set(k2, 0);
                 leftMap.set(k1, v1 - v2);
                 break loop;
               } else {
-                curMatchUC += (v2 - v1) * Math.abs(k1 - k2);
+                curMatchUC += v1 * Math.abs(k1 - k2);
                 rightMap.set(k2, v2 - v1);
                 leftMap.set(k1, 0);
                 break loop;
@@ -446,16 +448,23 @@ export function generateWindow(
   matchVertex: AllVertices,
   index: number
 ) {
+  console.log("depthList: ", depthList);
   const leftDepth = depthList[1] - depthList[0];
   const rightDepth = depthList[3] - depthList[2];
   const windowDepth = [];
-  const leftHeight = matchVertex[index][1][1] - matchVertex[index][0][1];
-  const rightHeight = matchVertex[index][3][1] - matchVertex[index][2][1];
+  const leftHeight =
+    reverseScale(matchVertex[index][1][1]) -
+    reverseScale(matchVertex[index][0][1]);
 
+  const rightHeight =
+    reverseScale(matchVertex[index][3][1]) -
+    reverseScale(matchVertex[index][2][1]);
   //fix left side
   for (let stepCount = 10; stepCount >= 0.5; stepCount -= 0.5) {
     const rightStep = rightDepth / stepCount;
-    if (rightStep > 1.5 * leftHeight || rightStep < leftHeight / 2) continue;
+    if (rightStep > 1.6 * leftHeight || rightStep < leftHeight / 2) {
+      continue;
+    }
     for (let i = 0; i < stepCount; i++) {
       windowDepth.push([
         reverseScale(matchVertex[index][0][1]),
@@ -465,9 +474,9 @@ export function generateWindow(
       ]);
     }
   }
-  for (let stepCount = 10; stepCount >= 0.5; stepCount -= 0.5) {
+  for (let stepCount = 10; stepCount >= 0.5; stepCount -= 0.2) {
     const leftStep = leftDepth / stepCount;
-    if (leftStep > 2 * rightHeight || leftStep < rightHeight / 2) continue;
+    if (leftStep > 1.6 * rightHeight || leftStep < rightHeight / 2) continue;
     for (let i = 0; i < stepCount; i++) {
       windowDepth.push([
         depthList[0] + leftStep * i,
