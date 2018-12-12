@@ -52,8 +52,7 @@ export default class Uncertainty {
 
       rightMaps.push(getMatchVertexPosition(curMatch, trackVertex, 2, 3));
     }
-    console.log("leftMaps: ", leftMaps);
-    console.log("rightMaps: ", rightMaps);
+
     for (let i = 0; i < leftMaps.length; i++) {
       const leftMap = leftMaps[i];
       const rightMap = rightMaps[i];
@@ -100,7 +99,7 @@ export default class Uncertainty {
       } */
       ucList.push(curMatchUC);
     }
-    console.log("ucList: ", ucList);
+
     return {
       path: this.getUcPath(matchVertex, ucList, width, paddingRatio, height),
       ucList
@@ -448,14 +447,12 @@ export function generateWindow(
   matchVertex: AllVertices,
   index: number
 ) {
-  console.log("depthList: ", depthList);
   const leftDepth = depthList[1] - depthList[0];
   const rightDepth = depthList[3] - depthList[2];
   const windowDepth = [];
   const leftHeight =
     reverseScale(matchVertex[index][1][1]) -
     reverseScale(matchVertex[index][0][1]);
-
   const rightHeight =
     reverseScale(matchVertex[index][3][1]) -
     reverseScale(matchVertex[index][2][1]);
@@ -476,16 +473,19 @@ export function generateWindow(
   }
   for (let stepCount = 10; stepCount >= 0.5; stepCount -= 0.2) {
     const leftStep = leftDepth / stepCount;
-    if (leftStep > 1.6 * rightHeight || leftStep < rightHeight / 2) continue;
+    if (leftStep > 1.6 * rightHeight || leftStep < rightHeight / 2) {
+      continue;
+    }
     for (let i = 0; i < stepCount; i++) {
       windowDepth.push([
         depthList[0] + leftStep * i,
-        depthList[1] + leftStep * (i + 1),
+        depthList[0] + leftStep * (i + 1),
         reverseScale(matchVertex[index][2][1]),
         reverseScale(matchVertex[index][3][1])
       ]);
     }
   }
+
   return windowDepth;
 }
 
