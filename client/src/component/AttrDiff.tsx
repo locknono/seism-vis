@@ -77,21 +77,21 @@ export default function AttrDiff(props: Props) {
       if (topRecords && curSelectedIndex) {
         const { rects, yList } = getTopRecordsDOM(
           topRecords,
-          svgWidth / 2 + 30 + padBetweenTwoGraph,
+          svgWidth / 2 + 30 + padBetweenTwoGraph - 7,
           getRecVertex,
           allDiff
         );
         topRecordsDOM = rects;
 
         const directions = getLeftRightLegend(topRecords);
-        directionDOM = getDerectionDOM(
+        directionDOM = getDirectionDOM(
           svgWidth / 2 + 20,
           yList,
           directions,
           topRecords
         );
         topBaseLine = getTopBaseLine(
-          svgWidth / 2 + 30 + padBetweenTwoGraph,
+          svgWidth / 2 + 30 + padBetweenTwoGraph - 7,
           topRecords,
           sameLayerFlags
         );
@@ -99,10 +99,11 @@ export default function AttrDiff(props: Props) {
           curSelectedIndex,
           [
             svgWidth * leftPaddingRatio +
-              normalizedAllDiff[0].length * horizontalPad,
+              normalizedAllDiff[0].length * horizontalPad -
+              3,
             topPadding + verticalPad * curSelectedIndex + verticalPad / 2
           ],
-          svgWidth / 2 + 20,
+          svgWidth / 2 + 20 - 8,
           yList
         );
       }
@@ -171,7 +172,8 @@ function getSingleScale(allDiff: AllDiff) {
   return d3
     .scaleLinear()
     .domain([min, max])
-    .range([0.1 * horizontalPad, horizontalPad * 0.9]);
+    .range([0.1 * horizontalPad, horizontalPad * 0.9])
+    .clamp(true);
 }
 
 function normalize(allDiff: AllDiff): AllDiff {
@@ -265,19 +267,19 @@ function getTopRecordsDOM(
   getRecVertex: any,
   allDiff: AllDiff
 ) {
-  const horizontalPad = (drawSvgWidth - 20) / 5;
+  //const horizontalPad = (drawSvgWidth - 20) / 5;
   const topPadding = topPaddingRatio * svgHeight;
   const verticalPad = drawSvgHeight / topRecords.length;
   const barHeight = verticalPad * 0.8;
-  const scales = getTopScales(topRecords);
+  //const scales = getTopScales(topRecords);
   const singleScale = getSingleScale(allDiff) as d3.ScaleLinear<number, number>;
-  const leftScales = getWidthScales(allDiff);
+  //const leftScales = getWidthScales(allDiff);
   const rects = [];
   const yList = [];
   for (let i = 0; i < 5; i++) {
-    let x = xStart + 3 + i * horizontalPad;
+    let x = xStart + i * horizontalPad;
     for (let j = 0; j < topRecords.length; j++) {
-      if (!leftScales) break;
+      //if (!leftScales) break;
       const width = singleScale(topRecords[j].diff[i]);
       const y = topPadding + verticalPad * 0.1 + verticalPad * j;
       yList.push(y + (verticalPad * 0.8) / 2);
@@ -365,7 +367,7 @@ function getLeftRightLegend(topRecords: AllRecords): Direction[] {
   return directions as Direction[];
 }
 
-function getDerectionDOM(
+function getDirectionDOM(
   xStart: number,
   yList: number[],
   directions: Direction[],
@@ -385,8 +387,8 @@ function getDerectionDOM(
         key={i}
         x={
           directions[i] === 1
-            ? xStart + directionRectLength - scale(topRecords[i].diffSum)
-            : xStart + directionRectLength
+            ? xStart + directionRectLength - scale(topRecords[i].diffSum) - 8
+            : xStart + directionRectLength - 8
         }
         y={yList[i] - (verticalPad * 0.8) / 2}
         width={scale(topRecords[i].diffSum)}
@@ -399,8 +401,8 @@ function getDerectionDOM(
   rects.push(
     <line
       key={v4()}
-      x1={xStart + directionRectLength}
-      x2={xStart + directionRectLength}
+      x1={xStart + directionRectLength - 8}
+      x2={xStart + directionRectLength - 8}
       y1={yList[0] - (verticalPad * 0.8) / 2}
       y2={yList[yList.length - 1] + verticalPad * 0.5}
       style={{ stroke: "black", strokeWidth: 2 }}
@@ -414,7 +416,7 @@ function getTopBaseLine(
   topRecords: AllRecords,
   sameLayerFlags: boolean[]
 ) {
-  const horizontalPad = (drawSvgWidth - 20) / 5;
+  //const horizontalPad = (drawSvgWidth - 20) / 5;
   const topPadding = topPaddingRatio * svgHeight;
   const verticalPad = drawSvgHeight / topRecords.length;
   const barHeight = verticalPad * 0.8;

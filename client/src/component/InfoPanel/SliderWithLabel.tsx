@@ -24,6 +24,7 @@ class SliderWithLabel extends React.Component<Props, State> {
       value: this.props.defaultValue ? this.props.defaultValue : 0.2
     };
     this.handleSlide = this.handleSlide.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   handleSlide(e: number) {
@@ -32,6 +33,9 @@ class SliderWithLabel extends React.Component<Props, State> {
     if (changeOneWeight && index !== undefined) {
       changeOneWeight(index, e);
     }
+  }
+  handleChange(e: number) {
+    this.setState({ value: e });
   }
   render() {
     const { name, color, min, max, step, defaultValue } = this.props;
@@ -75,7 +79,8 @@ class SliderWithLabel extends React.Component<Props, State> {
             step={step}
             defaultValue={defaultValue}
             value={value}
-            onChange={this.handleSlide}
+            onChange={this.handleChange}
+            onAfterChange={this.handleSlide}
             trackStyle={{ backgroundColor: color }}
             handleStyle={{ borderColor: color, borderRadius: `25%` }}
           />

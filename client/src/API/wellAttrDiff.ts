@@ -167,7 +167,7 @@ export function getTop10RecomendedVertex(allRecords: AllRecords) {
       recordSet.add(record.diffSum);
       list.push(record);
     }
-    if (list.length >= 10) break;
+    if (list.length >= 20) break;
   }
   return list;
 }
