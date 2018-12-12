@@ -243,7 +243,7 @@ export function withDataVoronoi(wells: AllWells, map: L.Map) {
       voronoiLayers.push(voronoiPath);
     }
     const voronoiLayerGroup = L.layerGroup(voronoiLayers).setZIndex(-200); //z-index does not work
-    voronoiLayerGroup.addTo(map);
+    //voronoiLayerGroup.addTo(map);
     return voronoiLayerGroup;
   });
 }

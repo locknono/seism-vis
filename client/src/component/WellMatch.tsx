@@ -236,7 +236,8 @@ class WellMatch extends React.Component<Props, State> {
       allTrackVertex,
       ucPath,
       weightList,
-      curSelectedIndex
+      curSelectedIndex,
+      getCurIndex
     } = this.props;
 
     if (matrixData && matrixData !== prevProps.matrixData) {
@@ -244,6 +245,7 @@ class WellMatch extends React.Component<Props, State> {
       changeSvgSize(width, height); */
       this.drawMatch();
       this.drawTrace();
+      getCurIndex(undefined);
     }
 
     if (width !== prevProps.width) {

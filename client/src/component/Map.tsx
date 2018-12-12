@@ -184,6 +184,7 @@ class Map extends React.Component<Props, object> {
       }
       getInsideWells(insideWells);
       withDataVoronoi(insideWells, self.map).then(voronoiLayer => {
+        (voronoiLayer as any).addTo(self.map);
         self.layerControl.addOverlay(voronoiLayer, "Selected");
         e1.layer.remove();
       });
@@ -255,7 +256,7 @@ class Map extends React.Component<Props, object> {
 
   deployMap() {
     const center: [number, number] = [37.867271959429445, 118.78092767561518];
-    const zoom = 14.5;
+    const zoom = 13.5;
     const preferCanvas = true;
     const zoomControl = false;
     const attributionControl = false;
@@ -342,12 +343,41 @@ class Map extends React.Component<Props, object> {
         return undefined;
       })
       .then(wellLocationData => {
+        self.map.on("keypress", function(event: any) {
+          wellLocationData.map((well: Well, index: number) => {
+            const circles: L.Circle[] = [];
+            if (
+              well.id === `GD1-5-815` ||
+              well.id === `GD1-6-13` ||
+              well.id === `GD1-9N19` ||
+              well.id === `GD1-9-18` ||
+              well.id === "GD1-15N10" ||
+              well.id === `GD1-16N11`
+            ) {
+              const circle = L.circle(well.latlng, {
+                radius: 30,
+                stroke: false,
+                color: `black`,
+                fillOpacity: 1
+              });
+              circle.addTo(self.map);
+              circles.push(circle);
+            }
+            setTimeout(function() {
+              for (let circle of circles) {
+                circle.remove();
+              }
+            }, 2000);
+          });
+        });
+
         const allCircles: L.Circle[] = [];
         const allWells: AllWells = [];
         wellLocationData.map((well: Well, index: number) => {
           let xOnMatrix = Math.floor((well.x - xStart) / xySection);
           let yOnMatrix = Math.floor((well.y - yStart) / xySection);
           allWells.push({ ...well, xOnMatrix, yOnMatrix, index: index });
+
           let circle = L.circle(well.latlng, {
             radius: 5,
             stroke: false,
