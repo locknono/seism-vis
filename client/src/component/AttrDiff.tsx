@@ -5,7 +5,8 @@ import {
   CurSelectedIndex,
   AllRecords,
   VertexType,
-  Direction
+  Direction,
+  OneLayerDiff
 } from "src/ts/Type";
 import * as d3 from "d3";
 import { v4 } from "uuid";
@@ -14,7 +15,8 @@ import {
   rectColor,
   brighterMatchColor,
   matchColor,
-  colorScale
+  colorScale,
+  darkerMatchColor
 } from "../constraint";
 import { getRecVertex } from "../action/changeWell";
 interface Props {
@@ -58,10 +60,6 @@ export default function AttrDiff(props: Props) {
     const verticalPad = drawSvgHeight / allDiff.length;
     const barHeight = verticalPad * 0.8;
     const normalizedAllDiff = normalize(allDiff);
-    const scales = getWidthScales(normalizedAllDiff) as d3.ScaleLinear<
-      number,
-      number
-    >[];
     const singleScale = getSingleScale(normalizedAllDiff) as d3.ScaleLinear<
       number,
       number
@@ -79,7 +77,9 @@ export default function AttrDiff(props: Props) {
           topRecords,
           svgWidth / 2 + 30 + padBetweenTwoGraph - 7,
           getRecVertex,
-          allDiff
+          allDiff,
+          normalizedAllDiff,
+          curSelectedIndex
         );
         topRecordsDOM = rects;
 
@@ -180,9 +180,7 @@ function normalize(allDiff: AllDiff): AllDiff {
   if (!allDiff) return;
   const [minList, maxList] = getMinMaxList(allDiff);
   const min = minList.sort()[0];
-
   const max = maxList.sort()[0];
-
   const scale = d3
     .scaleLinear()
     .domain([min, max])
@@ -265,19 +263,35 @@ function getTopRecordsDOM(
   topRecords: AllRecords,
   xStart: number,
   getRecVertex: any,
-  allDiff: AllDiff
+  allDiff: OneLayerDiff[],
+  normalizedAllDiff: OneLayerDiff[],
+  curSelectedIndex: number
 ) {
   //const horizontalPad = (drawSvgWidth - 20) / 5;
   const topPadding = topPaddingRatio * svgHeight;
   const verticalPad = drawSvgHeight / topRecords.length;
   const barHeight = verticalPad * 0.8;
-  //const scales = getTopScales(topRecords);
   const singleScale = getSingleScale(allDiff) as d3.ScaleLinear<number, number>;
-  //const leftScales = getWidthScales(allDiff);
   const rects = [];
   const yList = [];
   for (let i = 0; i < 5; i++) {
     let x = xStart + i * horizontalPad;
+    const width2 = singleScale(allDiff[curSelectedIndex][i]);
+    /* rects.push(
+      <line
+        x1={x + width2}
+        x2={x + width2}
+        y1={topPadding + verticalPad * 0.1 + verticalPad * 0}
+        y2={
+          topPadding +
+          verticalPad * 0.1 +
+          verticalPad * (topRecords.length - 1) +
+          barHeight
+        }
+        stroke={colorScale(i.toString())}
+        strokeWidth={1}
+      />
+    ); */
     for (let j = 0; j < topRecords.length; j++) {
       //if (!leftScales) break;
       const width = singleScale(topRecords[j].diff[i]);
@@ -291,6 +305,22 @@ function getTopRecordsDOM(
           width={width}
           height={barHeight}
           fill={colorScale(i.toString())}
+          rx="2px"
+          onMouseEnter={function() {
+            getRecVertex(topRecords[j].vertex);
+          }}
+        />,
+
+        <rect
+          key={v4()}
+          x={x}
+          y={y}
+          width={width2}
+          height={barHeight}
+          fill={(d3.color(colorScale(i.toString())) as d3.RGBColor)
+            .brighter()
+            .toString()}
+          fillOpacity={0.3}
           rx="2px"
           onMouseEnter={function() {
             getRecVertex(topRecords[j].vertex);

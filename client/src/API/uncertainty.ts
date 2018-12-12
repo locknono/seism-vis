@@ -459,7 +459,7 @@ export function generateWindow(
   //fix left side
   for (let stepCount = 10; stepCount >= 0.5; stepCount -= 0.5) {
     const rightStep = rightDepth / stepCount;
-    if (rightStep > 1.6 * leftHeight || rightStep < leftHeight / 2) {
+    if (rightStep > 2 * leftHeight || rightStep < leftHeight / 2) {
       continue;
     }
     for (let i = 0; i < stepCount; i++) {
@@ -473,7 +473,7 @@ export function generateWindow(
   }
   for (let stepCount = 10; stepCount >= 0.5; stepCount -= 0.2) {
     const leftStep = leftDepth / stepCount;
-    if (leftStep > 1.6 * rightHeight || leftStep < rightHeight / 2) {
+    if (leftStep > 2 * rightHeight || leftStep < rightHeight / 2) {
       continue;
     }
     for (let i = 0; i < stepCount; i++) {
