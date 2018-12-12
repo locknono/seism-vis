@@ -248,10 +248,10 @@ function getBaseLine(
         d={path.toString()}
         style={style}
         onMouseEnter={function() {
-          getCurIndex(i);
+          // getCurIndex(i);
         }}
         onMouseLeave={function() {
-          /* getCurIndex(undefined); */
+          // getCurIndex(undefined);
         }}
       />
     );
