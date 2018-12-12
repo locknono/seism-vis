@@ -216,15 +216,17 @@ class Map extends React.Component<Props, object> {
       coupleWell,
       allWells,
       coupleWellLayer,
-      getCoupleWellLayer
+      getCoupleWellLayer,
+      wellIDNearLine
     } = this.props;
+    console.log("wellIDNearLine: ", wellIDNearLine);
 
-    if (this.props.wellIDNearLine !== prevProps.wellIDNearLine) {
-      const { allWells, wellIDNearLine } = this.props;
+    if (wellIDNearLine !== prevProps.wellIDNearLine) {
       for (let i = 0; i < allWells.length; i++) {
         for (let j = 0; j < prevProps.wellIDNearLine.length; j++) {
           if (prevProps.wellIDNearLine[j] === allWells[i].id) {
             resetCircleStyle(this.UNSAFE_AllCircles[i]);
+            break;
           }
         }
       }
@@ -232,6 +234,7 @@ class Map extends React.Component<Props, object> {
         for (let j = 0; j < wellIDNearLine.length; j++) {
           if (wellIDNearLine[j] === allWells[i].id) {
             setSelectedCircleStyle(this.UNSAFE_AllCircles[i]);
+            break;
           }
         }
       }
@@ -349,69 +352,76 @@ class Map extends React.Component<Props, object> {
             radius: 5,
             stroke: false,
             fillOpacity: 1
-          }).on("click", function() {
-            self.UNSAFE_IDStore.push(well.id);
-            self.UNSAFE_XYStore.push([well.x, well.y]);
-            self.UNSAFE_IndexStore.push(index);
-            getCoupleWell(self.UNSAFE_IDStore);
+          })
+            .on("click", function() {
+              self.UNSAFE_IDStore.push(well.id);
+              self.UNSAFE_XYStore.push([well.x, well.y]);
+              self.UNSAFE_IndexStore.push(index);
+              getCoupleWell(self.UNSAFE_IDStore);
 
-            if (self.UNSAFE_IDStore.length === 1) {
-              getNearWellIndex(self.UNSAFE_IDStore[0], allWells).then(
-                indexList => {
-                  for (let index of indexList) {
-                    allCircles[index].setStyle({
-                      color: "green"
-                    });
+              if (self.UNSAFE_IDStore.length === 1) {
+                getNearWellIndex(self.UNSAFE_IDStore[0], allWells).then(
+                  indexList => {
+                    for (let index of indexList) {
+                      allCircles[index].setStyle({
+                        color: "green"
+                      });
+                    }
                   }
-                }
-              );
+                );
 
-              if (self.UNSAFE_IndexStore.length === 3) {
-                resetCircleStyle(allCircles[self.UNSAFE_IndexStore[0]]);
-                resetCircleStyle(allCircles[self.UNSAFE_IndexStore[1]]);
-                self.UNSAFE_IndexStore.splice(0, 2);
+                if (self.UNSAFE_IndexStore.length === 3) {
+                  resetCircleStyle(allCircles[self.UNSAFE_IndexStore[0]]);
+                  resetCircleStyle(allCircles[self.UNSAFE_IndexStore[1]]);
+                  self.UNSAFE_IndexStore.splice(0, 2);
+                }
+                setSelectedCircleStyle(allCircles[self.UNSAFE_IndexStore[0]]);
               }
-              setSelectedCircleStyle(allCircles[self.UNSAFE_IndexStore[0]]);
-            }
-            if (self.UNSAFE_IDStore.length === 2) {
-              getNearWellIndex(self.UNSAFE_IDStore[0], allWells).then(
-                indexList => {
-                  for (let index of indexList) {
-                    allCircles[index].setStyle({
-                      color: "#3388ff" //default
+              if (self.UNSAFE_IDStore.length === 2) {
+                getNearWellIndex(self.UNSAFE_IDStore[0], allWells)
+                  .then(indexList => {
+                    for (let index of indexList) {
+                      allCircles[index].setStyle({
+                        color: "#3388ff" //default
+                      });
+                    }
+                    self.UNSAFE_IndexStore.map(index => {
+                      setSelectedCircleStyle(allCircles[index]);
                     });
-                  }
-                  self.UNSAFE_IndexStore.map(index => {
-                    setSelectedCircleStyle(allCircles[index]);
+                  })
+                  .then(() => {
+                    const pointsOnLine = getPointsOnLine(self.UNSAFE_XYStore);
+                    const [
+                      wellIDNearLine,
+                      wellIDNearLineIndexOnLine
+                    ] = mapapi_getWellIDNearLine(
+                      pointsOnLine,
+                      allWells,
+                      self.UNSAFE_IDStore as [string, string]
+                    );
+                    fetchWellAttrData(
+                      self.UNSAFE_IDStore[0],
+                      self.UNSAFE_IDStore[1]
+                    ).then((data: WellAttrData) => {
+                      getWellAttrData(data);
+                    });
+
+                    self.UNSAFE_IDStore = [];
+                    getWellIDNearLine(wellIDNearLine);
+                    getWellIDNearLineIndex(wellIDNearLineIndexOnLine);
+                    fetchMatrixData(pointsOnLine).then(
+                      (matrixData: MatrixData) => {
+                        getMatrixData(matrixData);
+                      }
+                    );
+                    self.UNSAFE_XYStore = [];
                   });
-                }
-              );
-
-              const pointsOnLine = getPointsOnLine(self.UNSAFE_XYStore);
-              const [
-                wellIDNearLine,
-                wellIDNearLineIndexOnLine
-              ] = mapapi_getWellIDNearLine(
-                pointsOnLine,
-                allWells,
-                self.UNSAFE_IDStore as [string, string]
-              );
-              fetchWellAttrData(
-                self.UNSAFE_IDStore[0],
-                self.UNSAFE_IDStore[1]
-              ).then((data: WellAttrData) => {
-                getWellAttrData(data);
-              });
-
-              self.UNSAFE_IDStore = [];
-              getWellIDNearLine(wellIDNearLine);
-              getWellIDNearLineIndex(wellIDNearLineIndexOnLine);
-              fetchMatrixData(pointsOnLine).then((matrixData: MatrixData) => {
-                getMatrixData(matrixData);
-              });
-              self.UNSAFE_XYStore = [];
-            }
-          });
+              }
+            })
+            .on("mouseover", function() {
+              console.log("xOnMatrix: ", xOnMatrix);
+              console.log("yOnMatrix: ", yOnMatrix);
+            });
           circlesLayer.addLayer(circle);
           allCircles.push(circle);
         });
