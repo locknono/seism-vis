@@ -1,5 +1,10 @@
 /*Since i imported redux and stored all state in redux-store
 this file is useless now*/
+
+/**
+ * Context is still useful,
+ * especially now with react16.6 contextType,it's more convinient
+ */
 import * as React from "react";
 
 interface MatrixContextDefaultValue {

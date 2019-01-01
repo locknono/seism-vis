@@ -1,3 +1,7 @@
+/**
+ * Too large this file is.
+ * Just for my own convinience.
+ */
 import {
   GET_ALL_WELLS,
   GET_COUPLEWELL_PATH,

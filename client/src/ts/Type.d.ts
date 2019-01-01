@@ -1,3 +1,6 @@
+/**
+ * Not familar with typescript,a lot may(should) get improved.
+ */
 import Vertex from "src/component/Vertex";
 
 type Point = [number, number];
@@ -54,6 +57,7 @@ export interface SingleWellAttrData {
 
 export type WellAttrData = [SingleWellAttrData, SingleWellAttrData];
 
+//Tuple is clear and great,but typescript can't understand tuple properly.
 export type OneLayerDiff = [number, number, number, number, number];
 
 export type AllDiff = OneLayerDiff[] | undefined;

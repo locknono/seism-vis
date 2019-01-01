@@ -448,10 +448,7 @@ class Map extends React.Component<Props, object> {
                   });
               }
             })
-            .on("mouseover", function() {
-              console.log("xOnMatrix: ", xOnMatrix);
-              console.log("yOnMatrix: ", yOnMatrix);
-            });
+            .on("mouseover", function() {});
           circlesLayer.addLayer(circle);
           allCircles.push(circle);
         });
