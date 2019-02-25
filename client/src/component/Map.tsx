@@ -1,13 +1,7 @@
 /**
- * Maybe i shouldn't import leaflet and d3 here(src code),
- * Ts typechecking and webpack packing are really
- * time-consuimg,about 25sec.
- * And in some cases,types that leaflet and d3 bring
- * in donot work properly with ts and exsiting code,
- * for example,in ts,d3.line merely reconnizes d.x and d.y,
- * it can not recognize d[0],d[1].
- * I have to use `any` to opt-out,which is annoying.
- * It did more harm than good.
+ * see consuming dependencies
+ * https://www.typescriptlang.org/docs/handbook/declaration-files/library-structures.html
+ * import * as L from "leaflet" is correct.
  */
 
 import * as React from "react";

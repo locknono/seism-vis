@@ -5,6 +5,7 @@ import "./index.css";
 import registerServiceWorker from "./registerServiceWorker";
 import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
+
 import figReducer from "./reducer/figReducer";
 import globalVarReducer from "./reducer/globalVarReducer";
 import wellReducer from "./reducer/wellReducer";
@@ -27,4 +28,5 @@ ReactDOM.render(
   </Provider>,
   document.getElementById("root") as HTMLElement
 );
+
 registerServiceWorker();
